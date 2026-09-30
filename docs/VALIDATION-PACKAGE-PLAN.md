@@ -28,11 +28,11 @@ This categorization is a scenario design assumption. It is not a regulatory desi
 | STL-SD-001 | System Description and Intended Use | Establish the system, boundary, GxP use, records, users, and important assumptions. |
 | STL-RA-001 | Regulatory Applicability Statement | Establish which regulations/guidance govern the mock scenario and which are conditional references. |
 | STL-VP-001 | Validation Plan | Define lifecycle scope, roles, deliverables, risk/test strategy, acceptance, and deviation handling. |
-| STL-RAK-001 | Risk Assessment | Identify failure modes and use risk to determine verification depth. |
+| STL-RSK-001 | Risk Assessment | Identify failure modes and use risk to determine verification depth. |
 | STL-URS-001 | User Requirements Specification | Define approximately 30-35 testable regulated-user requirements. |
 | STL-RTM-001 | Requirements Traceability Matrix | Trace requirements to risk, tests, evidence, deviations, and final status. |
 | STL-OQ-001 | Operational Qualification | Predefine and execute approximately 18 risk-based test cases. |
-| STL-DEV-001 | Validation Deviation Log | Preserve three seeded training deviations with impact assessment, correction, and disposition. |
+| STL-DL-001 | Validation Deviation Log | Preserve three seeded training deviations with impact assessment, correction, and disposition. |
 | STL-VSR-001 | Validation Summary Report | Summarize execution and make a bounded mock release decision. |
 
 Current work status belongs in GitHub Issue #1 and pull requests rather than this plan.
