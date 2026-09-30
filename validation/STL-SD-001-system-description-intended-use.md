@@ -369,10 +369,10 @@ The intended claim is narrower: this repository defines and will exercise a fict
 - SampleTrack Lite Mock CSV Package Plan
 - Future: STL-VP-001 Validation Plan
 - Future: STL-URS-001 User Requirements Specification
-- Future: STL-RAK-001 Risk Assessment
+- Future: STL-RSK-001 Risk Assessment
 - Future: STL-RTM-001 Requirements Traceability Matrix
 - Future: STL-OQ-001 Operational Qualification
-- Future: STL-DEV-001 Validation Deviation Log
+- Future: STL-DL-001 Validation Deviation Log
 - Future: STL-VSR-001 Validation Summary Report
 
 ## 17. Revision history
