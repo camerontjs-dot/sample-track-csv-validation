@@ -6,12 +6,12 @@
 
 - [STL-SD-001 — System Description and Intended Use](STL-SD-001-system-description-intended-use.md)
 - [STL-RA-001 — Regulatory Applicability Statement](STL-RA-001-regulatory-applicability.md)
+- [STL-VP-001 — Validation Plan](STL-VP-001-validation-plan.md)
+- [STL-URS-001 — User Requirements Specification](STL-URS-001-user-requirements.md)
 
 ## Planned package
 
-- STL-VP-001 — Validation Plan
 - STL-RSK-001 — Risk Assessment
-- STL-URS-001 — User Requirements Specification
 - STL-RTM-001 — Requirements Traceability Matrix
 - STL-OQ-001 — Operational Qualification
 - STL-DL-001 — Validation Deviation Log
