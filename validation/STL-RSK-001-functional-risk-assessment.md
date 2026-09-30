@@ -99,6 +99,8 @@ RPN = Severity × Probability × Detectability
 
 The RPN is a prioritization aid only.
 
+For this functional assessment, the Probability score estimates the likelihood that the **software/configuration failure mode** could occur under the fictional operating scenario. It is not presented as a measured patient-harm frequency or an empirical production defect rate.
+
 It is **not** treated as the regulatory definition of risk and does not override professional judgment or severity.
 
 ## 6. Rating scales
@@ -219,6 +221,28 @@ V3 does not mean "more screenshots." It means stronger opportunities for the sys
 | RSK-013 | Electronic signature lacks required identity/meaning/date-time, is detachable from the record, or can be applied through another user's credentials. | URS-033–URS-035 | 4 | 2 | 4 | 32 | HIGH | Verify manifestation, permanent record linkage, human-readable output, unique identity, and negative authentication/signature attempt. | V3 | OPEN — pending verification |
 | RSK-014 | Required GxP record can be permanently deleted, cannot be reliably retrieved, loses related history, or produces an inaccurate/incomplete human-readable copy. | URS-006–URS-008 | 4 | 2 | 4 | 32 | HIGH | Attempt ordinary-user deletion; retrieve by key identifiers; compare human-readable copy with stored record/history relationships. | V3 | OPEN — pending verification |
 | RSK-015 | System records the wrong user or time for a GxP action, weakening attribution and reconstruction even when the business action itself succeeds. | URS-003, URS-015, URS-022, URS-030 | 3 | 2 | 4 | 24 | MEDIUM | Compare acting user/time with receiving, status, custody, and audit events across representative workflows. | V2 | OPEN — pending verification |
+
+### 9.1 Rating rationale
+
+The numerical values above are not self-explanatory. The following notes record the main reasoning used to assign Severity, Probability, and Detectability so another reviewer can challenge the assessment.
+
+| Risk ID | Rating rationale |
+|---|---|
+| RSK-001 | **S3:** identity ambiguity could impair traceability but does not itself change release/hold status. **P1:** unique-ID generation is a simple, mature control with little configuration freedom in the scenario. **D2:** duplicate/ambiguous identity would usually become visible during record retrieval or transaction review. |
+| RSK-002 | **S4:** missing lot, storage, or receipt data could materially compromise handling or recall records. **P2:** required-field enforcement is straightforward but configuration defects remain credible. **D2:** an incomplete record is likely to be visible before later quality use if the workflow displays required content. |
+| RSK-003 | **S4:** erroneous critical manual data can support an incorrect quality/storage decision. **P3:** manual-entry error is plausible during normal use and the accuracy-check configuration could be absent or ineffective. **D3:** later review may catch the error, but detection before release is not guaranteed without the intended check. |
+| RSK-004 | **S5:** incompatible storage can expose drug to conditions capable of affecting quality. **P2:** incompatible assignment requires a rule/configuration or user-control failure, but it is credible. **D3:** physical labels or later review may reveal the mismatch, but not reliably before exposure. |
+| RSK-005 | **S5:** bypassing QA/hold control can place unsuitable or unreviewed material into an available state. **P2:** the failure requires an authorization/workflow defect but such configuration errors are credible. **D4:** an apparently valid Released status could be relied upon before anyone recognizes the bypass. |
+| RSK-006 | **S5:** failure to identify a true excursion can allow potentially affected drug to remain unrestricted. **P3:** boundary and comparison defects are plausible in configured rules. **D5:** when the system labels the condition acceptable, the user may have no independent indication that the rule is wrong. |
+| RSK-007 | **S4:** incomplete or mislinked excursion evidence can compromise the scientific/quality assessment. **P3:** multi-field manual/event capture and record association provide several ordinary failure opportunities. **D3:** QA review may detect gaps, but incorrect association can appear plausible. |
+| RSK-008 | **S5:** an unresolved excursion leaving hold or being dispositioned without QA can directly defeat product-protection controls. **P2:** it requires role/workflow failure but is credible in a configurable system. **D4:** downstream users may trust the resulting status as authoritative. |
+| RSK-009 | **S3:** custody-history loss impairs accountability/investigation but does not by itself authorize release or change storage conditions. **P2:** append/history defects are credible but not expected in ordinary configuration. **D3:** gaps may become visible only when the history is specifically reviewed. |
+| RSK-010 | **S4:** access/RBAC failure can enable unauthorized GxP changes and quality actions. **P3:** role configuration is an ordinary configurable surface and misconfiguration is plausible. **D4:** unauthorized actions can look legitimate when performed under a valid session unless separately reviewed. |
+| RSK-011 | **S4:** continued access after revocation can permit unauthorized GxP activity, and missing authorization history weakens investigation. **P2:** account-disable and audit controls are standard but can be misconfigured. **D4:** continued access may remain unnoticed until review or an incident occurs. |
+| RSK-012 | **S4:** missing/alterable/unintelligible audit history can prevent reconstruction of critical GxP changes and conceal inappropriate actions. **P3:** audit configuration and event coverage are common areas where apparently functional systems can have gaps. **D4:** the underlying business transaction can appear successful while the evidence defect remains hidden until review. |
+| RSK-013 | **S4:** a detached, misattributed, or weakly authenticated signature can invalidate attribution of a quality decision. **P2:** signature controls are deliberate configured functions, making failure less frequent but credible. **D4:** a malformed or mislinked signature may appear valid to ordinary users without targeted review. |
+| RSK-014 | **S4:** loss, deletion, incomplete retrieval, or inaccurate copies can compromise required records, recall support, and inspection/investigation evidence. **P2:** persistence/retrieval functions are standard but defects or permissions can still create loss. **D4:** missing historical content may not be recognized until the record is needed. |
+| RSK-015 | **S3:** incorrect user/time attribution weakens reconstruction and accountability but does not necessarily alter the underlying material state. **P2:** attribution is normally system-generated, reducing opportunity for error. **D4:** incorrect metadata can appear authoritative and may not be discovered without comparison to a known execution context. |
 
 ## 10. Risk distribution
 
