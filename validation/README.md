@@ -10,11 +10,11 @@
 ## Planned package
 
 - STL-VP-001 — Validation Plan
-- STL-RAK-001 — Risk Assessment
+- STL-RSK-001 — Risk Assessment
 - STL-URS-001 — User Requirements Specification
 - STL-RTM-001 — Requirements Traceability Matrix
 - STL-OQ-001 — Operational Qualification
-- STL-DEV-001 — Validation Deviation Log
+- STL-DL-001 — Validation Deviation Log
 - STL-VSR-001 — Validation Summary Report
 
 Mutable work status is tracked in GitHub Issue #1 and pull requests.
