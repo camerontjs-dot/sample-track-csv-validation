@@ -6,7 +6,7 @@
 |---|---|
 | Document ID | STL-DL-001 |
 | System | SampleTrack Lite demonstration surrogate |
-| Status | Closed for successor candidate `b528234a0a14db68200c9213516d0ed6a76ca56b` |
+| Status | REOPENED — DEV-011 requires correction and successor qualification |
 | Approval status | Mock approval: Not executed |
 
 ## DEV-001 — Upper temperature boundary classified as excursion
@@ -636,6 +636,44 @@ Artifact ZIP SHA-256: `c137814080ba4cfa35169471d4ef19e8ab3cad722d495acfeaf091a52
 
 ---
 
+## DEV-011 — Delete-attempt authentication ordering
+
+**Discovered during:** final public-release pressure check  
+**Candidate:** `c9dc8a9364f768a2ad52da7d9695041eb5d68091`  
+**GitHub Actions run:** `36899763513`  
+**Affected requirement:** `URS-025`  
+**Affected risk:** `RSK-010`
+
+### Observation
+
+An unauthenticated delete-attempt call using an unknown record identifier returned `NotFoundError` before the application performed its authentication check.
+
+### Classification
+
+**SYSTEM AUTHENTICATION-CHECK ORDERING FAILURE**
+
+### Impact
+
+The function evaluated record state before enforcing the authentication prerequisite required by URS-025.
+
+### Required correction
+
+Check authenticated Warehouse/QA authority before record lookup in `attempt_delete_record`.
+
+### Initial receipt
+
+- compilation: **PASS**
+- development/adversarial suite: **18 PASS / 1 ERROR / 19 total**
+- frozen OQ: **NOT ENTERED**
+- artifact: `11181147821`
+- artifact SHA-256: `0676dddb79392f207c9bbdafc58122cc70ff0485b81f961674ad9b823a0bd294`
+
+### Status
+
+`OPEN — CORRECTION / FULL RETEST REQUIRED`
+
+---
+
 ## Final deviation closure summary
 
 Successor qualification: `OQ-CI-36897449285` on exact application/runner candidate `b528234a0a14db68200c9213516d0ed6a76ca56b`.
@@ -672,3 +710,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 0.8 | Reopened | Public-release pressure test run 36895767954 found four requirement-level gaps; DEV-005 through DEV-008 opened and publication blocked pending successor qualification. |
 | 0.9 | Reopened | Second pressure sweep found temperature data-limit failure (DEV-009) and QA-review apparatus discrepancy (DEV-010); full successor qualification required. |
 | 1.0 | Closed for successor candidate | DEV-005 through DEV-010 resolved; expanded pressure suite 18/18 PASS and unchanged frozen OQ 18/18 PASS. |
+| 1.1 | Reopened | Final authentication-order pressure check found DEV-011; full successor qualification required. |

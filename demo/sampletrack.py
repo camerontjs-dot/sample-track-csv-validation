@@ -295,8 +295,8 @@ class SampleTrackDemo:
         self.conn.commit()
 
     def attempt_delete_record(self, session: Session, record_id: str) -> None:
-        self._record(record_id)
         self._require_role(session, "Warehouse Operator", "QA Reviewer")
+        self._record(record_id)
         raise AuthorizationError("permanent deletion of completed GxP record is not permitted")
 
     def verify_critical_data(self, session: Session, record_id: str, product_id: str, lot: str, storage_condition: str) -> bool:
