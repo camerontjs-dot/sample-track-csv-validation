@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Local demonstration outputs
+local-oq-output/
+*.sqlite
+*.sqlite3
+*.db
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
