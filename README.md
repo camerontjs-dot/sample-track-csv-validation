@@ -1,10 +1,12 @@
-# CSV-demo
+# SampleTrack Lite validation demo
 
-Mock computerized system validation (CSV) package for **SampleTrack Lite**, a fictional configured sample/inventory tracking system used in a GMP pharmaceutical warehouse/distribution scenario.
+> **MOCK / FICTIONAL - DEMONSTRATION ONLY - NOT FOR GxP USE**
 
-> **MOCK / FICTIONAL — TRAINING & INTERVIEW DEMONSTRATION ONLY — NOT FOR GxP USE**
+This repository is a bounded computerized system validation (CSV) exercise for **SampleTrack Lite**, a fictional sample and inventory tracking system in a pharmaceutical warehouse/distribution scenario.
 
-This repository contains a bounded validation exercise built from intended use through final traceability and validation summary. It does **not** represent production validation work, a validated commercial system, or prior ownership of a formal CSV program.
+It follows one validation thread from intended use through requirements, risk, frozen qualification, observed failures, controlled correction, traceability closure, and a final bounded decision.
+
+It does **not** establish production validation, regulatory compliance, supplier qualification, or suitability for real GxP use.
 
 ## Current bounded result
 
@@ -12,16 +14,40 @@ Exact qualified custom demonstration surrogate:
 
 `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`
 
-Observed for the final qualification run:
+Final qualification evidence:
 
-- development tests: **10 / 10 PASS**;
+- development and adversarial tests: **10 / 10 PASS**;
 - frozen OQ: **18 / 18 PASS**;
-- URS traceability: **35 / 35 VERIFIED — PASS**;
+- URS traceability: **35 / 35 VERIFIED - PASS**;
 - recorded validation deviations: **4 / 4 resolved**;
 - final mock disposition: **ACCEPTED FOR BOUNDED MOCK DEMONSTRATION USE**;
 - production disposition: **NOT APPROVED FOR GxP PRODUCTION USE**.
 
-The successful final run does not erase the preserved failed executions that preceded it.
+The passing final run does not replace the failed executions that preceded it. The failure and correction lineage remains part of the validation record.
+
+## Reproduce the demonstration
+
+The surrogate uses Python's standard library and SQLite. No third-party Python package is required.
+
+Development tests:
+
+```bash
+cd demo
+python3 -m unittest -v test_sampletrack.py
+```
+
+Run the automated OQ harness locally:
+
+```bash
+cd demo
+python3 oq_runner.py \
+  --output ../local-oq-output \
+  --tester "local-reproduction" \
+  --system-identity "local-working-copy" \
+  --execution-id "LOCAL-OQ-001"
+```
+
+A local reproduction is useful behavioral evidence, but it is not the authoritative final qualification run. The final qualified candidate and evidence identities are recorded below and in the validation package.
 
 ## Start here
 
@@ -37,19 +63,17 @@ The successful final run does not erase the preserved failed executions that pre
 - [Final Qualification Receipt](validation/STL-OQ-001-final-qualification-receipt.md)
 - [Validation Summary Report](validation/STL-VSR-001-validation-summary-report.md)
 - [Final step-level OQ execution record](validation/evidence/OQ-CI-36813357212/execution.md)
-- [Package plan](docs/VALIDATION-PACKAGE-PLAN.md)
+- [Original package plan](docs/VALIDATION-PACKAGE-PLAN.md)
 
 ## Scenario boundary
 
-SampleTrack Lite is treated as a fictional **configured commercial product** for the validation scenario. That Category 4 assumption is part of the exercise and is not a claim about a real supplier product.
+SampleTrack Lite is treated as a fictional **configured commercial product** for the validation scenario. That Category 4 assumption belongs to the scenario and is not a claim about a real supplier product.
 
 Canadian GMP and Health Canada computerized-system/storage guidance are the primary regulatory basis. Selected 21 CFR Part 11 controls are included as a conditional electronic-record/e-signature exercise overlay; U.S. legal applicability is not asserted.
 
-The runnable Python/SQLite implementation in `demo/` is a **custom demonstration surrogate** used to produce real test evidence against the frozen protocol. It is not the fictional Category 4 supplier product.
+The runnable Python/SQLite implementation in `demo/` is a **custom demonstration surrogate** used to produce real execution evidence against the frozen protocol. It is not the fictional Category 4 supplier product.
 
 ## Evidence chain
-
-The repository maintains a reconstructable path:
 
 ```text
 intended use
@@ -67,10 +91,15 @@ intended use
 
 Material failures remain visible after correction.
 
-The final GitHub Actions execution is identified by:
+Final GitHub Actions execution:
 
 - run: `36813357212`;
 - execution ID: `OQ-CI-36813357212`;
+- exact qualified commit: `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`;
 - evidence artifact SHA-256: `94f82fb01bdd9999c4d71ccbd2587702181ab45bf7833dc39cb987b16051a490`.
 
-See the Validation Summary Report for scope, residual limitations, and the final bounded decision.
+See the Validation Summary Report for residual limitations and the exact final decision.
+
+## Historical-record note
+
+Some frozen or historical validation artifacts retain the wording used when the exercise was created, including the original training/interview watermark. Those files are preserved because exact document identity is part of the evidence chain. Public-facing entry points use neutral demonstration language instead of rewriting frozen records after qualification.
