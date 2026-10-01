@@ -16,7 +16,7 @@
 
 This Validation Summary Report summarizes the evidence generated for the SampleTrack Lite mock computerized-system validation exercise and records the final bounded validation decision.
 
-The report evaluates whether the exact custom demonstration surrogate satisfied the frozen functional validation scope defined by the approved mock package.
+The report evaluates whether the exact custom demonstration surrogate satisfied the frozen functional validation scope defined by the mock package.
 
 It does not establish that a real supplier product has been validated, that a production environment has been qualified, or that any real pharmaceutical operation may rely on this surrogate for GxP use.
 
@@ -113,7 +113,22 @@ Final full OQ:
 
 The workflow checked out the exact candidate in detached-HEAD state.
 
-## 7. Development verification
+## 7. Execution ownership and independence
+
+The final OQ was executed automatically by GitHub Actions against the exact pinned repository candidate.
+
+The `Tester: Cameron` field in the generated execution record identifies the exercise owner/protocol operator. It does **not** mean Cameron manually performed each automated test step.
+
+Independence is limited:
+
+- the OQ requirements and expected results were frozen before the demonstration surrogate was qualified;
+- GitHub Actions provided a clean hosted execution environment against exact committed code;
+- however, the surrogate implementation, automated qualification runner, and validation package were developed within the same overall project;
+- the final OQ is therefore reproducible behavioral evidence, but not an organizationally independent validation or independent second implementation.
+
+This limitation is retained in the final claim rather than describing CI execution as independent QA approval.
+
+## 8. Development verification
 
 Before final OQ execution:
 
@@ -133,7 +148,7 @@ The development suite included targeted regression/adversarial checks for:
 
 These tests supplement but do not replace OQ.
 
-## 8. Operational Qualification result
+## 9. Operational Qualification result
 
 Final frozen OQ result:
 
@@ -165,7 +180,7 @@ Core execution hashes:
 
 Individual evidence IDs and hashes are preserved in the execution manifest and final qualification receipt.
 
-## 9. Validation deviations
+## 10. Validation deviations
 
 Four validation deviations were preserved during qualification.
 
@@ -224,7 +239,7 @@ Classification: **pre-execution apparatus failure**.
 
 This incident is preserved separately and is not treated as a SampleTrack functional result.
 
-## 10. Requirements traceability
+## 11. Requirements traceability
 
 Final RTM status:
 
@@ -238,7 +253,7 @@ Requirement-specific deviation history remains visible for the affected temperat
 
 The RTM references exact final evidence IDs rather than using the aggregate green OQ result as a substitute for traceability.
 
-## 11. Functional risk disposition
+## 12. Functional risk disposition
 
 Design-time risk assessment:
 
@@ -255,7 +270,7 @@ Following final OQ:
 
 A successful OQ does not mean the risks cease to exist or that real production probability has been measured.
 
-## 12. Validation Plan acceptance criteria
+## 13. Validation Plan acceptance criteria
 
 | Acceptance criterion | Final status | Evidence basis |
 |---|---|---|
@@ -272,7 +287,7 @@ A successful OQ does not mean the risks cease to exist or that real production p
 
 Formal organizational QA approval is intentionally not fabricated.
 
-## 13. Residual limitations
+## 14. Residual limitations
 
 The following were not established by this mock package:
 
@@ -296,7 +311,7 @@ The following were not established by this mock package:
 
 These are boundaries, not hidden assumptions that are being treated as passed.
 
-## 14. Final validation decision
+## 15. Final validation decision
 
 ### Disposition
 
@@ -312,7 +327,7 @@ This package does not qualify SampleTrack Lite, the demonstration surrogate, or 
 
 The final claim is limited to the tested mock functional boundary.
 
-## 15. Revalidation / reconsideration triggers
+## 16. Revalidation / reconsideration triggers
 
 The bounded disposition should be reconsidered if any of the following materially change:
 
@@ -332,7 +347,7 @@ The bounded disposition should be reconsidered if any of the following materiall
 
 A documentation-only change does not automatically require requalification, but its impact should be assessed if it changes interpretation of the validation claim.
 
-## 16. Conclusion
+## 17. Conclusion
 
 The mock package achieved its intended demonstration objective:
 
@@ -351,7 +366,7 @@ intended use
 
 The evidence supports the bounded mock disposition above and no broader claim.
 
-## 17. References
+## 18. References
 
 - STL-RA-001 — Regulatory Applicability Statement
 - STL-VP-001 — Validation Plan
@@ -361,8 +376,9 @@ The evidence supports the bounded mock disposition above and no broader claim.
 - STL-OQ-001 — Final Qualification Receipt
 - GitHub Actions run `36813357212`
 
-## 18. Revision history
+## 19. Revision history
 
 | Revision | Status | Description |
 |---|---|---|
 | 1.0 | Final mock summary | Final bounded validation decision for exact qualified candidate after complete deviation reconciliation. |
+| 1.1 | Final mock summary | Clarified automated execution ownership, limited independence, and non-executed mock approval boundary. |
