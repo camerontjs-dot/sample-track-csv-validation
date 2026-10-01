@@ -1,6 +1,10 @@
-# SampleTrack Lite Mock CSV Package Plan
+# SampleTrack Lite Mock CSV Package Plan - Historical Planning Record
 
-> **MOCK / FICTIONAL — TRAINING & INTERVIEW DEMONSTRATION ONLY — NOT FOR GxP USE**
+> **MOCK / FICTIONAL - DEMONSTRATION ONLY - NOT FOR GxP USE**
+
+## Status
+
+This is the original planning record for the bounded validation exercise. The package is now complete. The final execution introduced additional evidence and one additional discovered validation deviation beyond the initial plan; current authority is the executed RTM, deviation log, final qualification receipt, and VSR.
 
 ## 1. Objective
 
@@ -8,7 +12,7 @@ Build a compact, risk-based computerized system validation package for **SampleT
 
 The package is intended to demonstrate how intended use, regulatory applicability, requirements, risk, verification evidence, deviations, traceability, and a final validation decision fit together.
 
-It is not evidence that SampleTrack Lite is suitable for real GxP use, and it does not represent prior ownership of a production CSV program.
+It is not evidence that SampleTrack Lite is suitable for real GxP use, and it does not represent production qualification of a real computerized system.
 
 ## 2. Validation scenario
 
@@ -32,7 +36,7 @@ This categorization is a scenario design assumption. It is not a regulatory desi
 | STL-URS-001 | User Requirements Specification | Define approximately 30-35 testable regulated-user requirements. |
 | STL-RTM-001 | Requirements Traceability Matrix | Trace requirements to risk, tests, evidence, deviations, and final status. |
 | STL-OQ-001 | Operational Qualification | Predefine and execute approximately 18 risk-based test cases. |
-| STL-DL-001 | Validation Deviation Log | Preserve three seeded training deviations with impact assessment, correction, and disposition. |
+| STL-DL-001 | Validation Deviation Log | Preserve three seeded demonstration deviations with impact assessment, correction, and disposition. |
 | STL-VSR-001 | Validation Summary Report | Summarize execution and make a bounded mock release decision. |
 
 Current work status belongs in GitHub Issue #1 and pull requests rather than this plan.
@@ -49,7 +53,7 @@ Current work status belongs in GitHub Issue #1 and pull requests rather than thi
 8. Design OQ tests from requirements and risk.
 9. Freeze the decisive OQ expectations, inputs, and acceptance criteria.
 10. Execute OQ and preserve first-run evidence.
-11. Record and disposition seeded training deviations without erasing failed evidence.
+11. Record and disposition seeded demonstration deviations without erasing failed evidence.
 12. Re-execute affected tests where justified.
 13. Close traceability.
 14. Write the Validation Summary Report.
@@ -113,7 +117,7 @@ The package is expected to include three transparently seeded deviations:
 2. **Protocol/document discrepancy:** the test script contains an incorrect role or configured-label reference while the system requirement remains correct.
 3. **Evidence/execution deficiency:** initial evidence does not adequately establish a required test condition or result and the affected step must be re-executed.
 
-They must be labelled as training seeds. They must not be presented as accidental production events.
+They must be labelled as demonstration seeds. They must not be presented as accidental production events.
 
 ## 9. Document and evidence identifiers
 
@@ -133,7 +137,7 @@ Evidence filenames may include the stable ID, execution date, and a short descri
 
 Every controlled validation deliverable and execution artifact should include:
 
-> **MOCK / FICTIONAL — TRAINING & INTERVIEW DEMONSTRATION ONLY — NOT FOR GxP USE**
+> **MOCK / FICTIONAL — DEMONSTRATION ONLY — NOT FOR GxP USE**
 
 Do not create fictional QA approvers, company authorization, or handwritten/electronic signatures.
 
@@ -159,7 +163,7 @@ Approximate planning budget:
 | OQ design, execution, evidence | 5.0-6.0 h |
 | Deviation handling | 1.0 h |
 | VSR | 1.5 h |
-| Package QC / interview path | 1.0 h |
+| Package QC / review path | 1.0 h |
 
 If time is constrained, reduce low-risk test count and cosmetic formatting before removing traceability, deviation handling, risk rationale, or the final decision record.
 
