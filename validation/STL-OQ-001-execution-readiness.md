@@ -12,6 +12,18 @@
 | Job | `110209333784` |
 | OQ execution | `OQ-EXEC-001` |
 
+## Historical scope
+
+This record captures **the initial execution-readiness state for OQ-EXEC-001 at candidate `e1636c...`**. It is retained as historical evidence and is not the final qualified-candidate identity.
+
+Later corrective candidates and the final successful qualification are recorded in:
+
+- `STL-DL-001-validation-deviation-log.md`
+- `STL-OQ-001-final-qualification-receipt.md`
+- `STL-VSR-001-validation-summary-report.md`
+
+Do not read this historical readiness record as the final validation disposition.
+
 ## Readiness evidence
 
 GitHub Actions checked out the exact candidate and observed:
