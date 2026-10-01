@@ -73,6 +73,7 @@ SHA-256:
 
 - `demo/sampletrack.py`: `c719094618123bc280cb0d9ce204da1f7072004e40e48a9787b38b02f1aa14b5`
 - `demo/test_sampletrack.py`: `1a9a45f3710b452b9b078d738698011b21d964f4803e97b510afe410f1484363`
+- `demo/test_pressure.py`: `63a66eddf7b71b91f238b9d2c2cffe8c6c251c5b0f582b9d94bf9baa8ae3ef8d`
 - `demo/oq_runner.py`: `aac407bec114b285298642f4ae22f8fa8d32d384e5cd170542073687689ea5b6`
 
 ## 6. Execution evidence identity
@@ -143,3 +144,4 @@ It does not establish:
 | Revision | Status | Description |
 |---|---|---|
 | 1.0 | Qualified successor | Final public-release pressure qualification after DEV-005 through DEV-010. |
+| 1.1 | Evidence hardening | Added exact SHA-256 identity for the adversarial pressure-test source after CI source-ledger hardening. |
