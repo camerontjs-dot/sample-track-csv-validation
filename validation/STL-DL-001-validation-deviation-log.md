@@ -104,6 +104,44 @@ DEV-001 is behaviorally resolved. Final package closure still depends on resolvi
 
 The original run and evidence must remain preserved after correction.
 
+### Secondary local preservation receipt — original `fed1f956…` candidate
+
+A separate local recovery/qualification review later inspected the earlier candidate:
+
+`fed1f956a8b6f251300599838a5b2ad88783d298`
+
+and preserved the existing first-run output without rerunning or repairing it.
+
+Observed from the preserved bundle:
+
+- OQ summary: **17 PASS / 1 FAIL**;
+- failing case: `OQ-TC-009`;
+- failing step: frozen **8.0 °C** input;
+- expected: `Within range`;
+- actual: `Excursion`;
+- classification: **system / configuration failure**;
+- preserved artifacts: **22**;
+- manifest entries verified: **21 / 21**;
+- receipt SHA-256: `1e90f8eb0edb670faef4fdf33877a6cddae652faf50ab2962d07beb44d1aa51e`;
+- local preservation branch: `qualification/preserve-fed1f-first-run-20261001`;
+- no source/protocol correction, commit, push, merge, or promotion was performed by that review.
+
+Local receipt path at time of review:
+
+`/private/tmp/csv-demo-qual-recovery-fed1f.fB1CAa/qualification/fed1f-first-run-preserved/qualification-receipt.json`
+
+Important limitation: the recovery environment (macOS 27.0 / 26A428, arm64, Python 3.14.4, SQLite 3.53.4) is **not** historical execution attestation. The original compile/unit-test results, original execution environment, invocation trace, and captured process exit code remain unknown. A runner-contract exit of 1 is inferred from the preserved 17/1 result, not directly observed.
+
+GitHub lineage review found that `fed1f956…` is an ancestor of the later hosted DEV-001 candidate `e1636c513661a8d6784e9594f8929b1592b690c7`. Between those commits, GitHub records only qualification-workflow / candidate-metadata additions. The application and OQ-runner blobs are byte-identical:
+
+- `demo/sampletrack.py`: `4fbe45cc3c5314c8456d390f6da581db9e087e19`
+- `demo/oq_runner.py`: `aa98aae1dc503c964136447e94e7b83f9878073e`
+
+Accordingly, this local receipt is treated as **corroborating preservation evidence for the same pre-correction upper-bound defect state**, not as a new OQ execution and not as historical environment evidence.
+
+It does not change the final DEV-001 resolution on the corrected candidate.
+
+
 
 
 
@@ -393,3 +431,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 0.4 | Active | DEV-004 opened after corrected harness exposed uncontrolled unauthenticated-access behavior; adversarial pre-correction tests added. |
 | 0.5 | Active | DEV-004 adversarial test confirmed forged-session authorization bypass; session authority correction applied pending full qualification. |
 | 0.6 | Closed for qualified candidate | DEV-002 and DEV-004 closed by exact-candidate run 36813357212; all four recorded validation deviations resolved with failed evidence preserved. |
+| 0.7 | Closed / supplemented | Added local preservation receipt for original fed1f956 candidate; corroborates DEV-001 defect while preserving unknown historical environment/invocation limits. |
