@@ -36,7 +36,15 @@ Observed environment:
 
 The only working-tree addition at environment capture was the qualification evidence output directory created by the workflow.
 
-## 3. Development gates
+## 3. Execution mode and independence
+
+GitHub Actions executed the qualification steps automatically against the exact candidate.
+
+The generated execution record uses `Tester: Cameron` to identify the exercise owner/protocol operator. It does not represent a manual step-by-step execution by Cameron.
+
+The qualification has useful separation from implementation state because the expected behavior was frozen before qualification and the hosted runner checked out exact committed source. It is **not** organizationally independent validation: the application, runner, and package were developed within the same project.
+
+## 4. Development gates
 
 Before OQ execution:
 
@@ -51,7 +59,7 @@ The development tests include requirement-derived adversarial checks added after
 
 Development tests are supporting evidence. The frozen OQ remains the qualification authority.
 
-## 4. Frozen OQ result
+## 5. Frozen OQ result
 
 Complete STL-OQ-001 execution:
 
@@ -78,7 +86,7 @@ The final run includes:
 - electronic-signature manifestation, linkage, credential challenge, and attribution;
 - end-to-end receiving → storage → custody → excursion → hold → QA disposition → retrieval.
 
-## 5. Protocol-conformance check
+## 6. Protocol-conformance check
 
 The frozen OQ contains 18 cases and 99 numbered protocol steps.
 
@@ -95,7 +103,7 @@ This expansion increases inspectability and does not change the frozen expected 
 
 DEV-002 is therefore closed by the final full execution.
 
-## 6. Source identity
+## 7. Source identity
 
 SHA-256 captured from the exact checkout before OQ:
 
@@ -103,7 +111,7 @@ SHA-256 captured from the exact checkout before OQ:
 - `demo/test_sampletrack.py`: `a3318e9522b01e1e77d4db9247af2085cf89836121737301378350de6e6735e1`
 - `demo/oq_runner.py`: `0789c67da040a73904602b3ef0638e3ed27adca72268c180b92ffdf207ce68af`
 
-## 7. Execution evidence identity
+## 8. Execution evidence identity
 
 Execution-file SHA-256:
 
@@ -122,7 +130,7 @@ GitHub Actions artifact:
 
 The artifact ZIP digest was independently rechecked after download and matched the GitHub artifact digest.
 
-## 8. Deviation lineage
+## 9. Deviation lineage
 
 This passing execution does not erase the earlier failures.
 
@@ -135,7 +143,7 @@ Relevant preserved validation history:
 
 The pre-execution workflow checkout failure in run `36811955161` remains classified separately as an apparatus failure because no system-under-test code or OQ step executed.
 
-## 9. Qualification disposition
+## 10. Qualification disposition
 
 **PASS FOR BOUNDED MOCK OQ**
 
@@ -157,12 +165,13 @@ It does **not** establish:
 
 Those non-claims remain part of the final validation decision.
 
-## 10. Revalidation trigger
+## 11. Revalidation trigger
 
 Any change to the tested application behavior, frozen validation authority, authentication model, status workflow, temperature logic, evidence apparatus, or other material validated behavior requires impact assessment before relying on this receipt.
 
-## 11. Revision history
+## 12. Revision history
 
 | Revision | Status | Description |
 |---|---|---|
 | 1.0 | Qualified | Final corrective full-OQ receipt for exact candidate `37a23e1...`. |
+| 1.1 | Qualified | Clarified automated execution ownership and limited independence. |
