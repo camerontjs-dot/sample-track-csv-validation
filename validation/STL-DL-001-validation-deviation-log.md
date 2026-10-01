@@ -6,7 +6,7 @@
 |---|---|
 | Document ID | STL-DL-001 |
 | System | SampleTrack Lite demonstration surrogate |
-| Status | Active |
+| Status | Closed for qualified mock candidate `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e` |
 | Approval status | Mock approval: Not executed |
 
 ## DEV-001 — Upper temperature boundary classified as excursion
@@ -169,7 +169,7 @@ If the adversarial test confirms the exposure:
 
 ### Status
 
-`OPEN — FORGED-SESSION BYPASS CONFIRMED / CORRECTION APPLIED / FULL RETEST REQUIRED`
+`RESOLVED — AUTHORITY CORRECTED / ADVERSARIAL TEST PASS / FULL OQ PASS`
 
 ### Pre-correction adversarial receipt
 
@@ -198,6 +198,29 @@ The system now:
 - invalidates a user's existing sessions when the account is disabled or role authorization changes.
 
 The frozen OQ expected results remain unchanged.
+
+### Final corrective qualification receipt
+
+Corrected candidate: `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`  
+Candidate tree: `0fd797f7a4532ef18284aa8484c2db7036532c02`  
+GitHub Actions run: `36813357212`  
+Job: `110213023142`  
+Development tests: **10 / 10 PASS**  
+Frozen OQ: **18 / 18 PASS**  
+`sampletrack.py` SHA-256: `c0bcf3919279d41aabe90f63056f8b63b57e38f3ca8a3d146ab5a128ea28afe4`  
+OQ runner SHA-256: `0789c67da040a73904602b3ef0638e3ed27adca72268c180b92ffdf207ce68af`  
+Artifact: `11140757299`  
+Artifact digest: `sha256:94f82fb01bdd9999c4d71ccbd2587702181ab45bf7833dc39cb987b16051a490`
+
+The final execution explicitly passed:
+
+- unauthenticated GxP access denial;
+- invalid-password post-failure GxP access denial;
+- disabled-account post-failure GxP access denial;
+- forged-session development challenge;
+- all role/authority OQ paths.
+
+DEV-004 is resolved for the exact qualified candidate. The original pre-correction failures remain preserved.
 
 ## DEV-002 — Automated OQ harness did not preserve frozen protocol step coverage
 
@@ -243,7 +266,21 @@ Without changing any frozen expected result:
 
 ### Status
 
-`OPEN — HARNESS CORRECTION APPLIED / FULL OQ RETEST REQUIRED`
+`RESOLVED — PROTOCOL CONFORMANCE VERIFIED / FULL OQ PASS`
+
+### Final conformance verification
+
+Final run: `36813357212`  
+Candidate: `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`  
+Frozen OQ result: **18 / 18 PASS**
+
+A case-by-case conformance audit found:
+
+- OQ-TC-002 through OQ-TC-018 expose the same number of explicit runner assertions as frozen numbered protocol steps;
+- OQ-TC-001 expands the frozen combined post-failed-authentication check into separate invalid-password and disabled-account GxP-access assertions;
+- no frozen expected result was removed or weakened.
+
+DEV-002 is resolved. The earlier 18/18 runs produced before this apparatus correction remain useful observations but are not substituted for the final conformance-qualified execution.
 
 ## DEV-003 — Qualification evidence execution identity collision
 
@@ -323,6 +360,19 @@ Artifact digest: `sha256:8a2b32fe35e5cd39cc7375fa21926630ae62cafa23c0096b1573180
 
 The OQ-TC-009 evidence object was confirmed to carry `execution_id = OQ-CI-36812736825`.
 
+## Final deviation closure summary
+
+| Deviation | Classification | Final status | Closing evidence |
+|---|---|---|---|
+| DEV-001 | System / configuration | RESOLVED | Corrected boundary logic; final full OQ 18/18 PASS |
+| DEV-002 | Protocol / execution apparatus | RESOLVED | Protocol-conformance correction; final full OQ 18/18 PASS |
+| DEV-003 | Evidence / execution apparatus | RESOLVED | Unique execution ID verified; final execution uses `OQ-CI-36813357212` |
+| DEV-004 | Authentication / authorization system boundary | RESOLVED | Forged-session defect confirmed, corrected, 10/10 development tests and final full OQ 18/18 PASS |
+
+No recorded validation deviation remains open for the exact candidate `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`.
+
+This closure does not erase the failed executions or broaden the validation claim beyond the mock application/OQ boundary.
+
 ## Pre-execution apparatus incident — workflow checkout
 
 Before OQ-EXEC-001, GitHub Actions run `36811955161` failed at candidate checkout because the workflow supplied an escaped SHA ref.
@@ -342,3 +392,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 0.3 | Active | DEV-003 resolved with unique execution identity; DEV-002 opened after frozen-protocol-to-runner step-coverage audit. |
 | 0.4 | Active | DEV-004 opened after corrected harness exposed uncontrolled unauthenticated-access behavior; adversarial pre-correction tests added. |
 | 0.5 | Active | DEV-004 adversarial test confirmed forged-session authorization bypass; session authority correction applied pending full qualification. |
+| 0.6 | Closed for qualified candidate | DEV-002 and DEV-004 closed by exact-candidate run 36813357212; all four recorded validation deviations resolved with failed evidence preserved. |
