@@ -15,13 +15,13 @@ jobs:
   qualify:
     runs-on: ubuntu-latest
     env:
-      SUT_SHA: \${{ github.event.pull_request.head.sha || github.sha }}
+      SUT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
       OQ_OUTPUT: validation/evidence/OQ-EXEC-001
     steps:
       - name: Checkout exact candidate
         uses: actions/checkout@v4
         with:
-          ref: \${{ env.SUT_SHA }}
+          ref: ${{ env.SUT_SHA }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
