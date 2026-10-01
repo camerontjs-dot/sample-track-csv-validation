@@ -106,6 +106,71 @@ The original run and evidence must remain preserved after correction.
 
 
 
+
+## DEV-004 — Authentication boundary does not provide controlled denial
+
+**Discovered during:** corrected protocol-conformance execution `OQ-CI-36813093395`  
+**Candidate:** `9dfe0aa25ecd86173fc654b90665d51455ebb156`  
+**Affected test:** `OQ-TC-001`  
+**Affected requirements:** `URS-024`, `URS-025`, `URS-026`, `URS-027`  
+**Affected risks:** `RSK-010`, `RSK-011`
+
+### Observation
+
+After DEV-002 corrected the OQ harness to execute the frozen unauthenticated-access steps, `OQ-TC-001` failed.
+
+Three unauthenticated GxP-write challenges produced:
+
+`AttributeError: 'NoneType' object has no attribute 'role'`
+
+instead of a controlled authentication/access denial.
+
+The run result was **17 PASS / 1 FAIL**.
+
+### Classification
+
+**SYSTEM AUTHENTICATION / AUTHORIZATION BOUNDARY FAILURE**
+
+The qualification harness used the frozen expected behavior: a GxP data-changing function must require authenticated access and reject an unauthenticated attempt.
+
+### Additional code-inspection finding
+
+The current `Session` object is directly caller-constructible and `_require_role` trusts its role field without checking that the application actually issued the session.
+
+This creates a plausible forged-session authorization path.
+
+This is an **inference from code inspection** until challenged by a separate requirement-derived adversarial test.
+
+### Impact assessment
+
+The observed uncontrolled exception is a validation failure for the authentication boundary.
+
+If the forged-session path is executable, the impact is more severe because an unauthenticated caller could potentially construct an apparently authorized Warehouse or QA session and bypass the intended authentication gate.
+
+Final validation disposition is blocked until this boundary is corrected and requalified.
+
+### Pre-correction adversarial test
+
+Before implementation repair, add development tests derived from the authentication requirement that require:
+
+1. an unauthenticated GxP write to raise a controlled `AuthenticationError`;
+2. a caller-constructed forged Warehouse session to be rejected with `AuthenticationError`.
+
+Preserve the first test result.
+
+### Planned correction
+
+If the adversarial test confirms the exposure:
+
+- issue opaque session tokens only after successful authentication;
+- validate each session token and its user/role against application-owned state before protected operations;
+- reject absent, forged, expired, disabled-user, or role-stale sessions with controlled authentication errors;
+- invalidate existing sessions when access is disabled or role authorization changes.
+
+### Status
+
+`OPEN — ADVERSARIAL CONFIRMATION / CORRECTION REQUIRED`
+
 ## DEV-002 — Automated OQ harness did not preserve frozen protocol step coverage
 
 **Training seed category:** Protocol / execution discrepancy.
@@ -247,3 +312,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 0.1 | Active | DEV-001 opened from preserved first OQ execution; pre-execution workflow incident recorded separately. |
 | 0.2 | Active | DEV-001 corrected and full retest passed; DEV-003 opened for duplicate internal execution identity across evidence bundles. |
 | 0.3 | Active | DEV-003 resolved with unique execution identity; DEV-002 opened after frozen-protocol-to-runner step-coverage audit. |
+| 0.4 | Active | DEV-004 opened after corrected harness exposed uncontrolled unauthenticated-access behavior; adversarial pre-correction tests added. |

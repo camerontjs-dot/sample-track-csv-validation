@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from sampletrack import SampleTrackDemo, AuthenticationError, AuthorizationError, ValidationError
+from sampletrack import SampleTrackDemo, Session, AuthenticationError, AuthorizationError, ValidationError
 
 
 class SampleTrackDemoTests(unittest.TestCase):
@@ -75,6 +75,16 @@ class SampleTrackDemoTests(unittest.TestCase):
         self.app.transition_status(self.qa, rid, "Released", "QA review complete", "QA_REVIEW_01", self.credentials["QA_REVIEW_01"])
         self.assertEqual(self.app.get_record(rid)["status"], "Released")
         self.assertEqual(len(self.app.signature_events(rid)), 1)
+
+
+    def test_unauthenticated_gxp_write_is_controlled_denial(self):
+        with self.assertRaises(AuthenticationError):
+            self.app.create_inventory(None, "DEMO-RX-COLD-001", "LOT-UNAUTH", 1, "REFRIGERATED_2_8C")
+
+    def test_forged_session_cannot_authorize_gxp_write(self):
+        forged = Session("WH_OP_01", "Warehouse Operator")
+        with self.assertRaises(AuthenticationError):
+            self.app.create_inventory(forged, "DEMO-RX-COLD-001", "LOT-FORGED", 1, "REFRIGERATED_2_8C")
 
 
 if __name__ == "__main__":
