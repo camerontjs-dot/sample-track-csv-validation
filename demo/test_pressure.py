@@ -133,6 +133,11 @@ class PublicPressureTests(unittest.TestCase):
                 "pressure test",
             )
 
+    def test_delete_attempt_authenticates_before_record_lookup(self):
+        """URS-025: delete-attempt access must authenticate before record existence lookup."""
+        with self.assertRaises(AuthenticationError):
+            self.app.attempt_delete_record(None, "STL-NOT-A-REAL-RECORD")
+
     def test_disabled_user_existing_session_is_invalidated(self):
         rid = self.record("LOT-PRESSURE-SESSION")
         self.app.disable_user(self.admin, "WH_OP_01")
