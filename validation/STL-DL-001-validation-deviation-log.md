@@ -544,6 +544,98 @@ Publication remains blocked until a corrected successor passes the pressure suit
 
 ---
 
+## DEV-009 — Temperature data-limit handling accepts non-finite values and leaks raw conversion errors
+
+**Discovered during:** second public-release pressure sweep  
+**Candidate:** `d1471b983d06c3564531e505dcd75f407993a52c`  
+**Candidate tree:** `78b462ade0c4c3f7cd8499e7586e479638c0debf`  
+**GitHub Actions run:** `36897292169`  
+**Job:** `110487364234`  
+**Affected requirements:** `URS-016`, `URS-017`  
+**Affected risk:** `RSK-006`
+
+### Observation
+
+Requirement-derived data-limit/error-handling tests challenged the temperature path with:
+
+- `NaN`;
+- positive infinity;
+- negative infinity;
+- nonnumeric text.
+
+Observed:
+
+- all three non-finite numeric values were accepted rather than rejected;
+- `NaN` follows comparison semantics that can appear in-range because both limit comparisons are false;
+- nonnumeric text raised an uncontrolled Python `ValueError` rather than a controlled application validation error.
+
+Pressure gate result: existing corrected controls passed, but these new data-limit cases failed before frozen OQ execution.
+
+### Classification
+
+**SYSTEM / INPUT-VALIDATION AND ERROR-HANDLING FAILURE**
+
+### Impact
+
+The excursion decision path can receive values that are not valid finite temperature measurements. In particular, a NaN value can bypass normal lower/upper comparison semantics.
+
+This is material to the High-risk excursion-detection path and must be corrected before public release.
+
+### Required correction
+
+Normalize temperature input through one controlled conversion step and reject nonnumeric or non-finite values with `ValidationError` before range classification or evidence creation.
+
+### Status
+
+`OPEN — CORRECTION / FULL RETEST REQUIRED`
+
+---
+
+## DEV-010 — TC-015 QA audit-review assertion used Warehouse read authority after read-boundary hardening
+
+**Discovered during:** public-release protocol-conformance inspection  
+**Affected test:** `OQ-TC-015`  
+**Affected requirement:** `URS-032`
+
+### Observation
+
+After the DEV-007 read-authorization correction, the automated OQ runner was updated to pass authenticated sessions to record-inspection helpers.
+
+Inspection found that TC-015's step labelled **QA reviewability** still retrieved the audit trail using the Warehouse Operator session.
+
+The audit content itself was exercised, but the exact frozen protocol step requiring a QA Reviewer to retrieve/review the associated audit trail was not demonstrated by that assertion.
+
+### Classification
+
+**QUALIFICATION APPARATUS / PROTOCOL-CONFORMANCE DISCREPANCY**
+
+This is not evidence of a product failure. The system authorization model permits QA audit retrieval; the qualification apparatus must exercise the role specified by the frozen protocol.
+
+### Required correction
+
+Retrieve the audit trail with `QA_REVIEW_01` for the frozen QA-reviewability step and preserve the complete successor run.
+
+### Status
+
+`OPEN — APPARATUS CORRECTION / FULL RETEST REQUIRED`
+
+---
+
+## Second public-release pressure-sweep receipt
+
+Candidate: `d1471b983d06c3564531e505dcd75f407993a52c`  
+Tree: `78b462ade0c4c3f7cd8499e7586e479638c0debf`  
+Run: `36897292169`  
+Job: `110487364234`  
+Environment: Ubuntu 24.04 / x86_64 / Python 3.13.15 / SQLite 3.45.1  
+Compilation: **PASS**  
+Development/adversarial suite: original and first-wave pressure controls passed; non-finite/malformed temperature tests failed.  
+Frozen OQ: **NOT ENTERED** because the pressure gate failed.  
+Artifact: `11179849851`  
+Artifact ZIP SHA-256: `c137814080ba4cfa35169471d4ef19e8ab3cad722d495acfeaf091a52a9e8f9f`
+
+---
+
 ## Final deviation closure summary
 
 | Deviation | Classification | Final status | Closing evidence |
@@ -579,3 +671,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 0.6 | Closed for qualified candidate | DEV-002 and DEV-004 closed by exact-candidate run 36813357212; all four recorded validation deviations resolved with failed evidence preserved. |
 | 0.7 | Closed / supplemented | Added local preservation receipt for original fed1f956 candidate; corroborates DEV-001 defect while preserving unknown historical environment/invocation limits. |
 | 0.8 | Reopened | Public-release pressure test run 36895767954 found four requirement-level gaps; DEV-005 through DEV-008 opened and publication blocked pending successor qualification. |
+| 0.9 | Reopened | Second pressure sweep found temperature data-limit failure (DEV-009) and QA-review apparatus discrepancy (DEV-010); full successor qualification required. |
