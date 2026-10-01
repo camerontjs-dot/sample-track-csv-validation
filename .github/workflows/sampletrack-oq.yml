@@ -1,0 +1,114 @@
+name: SampleTrack OQ candidate qualification
+
+on:
+  pull_request:
+    paths:
+      - "demo/**"
+      - ".github/workflows/sampletrack-oq.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    env:
+      SUT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      OQ_EXECUTION_ID: OQ-CI-${{ github.run_id }}
+      OQ_OUTPUT: validation/evidence/OQ-CI-${{ github.run_id }}
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SUT_SHA }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Capture candidate and environment identity
+        shell: bash
+        run: |
+          mkdir -p "$OQ_OUTPUT"
+          {
+            echo "MOCK / FICTIONAL — TRAINING & INTERVIEW DEMONSTRATION ONLY — NOT FOR GxP USE"
+            echo "candidate_sha=$(git rev-parse HEAD)"
+            echo "candidate_tree=$(git rev-parse HEAD^{tree})"
+            echo "git_status_begin"
+            git status --porcelain
+            echo "git_status_end"
+            echo "runner_os=$(uname -a)"
+            python --version
+            python -c 'import platform, sqlite3, sys; print("architecture="+platform.machine()); print("python_full="+sys.version.replace("\n"," ")); print("sqlite="+sqlite3.sqlite_version)'
+          } | tee "$OQ_OUTPUT/qualification-environment.txt"
+
+      - name: Compile candidate
+        run: python -m py_compile demo/sampletrack.py demo/test_sampletrack.py demo/oq_runner.py
+
+      - name: Development unit tests
+        working-directory: demo
+        run: python -m unittest -v test_sampletrack.py
+
+      - name: Source digests
+        shell: bash
+        run: |
+          sha256sum demo/sampletrack.py demo/test_sampletrack.py demo/oq_runner.py \
+            | tee "$OQ_OUTPUT/source-sha256.txt"
+
+      - name: Execute frozen OQ once
+        id: oq
+        continue-on-error: true
+        shell: bash
+        run: |
+          python demo/oq_runner.py \
+            --output "$OQ_OUTPUT" \
+            --tester "Cameron" \
+            --system-identity "$SUT_SHA" \
+            --execution-id "$OQ_EXECUTION_ID"
+
+      - name: Summarize OQ
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "$OQ_OUTPUT/execution.json" ]; then
+            python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p = Path(os.environ["OQ_OUTPUT"]) / "execution.json"
+          d = json.loads(p.read_text())
+          print("OQ summary:", d["summary"])
+          failures = []
+          for case in d["results"]:
+              bad = [s for s in case["steps"] if s["result"] == "FAIL"]
+              if bad:
+                  failures.append((case["test_id"], bad))
+          print("OQ failures:", failures)
+          with open(Path(__import__("os").environ["GITHUB_STEP_SUMMARY"]), "a") as f:
+              f.write("# SampleTrack mock OQ\n\n")
+              f.write(f"- Candidate: \`{d['system_identity']}\`\n")
+              f.write(f"- Result: {d['summary']['pass']} PASS / {d['summary']['fail']} FAIL\n")
+              for test_id, steps in failures:
+                  f.write(f"- {test_id}: {steps}\n")
+          PY
+          fi
+          if [ -f "$OQ_OUTPUT/execution.json" ]; then
+            sha256sum "$OQ_OUTPUT/execution.json" "$OQ_OUTPUT/execution.md" "$OQ_OUTPUT/manifest.json" \
+              | tee "$OQ_OUTPUT/execution-sha256.txt"
+          fi
+
+      - name: Upload qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sampletrack-oq-${{ github.run_id }}
+          path: ${{ env.OQ_OUTPUT }}
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Preserve failing OQ as failing qualification gate
+        if: steps.oq.outcome == 'failure'
+        run: |
+          echo "Frozen OQ did not pass. See uploaded evidence artifact."
+          exit 1
