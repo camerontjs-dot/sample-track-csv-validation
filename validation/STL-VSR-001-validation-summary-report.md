@@ -29,11 +29,11 @@ Validation scenario:
 
 Exact qualified system-under-test candidate:
 
-- commit: `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`
-- tree: `0fd797f7a4532ef18284aa8484c2db7036532c02`
-- `demo/sampletrack.py` SHA-256: `c0bcf3919279d41aabe90f63056f8b63b57e38f3ca8a3d146ab5a128ea28afe4`
-- `demo/test_sampletrack.py` SHA-256: `a3318e9522b01e1e77d4db9247af2085cf89836121737301378350de6e6735e1`
-- `demo/oq_runner.py` SHA-256: `0789c67da040a73904602b3ef0638e3ed27adca72268c180b92ffdf207ce68af`
+- commit: `b528234a0a14db68200c9213516d0ed6a76ca56b`
+- tree: `834831c3df75d2a610c338c02657036c8ee9695a`
+- `demo/sampletrack.py` SHA-256: `c719094618123bc280cb0d9ce204da1f7072004e40e48a9787b38b02f1aa14b5`
+- `demo/test_sampletrack.py` SHA-256: `1a9a45f3710b452b9b078d738698011b21d964f4803e97b510afe410f1484363`
+- `demo/oq_runner.py` SHA-256: `aac407bec114b285298642f4ae22f8fa8d32d384e5cd170542073687689ea5b6`
 
 The repository branch later advanced through documentation-only reconciliation commits.
 
@@ -77,6 +77,14 @@ A pre-OQ source review identified and corrected a requirement gap before executi
 
 No frozen expected result was changed after observing OQ behavior in order to obtain the final passing disposition.
 
+### Public-release regulatory recheck
+
+Immediately before public-release reconciliation on 2026-10-01, the package mappings were rechecked against the current official Health Canada GUI-0001, GUI-0050 and GUI-0069 pages and the current eCFR Part 11 text.
+
+That recheck continued to support the package's bounded design choices around risk-based validation, URS traceability, parameter/data limits and error handling, critical manual-data checks, authorized access, audit trails, electronic-signature linkage, controlled storage, receiving and excursion handling.
+
+The public-release pressure suite added explicit malformed/non-finite temperature tests in response to GUI-0050's data-limit/error-handling expectation.
+
 ## 5. Validation scope executed
 
 The mock qualification exercised:
@@ -102,10 +110,10 @@ Formal production IQ and PQ were not executed.
 
 Final full OQ:
 
-- GitHub Actions run: `36813357212`
-- job: `110213023142`
-- execution ID: `OQ-CI-36813357212`
-- executed: 2026-10-01T04:03:52+00:00
+- GitHub Actions run: `36897449285`
+- job: `110487913996`
+- execution ID: `OQ-CI-36897449285`
+- executed: 2026-10-01T17:10:53+00:00
 - GitHub-hosted Ubuntu 24.04 runner
 - architecture: x86_64
 - Python: 3.13.15
@@ -133,7 +141,7 @@ This limitation is retained in the final claim rather than describing CI executi
 Before final OQ execution:
 
 - Python compilation: **PASS**
-- development tests: **10 / 10 PASS**
+- development/adversarial tests: **18 / 18 PASS**
 
 The development suite included targeted regression/adversarial checks for:
 
@@ -168,15 +176,15 @@ OQ-TC-001 expands one combined frozen step into separate invalid-password and di
 
 GitHub Actions artifact:
 
-- artifact ID: `11140757299`
-- artifact: `sampletrack-oq-36813357212`
-- artifact ZIP SHA-256: `94f82fb01bdd9999c4d71ccbd2587702181ab45bf7833dc39cb987b16051a490`
+- artifact ID: `11180665087`
+- artifact: `sampletrack-oq-36897449285`
+- artifact ZIP SHA-256: `7c1d8c52dd6161b16130d20699ce1a5ff47a4edc9ef54454cd469966af6c05af`
 
 Core execution hashes:
 
-- `execution.json`: `33fa401498126a58369b57226d1856bb97ae92548a0c15d2d081e6eec04186cd`
-- `execution.md`: `65956cd5541b3efc6a24e7a81cc7945c685e34a5d4ae20fc900bdca2f1d833c3`
-- `manifest.json`: `0318f5f73106054e3a1f95d83a08c258af10e75d625454eca7a69ce42f01204a`
+- `execution.json`: `1ccd18f02deaf920f08f2742906a37e70d375e6b0f7f3f87c13e39df774e2b3b`
+- `execution.md`: `6129581178cad83cd9fadf64a20795ea4128e73d220794c78dd9358b8fad55d7`
+- `manifest.json`: `2f572bad3c11ea34a2c343da5dee839b602874c14ce36c9bbee3772f56df1e08`
 
 Individual evidence IDs and hashes are preserved in the execution manifest and final qualification receipt.
 
@@ -229,6 +237,65 @@ Final candidate passed the adversarial development tests and full OQ.
 
 Final status: **RESOLVED**.
 
+### DEV-005 — Critical verification remained valid after critical lot correction
+
+Pressure testing demonstrated that a previous QA verification could remain set after the underlying lot value changed.
+
+Correction: critical lot correction now invalidates the prior critical-data verification and requires re-verification before release.
+
+Final status: **RESOLVED**.
+
+### DEV-006 — On Hold transition allowed without required reason
+
+Pressure testing showed that a GMP-relevant Quarantine → On Hold transition could be recorded without rationale.
+
+Correction: the transition now requires a non-empty reason and preserves it in audit history.
+
+Final status: **RESOLVED**.
+
+### DEV-007 — Regulated record retrieval lacked an authentication boundary
+
+Pressure testing showed that public retrieval/history/export methods could return regulated record data without an authenticated session.
+
+Correction: regulated record, lot search, export, audit, custody, excursion and signature retrieval now require authenticated role authority.
+
+Final status: **RESOLVED**.
+
+### DEV-008 — Same-status request returned before authentication
+
+A no-op status request could return before session authorization was checked.
+
+Correction: authentication/role validation now occurs before the same-status early return.
+
+Final status: **RESOLVED**.
+
+### DEV-009 — Malformed and non-finite temperature values were not controlled
+
+Second-wave pressure testing showed that NaN and infinite numeric values were accepted by the comparison path, while nonnumeric text leaked a raw conversion exception.
+
+Correction: temperature input is normalized through controlled conversion and rejects nonnumeric or non-finite values with ValidationError before classification/evidence creation.
+
+Final status: **RESOLVED**.
+
+### DEV-010 — QA audit-review OQ step used the wrong authenticated read role
+
+After read-boundary hardening, apparatus inspection found that TC-015's QA-reviewability assertion still read the audit trail using a Warehouse session.
+
+Correction: the frozen QA-reviewability step now retrieves and evaluates the audit trail using QA_REVIEW_01.
+
+Final status: **RESOLVED**.
+
+### Public-release pressure qualification
+
+Pressure-test lineage:
+
+- run `36895767954`: four requirement-level failures, frozen OQ not entered;
+- run `36896153123`: first-wave corrections passed 16/16 development/adversarial tests and 18/18 frozen OQ;
+- run `36897292169`: second-wave data-limit tests exposed malformed/non-finite temperature handling, frozen OQ not entered;
+- run `36897449285`: **18/18 development/adversarial tests PASS and 18/18 unchanged frozen OQ PASS**.
+
+The final pressure test therefore did not merely rerun the previous success. It added new falsifiers that found additional defects, preserved them, and required a successor qualification.
+
 ### Pre-execution apparatus incident
 
 GitHub Actions run `36811955161` failed during checkout because of an escaped SHA ref.
@@ -248,10 +315,11 @@ Final RTM status:
 - requirements with final OQ evidence: **35 / 35**
 - final requirement status: **35 / 35 VERIFIED — PASS**
 - open validation deviations: **0**
+- total recorded validation deviations: **10 / 10 resolved**
 
 Requirement-specific deviation history remains visible for the affected temperature and authentication controls.
 
-The RTM references exact final evidence IDs rather than using the aggregate green OQ result as a substitute for traceability.
+The RTM references exact final OQ evidence IDs and separately records supplemental public-release pressure evidence for the requirements that exposed DEV-005 through DEV-010.
 
 ## 12. Functional risk disposition
 
@@ -266,7 +334,7 @@ The original Severity, Probability, Detectability, RPN, and class values remain 
 Following final OQ:
 
 - all 15 functional risks have at least one executed verification path;
-- the associated application controls are marked **SUPPORTED WITH BOUNDS — OQ-CI-36813357212 PASS**.
+- the associated application controls are marked **SUPPORTED WITH BOUNDS — OQ-CI-36897449285 PASS**.
 
 A successful OQ does not mean the risks cease to exist or that real production probability has been measured.
 
@@ -276,10 +344,10 @@ A successful OQ does not mean the risks cease to exist or that real production p
 |---|---|---|
 | Final in-scope URS uniquely identified | PASS | STL-URS-001, 35 requirements |
 | Every in-scope URS traced or explicitly dispositioned | PASS | STL-RTM-001, 35/35 |
-| All planned OQ tests executed or formally dispositioned | PASS | OQ-CI-36813357212, 18/18 executed |
+| All planned OQ tests executed or formally dispositioned | PASS | OQ-CI-36897449285, 18/18 executed |
 | High-risk functions receive risk-proportionate verification | PASS | STL-RSK-001 V3 paths; final OQ |
 | No unresolved deviation invalidates a high-risk requirement or conclusion | PASS | STL-DL-001, 0 open deviations |
-| Failed tests corrected through impact assessment and justified retest | PASS | DEV-001 through DEV-004 lineage |
+| Failed tests corrected through impact assessment and justified retest | PASS | DEV-001 through DEV-010 lineage |
 | Access, status, excursion, audit, e-signature, and record-retrieval controls meet applicable criteria | PASS | Final 18/18 OQ evidence |
 | Tested system/configuration identity known | PASS | exact commit/tree/source SHA-256 |
 | RTM reflects final executed evidence | PASS | STL-RTM-001 executed/reconciled revision |
@@ -301,6 +369,7 @@ The following were not established by this mock package:
 - production business-continuity/disaster-recovery performance;
 - real SOP and training effectiveness;
 - cybersecurity assessment or penetration testing;
+- production-grade credential storage or identity-provider integration; the surrogate's local credential mechanism is deliberately demonstrative and is not a production authentication design;
 - production workload/performance;
 - real sensor/logger qualification;
 - warehouse temperature mapping;
@@ -317,7 +386,7 @@ These are boundaries, not hidden assumptions that are being treated as passed.
 
 **ACCEPTED FOR BOUNDED MOCK DEMONSTRATION USE**
 
-Within the defined fictional scenario, the exact custom demonstration surrogate candidate `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e` satisfied the frozen functional URS/OQ acceptance criteria after documented correction and requalification of the observed validation deviations.
+Within the defined fictional scenario, the exact custom demonstration surrogate candidate `b528234a0a14db68200c9213516d0ed6a76ca56b` satisfied the frozen functional URS/OQ acceptance criteria after documented correction and requalification of the observed validation deviations.
 
 ### Production decision
 
@@ -374,7 +443,7 @@ The evidence supports the bounded mock disposition above and no broader claim.
 - STL-RTM-001 — Requirements Traceability Matrix
 - STL-DL-001 — Validation Deviation Log
 - STL-OQ-001 — Final Qualification Receipt
-- GitHub Actions run `36813357212`
+- GitHub Actions run `36897449285`
 
 ## 19. Revision history
 
@@ -382,3 +451,4 @@ The evidence supports the bounded mock disposition above and no broader claim.
 |---|---|---|
 | 1.0 | Final mock summary | Final bounded validation decision for exact qualified candidate after complete deviation reconciliation. |
 | 1.1 | Final mock summary | Clarified automated execution ownership, limited independence, and non-executed mock approval boundary. |
+| 2.0 | Final pressure-tested summary | Public-release adversarial review preserved DEV-005 through DEV-010 and qualified successor b528234a with 18/18 pressure tests plus unchanged 18/18 frozen OQ. |
