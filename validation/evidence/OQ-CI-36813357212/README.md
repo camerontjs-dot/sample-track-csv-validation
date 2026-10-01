@@ -32,3 +32,16 @@ The downloaded ZIP was independently hashed and matched the GitHub-reported arti
 See `STL-OQ-001-final-qualification-receipt.md` for environment, source identity, deviation lineage, and bounded disposition.
 
 The earlier failed executions and deviations remain part of the validation record and are not superseded out of history by this passing run.
+
+
+## Repository-readable execution record
+
+The repository also retains a readable text extraction at:
+
+`validation/evidence/OQ-CI-36813357212/execution.md`
+
+A direct text comparison found the extracted content equal to the exported artifact text.
+
+The extraction path normalizes the file bytes, so the Git blob is **not** asserted to be byte-identical to the raw ZIP member. The raw artifact identity remains the GitHub Actions artifact ZIP digest and the recorded raw `execution.md` SHA-256 above.
+
+Use the repository copy for inspection. Use the artifact/hash record for exact raw-file identity.
