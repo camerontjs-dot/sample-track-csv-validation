@@ -73,7 +73,7 @@ jobs:
       - name: Source digests
         shell: bash
         run: |
-          sha256sum demo/sampletrack.py demo/test_sampletrack.py demo/oq_runner.py \
+          sha256sum demo/sampletrack.py demo/test_sampletrack.py demo/test_pressure.py demo/oq_runner.py \
             | tee "$OQ_OUTPUT/source-sha256.txt"
 
       - name: Execute frozen OQ once
