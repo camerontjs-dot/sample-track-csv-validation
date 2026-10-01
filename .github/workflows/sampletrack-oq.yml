@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "demo/**"
+      - "validation/**"
       - ".github/workflows/sampletrack-oq.yml"
   workflow_dispatch:
 
@@ -22,6 +23,24 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ env.SUT_SHA }}
+          fetch-depth: 0
+
+      - name: Verify frozen validation authority
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test "$(git hash-object validation/STL-SD-001-system-description-intended-use.md)" = "d4729f5e0f2b6151dda7b3fc73ba5adf253b8c56"
+          test "$(git hash-object validation/STL-RA-001-regulatory-applicability.md)" = "a270ed06c54c43fe94ff4583def0de44594f5b13"
+          test "$(git hash-object validation/STL-VP-001-validation-plan.md)" = "6b798621cf44d8ee28c31f7dfeb267fc5ca8c491"
+          test "$(git hash-object validation/STL-URS-001-user-requirements.md)" = "673a2739bd817c5c348c94572e65e7e113766118"
+          test "$(git hash-object validation/STL-OQ-001-operational-qualification.md)" = "c3e0b589362d3c12650e1ade1290da36db1a3f31"
+          test "$(git hash-object validation/fixtures/STL-OQ-001-test-configuration.md)" = "1f4163067d9fc35627ba4cec8253f4cbc94a60bf"
+
+          for blob in             d4729f5e0f2b6151dda7b3fc73ba5adf253b8c56             a270ed06c54c43fe94ff4583def0de44594f5b13             6b798621cf44d8ee28c31f7dfeb267fc5ca8c491             673a2739bd817c5c348c94572e65e7e113766118             0c1a36669f5ee07a219ecd358f63aa62277a1a62             c653b9e8ecb55a608e55594c49649d279400ecae             c3e0b589362d3c12650e1ade1290da36db1a3f31             1f4163067d9fc35627ba4cec8253f4cbc94a60bf
+          do
+            git cat-file -e "$blob^{blob}"
+          done
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -45,7 +64,7 @@ jobs:
           } | tee "$OQ_OUTPUT/qualification-environment.txt"
 
       - name: Compile candidate
-        run: python -m py_compile demo/sampletrack.py demo/test_sampletrack.py demo/oq_runner.py
+        run: python -m py_compile demo/sampletrack.py demo/test_sampletrack.py demo/test_pressure.py demo/oq_runner.py
 
       - name: Development unit tests
         working-directory: demo
