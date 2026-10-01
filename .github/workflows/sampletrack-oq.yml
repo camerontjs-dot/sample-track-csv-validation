@@ -4,7 +4,6 @@ on:
   pull_request:
     paths:
       - "demo/**"
-      - "validation/**"
       - ".github/workflows/sampletrack-oq.yml"
   workflow_dispatch:
 
