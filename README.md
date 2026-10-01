@@ -102,4 +102,4 @@ See the Validation Summary Report for residual limitations and the exact final d
 
 ## Historical-record note
 
-Some frozen or historical validation artifacts retain the wording used when the exercise was created, including the original training/interview watermark. Those files are preserved because exact document identity is part of the evidence chain. Public-facing entry points use neutral demonstration language instead of rewriting frozen records after qualification.
+Some frozen or historical validation artifacts retain the wording used when the exercise was created. Those files are preserved because exact document identity is part of the evidence chain. Public-facing entry points use neutral demonstration language instead of rewriting frozen records after qualification.
