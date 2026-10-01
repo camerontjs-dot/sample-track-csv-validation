@@ -1,4 +1,4 @@
-# SampleTrack Lite validation demo
+# SampleTrack CSV Validation
 
 > **MOCK / FICTIONAL - DEMONSTRATION ONLY - NOT FOR GxP USE**
 
@@ -103,3 +103,8 @@ See the Validation Summary Report for residual limitations and the exact final d
 ## Historical-record note
 
 Some frozen or historical validation artifacts retain the wording used when the exercise was created. Those files are preserved because exact document identity is part of the evidence chain. Public-facing entry points use neutral demonstration language instead of rewriting frozen records after qualification.
+
+
+## License
+
+The repository code and documentation are released under the [MIT License](LICENSE).
