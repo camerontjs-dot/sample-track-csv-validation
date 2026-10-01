@@ -127,7 +127,7 @@ Use the actual tester name only for work actually executed.
 | OQ-TC-002 | Receiving record identity, required fields, creator/time | URS-001–003 | RSK-001, RSK-002, RSK-015 | V2 |
 | OQ-TC-003 | Critical manual-data accuracy check | URS-004 | RSK-003 | V2 |
 | OQ-TC-004 | Correction history and deletion prevention | URS-005, URS-006 | RSK-012, RSK-014 | V3 |
-| OQ-TC-005 | Record retrieval, related history, human-readable copy | URS-007, URS-008 | RSK-014 | V3 |
+| OQ-TC-005 | Record retrieval, related history, human-readable/electronic copies | URS-007, URS-008 | RSK-014 | V3 |
 | OQ-TC-006 | Storage condition/location compatibility | URS-009, URS-010 | RSK-004 | V3 |
 | OQ-TC-007 | Initial and controlled material statuses | URS-011, URS-012 | RSK-005 | V2 |
 | OQ-TC-008 | Status sequencing, QA authority, rationale | URS-013–015 | RSK-005, RSK-015 | V3 |
@@ -263,7 +263,7 @@ Critical fields:
 
 ## OQ-TC-005 — Record retrieval, related history, and human-readable copy
 
-**Objective:** Verify reliable retrieval and an accurate, complete human-readable representation of the regulated record and related history available at the time of export.
+**Objective:** Verify reliable retrieval and accurate, complete human-readable and electronic representations of the regulated record and related history available at the time of export.
 
 **Requirements:** URS-007, URS-008  
 **Risk:** RSK-014  
@@ -275,9 +275,10 @@ Critical fields:
 | 2 | Retrieve the same record by lot/batch number. | Same record is returned without ambiguity. | NOT EXECUTED | TBD | NOT EXECUTED |
 | 3 | Review the record's associated receiving, status/location, and available history relationships. | Related in-scope information remains associated with the same record identity. | NOT EXECUTED | TBD | NOT EXECUTED |
 | 4 | Generate the configured human-readable record copy/export. | A clear human-readable copy is produced. | NOT EXECUTED | TBD | NOT EXECUTED |
-| 5 | Compare the human-readable output with the authoritative application record for the fields/history in scope. | Output is accurate and complete for the tested regulated content; no tested field changes meaning during output. | NOT EXECUTED | TBD | NOT EXECUTED |
+| 5 | Generate the configured electronic record copy/export. | An electronic copy suitable for the defined mock inspection/review workflow is produced without changing the tested regulated content. | NOT EXECUTED | TBD | NOT EXECUTED |
+| 6 | Compare both outputs with the authoritative application record for the fields/history in scope. | Human-readable and electronic outputs are accurate and complete for the tested regulated content; no tested field changes value or meaning during output. | NOT EXECUTED | TBD | NOT EXECUTED |
 
-**Planned evidence:** application record plus exported/human-readable output and comparison.
+**Planned evidence:** application record plus human-readable and electronic outputs and comparison.
 
 **Tester:** TBD  
 **Execution date:** TBD  
@@ -602,11 +603,12 @@ The expected classification is fixed before execution:
 
 | Step | Action | Expected result | Actual result | Evidence | Step result |
 |---:|---|---|---|---|---|
-| 1 | As QA_REVIEW_01, initiate the signed action and enter an incorrect password/re-authentication component. | Signature is rejected and signed action does not complete. | NOT EXECUTED | TBD | NOT EXECUTED |
+| 1 | As QA_REVIEW_01, initiate the signed action and enter the correct identification code with an incorrect password. | Signature is rejected and signed action does not complete. | NOT EXECUTED | TBD | NOT EXECUTED |
 | 2 | Confirm the record after the failed signature attempt. | No valid QA signature is recorded for the failed attempt and the protected disposition is not completed. | NOT EXECUTED | TBD | NOT EXECUTED |
-| 3 | As WH_OP_01, attempt the QA signed action. | Warehouse Operator cannot apply the QA signature/action. | NOT EXECUTED | TBD | NOT EXECUTED |
-| 4 | As QA_REVIEW_01, execute the action using the correct unique identity and configured password control. | Signature/action succeeds. | NOT EXECUTED | TBD | NOT EXECUTED |
-| 5 | Inspect the resulting signature attribution. | Signature is attributed to QA_REVIEW_01, not another user. | NOT EXECUTED | TBD | NOT EXECUTED |
+| 3 | As QA_REVIEW_01, initiate the signed action using a different user's identification code with QA_REVIEW_01's password. | Signature is rejected and the protected action does not complete. | NOT EXECUTED | TBD | NOT EXECUTED |
+| 4 | As WH_OP_01, attempt the QA signed action. | Warehouse Operator cannot apply the QA signature/action. | NOT EXECUTED | TBD | NOT EXECUTED |
+| 5 | As QA_REVIEW_01, execute the action using QA_REVIEW_01's correct identification code and password. | Signature/action succeeds. | NOT EXECUTED | TBD | NOT EXECUTED |
+| 6 | Inspect the resulting signature attribution. | Signature is attributed to QA_REVIEW_01, not another user. | NOT EXECUTED | TBD | NOT EXECUTED |
 
 **Planned evidence:** failed incorrect-credential attempt, denied Warehouse attempt, successful QA signature and attribution.
 
@@ -665,7 +667,7 @@ The OQ protocol reaches a positive execution disposition only if:
 6. access restrictions and disabled-account behavior meet expected results;
 7. audit-trail evidence is present, attributable, non-obscuring, protected from ordinary alteration, and reviewable for the tested events;
 8. required electronic-signature manifestation and linkage behave as expected;
-9. required records can be retrieved and represented accurately in human-readable form;
+9. required records can be retrieved and represented accurately in both human-readable and electronic form;
 10. material deviations are assessed and any required re-execution is completed without erasing the original result;
 11. the system/configuration identity under test remains identifiable.
 
@@ -741,3 +743,4 @@ To be completed only after execution.
 | Revision | Status | Description |
 |---|---|---|
 | 0.1 | Draft / pre-execution | Initial 18-case risk-based OQ protocol with predeclared expected results. |
+| 0.2 | Draft / pre-execution | Pre-OQ source review: added explicit electronic-copy verification and narrowed signature credential challenge to the configured ID/password control. |
