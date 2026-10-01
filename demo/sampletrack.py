@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import secrets
 import sqlite3
 import uuid
 from dataclasses import dataclass
@@ -32,6 +33,7 @@ class NotFoundError(SampleTrackError):
 class Session:
     user_id: str
     role: str
+    token: str
 
 
 def utc_now() -> str:
@@ -54,10 +56,12 @@ class SampleTrackDemo:
     def __init__(self, db_path: str = ":memory:") -> None:
         self.conn = sqlite3.connect(db_path)
         self.conn.row_factory = sqlite3.Row
+        self._sessions: dict[str, tuple[str, str]] = {}
         self._create_schema()
         self._seed_configuration()
 
     def close(self) -> None:
+        self._sessions.clear()
         self.conn.close()
 
     def _create_schema(self) -> None:
@@ -198,9 +202,25 @@ class SampleTrackDemo:
         row = self.conn.execute("SELECT * FROM users WHERE user_id=?", (user_id,)).fetchone()
         if row is None or not row["active"] or row["password_hash"] != password_hash(password):
             raise AuthenticationError("authentication failed")
-        return Session(row["user_id"], row["role"])
+        token = secrets.token_urlsafe(32)
+        self._sessions[token] = (row["user_id"], row["role"])
+        return Session(row["user_id"], row["role"], token)
+
+    def _invalidate_user_sessions(self, user_id: str) -> None:
+        for token, state in list(self._sessions.items()):
+            if state[0] == user_id:
+                self._sessions.pop(token, None)
 
     def _require_role(self, session: Session, *roles: str) -> None:
+        if not isinstance(session, Session):
+            raise AuthenticationError("authenticated session required")
+        state = self._sessions.get(session.token)
+        if state != (session.user_id, session.role):
+            raise AuthenticationError("invalid or expired session")
+        row = self.conn.execute("SELECT user_id, role, active FROM users WHERE user_id=?", (session.user_id,)).fetchone()
+        if row is None or not row["active"] or row["role"] != session.role:
+            self._sessions.pop(session.token, None)
+            raise AuthenticationError("session no longer authorized")
         if session.role not in roles:
             raise AuthorizationError(f"{session.role} not authorized")
 
@@ -457,6 +477,7 @@ class SampleTrackDemo:
         if row is None or new_role not in self.ROLES:
             raise ValidationError("invalid user/role")
         self.conn.execute("UPDATE users SET role=? WHERE user_id=?", (new_role, user_id))
+        self._invalidate_user_sessions(user_id)
         self.conn.execute(
             "INSERT INTO access_history(target_user,actor,at,action,old_role,new_role) VALUES (?,?,?,?,?,?)",
             (user_id, admin.user_id, utc_now(), "role_changed", row["role"], new_role),
@@ -469,6 +490,7 @@ class SampleTrackDemo:
         if row is None:
             raise NotFoundError(user_id)
         self.conn.execute("UPDATE users SET active=0 WHERE user_id=?", (user_id,))
+        self._invalidate_user_sessions(user_id)
         self.conn.execute(
             "INSERT INTO access_history(target_user,actor,at,action,old_role,new_role) VALUES (?,?,?,?,?,?)",
             (user_id, admin.user_id, utc_now(), "disabled", row["role"], row["role"]),

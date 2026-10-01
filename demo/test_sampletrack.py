@@ -82,7 +82,7 @@ class SampleTrackDemoTests(unittest.TestCase):
             self.app.create_inventory(None, "DEMO-RX-COLD-001", "LOT-UNAUTH", 1, "REFRIGERATED_2_8C")
 
     def test_forged_session_cannot_authorize_gxp_write(self):
-        forged = Session("WH_OP_01", "Warehouse Operator")
+        forged = Session("WH_OP_01", "Warehouse Operator", "FORGED-TOKEN")
         with self.assertRaises(AuthenticationError):
             self.app.create_inventory(forged, "DEMO-RX-COLD-001", "LOT-FORGED", 1, "REFRIGERATED_2_8C")
 

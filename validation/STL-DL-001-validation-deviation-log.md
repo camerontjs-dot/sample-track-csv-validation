@@ -139,7 +139,7 @@ The current `Session` object is directly caller-constructible and `_require_role
 
 This creates a plausible forged-session authorization path.
 
-This is an **inference from code inspection** until challenged by a separate requirement-derived adversarial test.
+This exposure was subsequently **confirmed by a requirement-derived adversarial test** before implementation repair.
 
 ### Impact assessment
 
@@ -169,7 +169,35 @@ If the adversarial test confirms the exposure:
 
 ### Status
 
-`OPEN — ADVERSARIAL CONFIRMATION / CORRECTION REQUIRED`
+`OPEN — FORGED-SESSION BYPASS CONFIRMED / CORRECTION APPLIED / FULL RETEST REQUIRED`
+
+### Pre-correction adversarial receipt
+
+Candidate: `5a77e66e0bb165fb040c33e9445925b3e9eb070d`  
+Candidate tree: `0c90945319a2304d90394aae94ac0d3b65147967`  
+GitHub Actions run: `36813247201`  
+Job: `110212683378`
+
+Development gate result: **10 tests, 1 failure, 1 error**.
+
+Observed:
+
+- unauthenticated GxP write raised uncontrolled `AttributeError`, not `AuthenticationError`;
+- a caller-constructed Warehouse `Session` did **not** raise `AuthenticationError` and successfully passed the application role gate.
+
+The forged-session bypass is therefore OBSERVED, not merely inferred.
+
+### Authorized implementation correction
+
+The system now:
+
+- issues an opaque random token only after successful authentication;
+- stores issued session authority in application-owned state;
+- validates token, user identity, role, active status, and current role before protected operations;
+- rejects absent, forged, expired, disabled-user, or stale-role sessions with controlled authentication failure;
+- invalidates a user's existing sessions when the account is disabled or role authorization changes.
+
+The frozen OQ expected results remain unchanged.
 
 ## DEV-002 — Automated OQ harness did not preserve frozen protocol step coverage
 
@@ -313,3 +341,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 0.2 | Active | DEV-001 corrected and full retest passed; DEV-003 opened for duplicate internal execution identity across evidence bundles. |
 | 0.3 | Active | DEV-003 resolved with unique execution identity; DEV-002 opened after frozen-protocol-to-runner step-coverage audit. |
 | 0.4 | Active | DEV-004 opened after corrected harness exposed uncontrolled unauthenticated-access behavior; adversarial pre-correction tests added. |
+| 0.5 | Active | DEV-004 adversarial test confirmed forged-session authorization bypass; session authority correction applied pending full qualification. |
