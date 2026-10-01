@@ -1,30 +1,38 @@
 # OQ Evidence Directory
 
-> **MOCK / FICTIONAL — TRAINING & INTERVIEW DEMONSTRATION ONLY — NOT FOR GxP USE**
+> **MOCK / FICTIONAL - DEMONSTRATION ONLY - NOT FOR GxP USE**
 
-No executed OQ evidence exists yet.
+This directory contains durable repository-facing receipts for executed SampleTrack Lite mock OQ runs.
 
-When execution begins, store evidence under test-scoped paths where practical, for example:
+## Current release authority
 
-```text
-evidence/
-  OQ-TC-001/
-    STL-EV-OQ-001-01-...
-  OQ-TC-002/
-    STL-EV-OQ-002-01-...
-```
+- [OQ-CI-36897449285 receipt](OQ-CI-36897449285/README.md)
+- [OQ-CI-36897449285 step-level execution](OQ-CI-36897449285/execution.md)
+- [OQ-CI-36897449285 evidence-object manifest](OQ-CI-36897449285/manifest.json)
+
+Current successor result:
+
+- development/adversarial pressure suite: **18 / 18 PASS**
+- unchanged frozen OQ: **18 / 18 PASS**
+- exact application/runner candidate: `b528234a0a14db68200c9213516d0ed6a76ca56b`
+
+## Preserved historical execution
+
+The earlier bounded qualification remains available as historical evidence:
+
+- [OQ-CI-36813357212 receipt](OQ-CI-36813357212/README.md)
+- [OQ-CI-36813357212 step-level execution](OQ-CI-36813357212/execution.md)
+
+Earlier failed and partially sufficient executions are documented in `STL-DL-001` and GitHub Actions history rather than being rewritten out of the record.
 
 ## Evidence rules
 
-- use stable evidence IDs;
-- identify the test/execution the evidence belongs to;
-- preserve original failed-run evidence after repair/re-test;
+- use stable evidence IDs and execution IDs;
+- identify the exact system-under-test source;
+- preserve failed evidence after repair/retest;
 - do not overwrite one execution with another;
-- avoid real patient, customer, employee, supplier, or production data;
+- do not commit real regulated, patient, customer, employee, supplier, or production data;
 - do not commit passwords, tokens, or other credentials;
-- capture only evidence needed to establish the decision-relevant result;
-- when checksums are generated later, treat them as evidence-object identity/integrity controls rather than proof that the tested behavior is correct.
+- preserve checksums as evidence-object identity/integrity controls, not as proof that the behavior is correct.
 
-The future evidence manifest should record, where useful:
-
-`evidence ID | test ID | execution ID | filename | SHA-256 | capture time | system-under-test identity`
+The GitHub Actions artifact ZIP remains the byte-exact generated-bundle authority where referenced. Repository copies provide durable, readable evidence and hash ledgers beyond Actions retention.
