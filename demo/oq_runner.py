@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
-from sampletrack import SampleTrackDemo, AuthenticationError, AuthorizationError, ValidationError
+from sampletrack import SampleTrackDemo, Session, AuthenticationError, AuthorizationError, ValidationError
 
 
 def now_utc() -> str:
@@ -107,19 +107,35 @@ class OQRunner:
     def record(self, app, wh, lot="LOT-OQ-001"):
         return app.create_inventory(wh, "DEMO-RX-COLD-001", lot, 24, "REFRIGERATED_2_8C")
 
+
     def tc001(self):
         tid, title = "OQ-TC-001", "Valid, invalid, and disabled authentication"
         app, c, tmp = self.fresh(); st=[]; ev=[]
         try:
-            ok,a=self.rejected(lambda: app.authenticate("WH_OP_01","wrong"),(AuthenticationError,))
-            st.append(self.s("invalid password","Authentication rejected",a,ok))
+            ok,a=self.rejected(
+                lambda: app.create_inventory(None,"DEMO-RX-COLD-001","LOT-UNAUTH-1",1,"REFRIGERATED_2_8C"),
+                (AuthenticationError, AuthorizationError, ValidationError),
+            )
+            st.append(self.s("unauthenticated GxP access","Controlled access denial",a,ok))
             try:
                 sess=app.authenticate("WH_OP_01",c["WH_OP_01"])
                 st.append(self.s("valid password","Warehouse session established",f"{sess.user_id}/{sess.role}",True))
             except Exception as e:
                 st.append(self.s("valid password","Warehouse session established",f"{type(e).__name__}: {e}",False))
+            ok,a=self.rejected(lambda: app.authenticate("WH_OP_01","wrong"),(AuthenticationError,))
+            st.append(self.s("invalid password","Authentication rejected",a,ok))
+            ok2,a2=self.rejected(
+                lambda: app.create_inventory(None,"DEMO-RX-COLD-001","LOT-UNAUTH-2",1,"REFRIGERATED_2_8C"),
+                (AuthenticationError, AuthorizationError, ValidationError),
+            )
+            st.append(self.s("GxP access after invalid authentication","No data-changing operation permitted",a2,ok2))
             ok,a=self.rejected(lambda: app.authenticate("WH_DISABLED_01",c["WH_DISABLED_01"]),(AuthenticationError,))
             st.append(self.s("disabled account","Authentication rejected",a,ok))
+            ok2,a2=self.rejected(
+                lambda: app.create_inventory(None,"DEMO-RX-COLD-001","LOT-UNAUTH-3",1,"REFRIGERATED_2_8C"),
+                (AuthenticationError, AuthorizationError, ValidationError),
+            )
+            st.append(self.s("GxP access after disabled authentication","No data-changing operation permitted",a2,ok2))
             ev.append(self.evidence(tid,"authentication",{"steps":[asdict(x) for x in st]}))
             self.finish(tid,title,st,ev)
         finally:
@@ -134,6 +150,7 @@ class OQRunner:
             st.append(self.s("missing lot","Completion blocked",a,ok))
             r1=self.record(app,wh,"LOT-OQ-001"); row=app.get_record(r1)
             st.append(self.s("complete record","Valid record completes",r1,bool(r1)))
+            st.append(self.s("generated identifier","Non-empty SampleTrack ID assigned",r1,bool(r1) and r1.startswith("STL-")))
             st.append(self.s("persistent ID","Same ID on retrieval",app.get_record(r1)["record_id"],app.get_record(r1)["record_id"]==r1))
             st.append(self.s("creator/time","WH_OP_01 and creation time recorded",f"{row['received_by']} @ {row['created_at']}",row["received_by"]=="WH_OP_01" and bool(row["created_at"])))
             r2=self.record(app,wh,"LOT-OQ-002")
@@ -153,9 +170,11 @@ class OQRunner:
             st.append(self.s("release before verification","Release blocked",a,ok))
             verified=app.verify_critical_data(qa,r1,"DEMO-RX-COLD-001","LOT-OQ-001","REFRIGERATED_2_8C")
             st.append(self.s("matching verification","Complete and attributable",f"{verified}/{app.get_record(r1)['critical_verified_by']}",verified and app.get_record(r1)["critical_verified_by"]=="QA_REVIEW_01"))
+            row=app.get_record(r1)
+            st.append(self.s("verification state retained","QA verifier and timestamp retained",f"{row['critical_verified_by']} @ {row['critical_verified_at']}",row["critical_verified_by"]=="QA_REVIEW_01" and bool(row["critical_verified_at"])))
             r2=self.record(app,wh,"LOT-OQ-002")
             bad=app.verify_critical_data(qa,r2,"DEMO-RX-COLD-001","WRONG-LOT","REFRIGERATED_2_8C")
-            st.append(self.s("discrepant verification","Does not complete",str(bad),bad is False))
+            st.append(self.s("discrepant verification","Does not complete",str(bad),bad is False and app.get_record(r2)["critical_verified_by"] is None))
             ok,a=self.rejected(lambda: app.transition_status(qa,r2,"Released","QA review","QA_REVIEW_01",c["QA_REVIEW_01"]),(ValidationError,))
             st.append(self.s("release after mismatch","Release blocked",a,ok))
             ev.append(self.evidence(tid,"critical-verification",{"good":app.get_record(r1),"bad":app.get_record(r2),"bad_audit":app.audit_events(r2)}))
@@ -170,14 +189,16 @@ class OQRunner:
             wh=app.authenticate("WH_OP_01",c["WH_OP_01"]); qa=app.authenticate("QA_REVIEW_01",c["QA_REVIEW_01"])
             rid=self.record(app,wh)
             app.correct_field(wh,rid,"lot","LOT-OQ-001A","transcription correction")
+            st.append(self.s("permitted correction","Current value updated",app.get_record(rid)["lot"],app.get_record(rid)["lot"]=="LOT-OQ-001A"))
             corr=[x for x in app.audit_events(rid) if x["action"]=="record_corrected"][-1]
-            st.append(self.s("correction history","Prior/new/reason retained",json.dumps(corr,sort_keys=True),corr["old_value"]=="LOT-OQ-001" and corr["new_value"]=="LOT-OQ-001A" and corr["reason"]=="transcription correction"))
+            st.append(self.s("correction history","Prior/new/reason/user/time retained",json.dumps(corr,sort_keys=True),corr["old_value"]=="LOT-OQ-001" and corr["new_value"]=="LOT-OQ-001A" and corr["reason"]=="transcription correction" and corr["actor"]=="WH_OP_01" and bool(corr["at"])))
             ok,a=self.rejected(lambda: app.attempt_delete_record(wh,rid),(AuthorizationError,))
             st.append(self.s("Warehouse delete","Denied",a,ok))
             ok,a=self.rejected(lambda: app.attempt_delete_record(qa,rid),(AuthorizationError,))
             st.append(self.s("QA delete","Denied",a,ok))
-            st.append(self.s("record retained","Corrected record retrievable",app.get_record(rid)["lot"],app.get_record(rid)["lot"]=="LOT-OQ-001A"))
-            ev.append(self.evidence(tid,"correction-history",{"record":app.get_record(rid),"audit":app.audit_events(rid)}))
+            retained=app.get_record(rid)
+            st.append(self.s("record retained","Record and correction retained",retained["lot"],retained["lot"]=="LOT-OQ-001A" and any(x["action"]=="record_corrected" for x in app.audit_events(rid))))
+            ev.append(self.evidence(tid,"correction-history",{"record":retained,"audit":app.audit_events(rid)}))
             self.finish(tid,title,st,ev)
         finally:
             app.close(); tmp.cleanup()
@@ -187,18 +208,23 @@ class OQRunner:
         app,c,tmp=self.fresh(); st=[]; ev=[]
         try:
             wh=app.authenticate("WH_OP_01",c["WH_OP_01"]); rid=self.record(app,wh); app.assign_location(wh,rid,"REFR-A1")
-            byid=app.get_record(rid); bylot=app.find_by_lot("LOT-OQ-001"); electronic=app.export_electronic(rid); human=app.export_human_readable(rid)
+            byid=app.get_record(rid); bylot=app.find_by_lot("LOT-OQ-001")
             st.append(self.s("retrieve by ID","Correct record",byid["record_id"],byid["record_id"]==rid))
             st.append(self.s("retrieve by lot","Same record unambiguous",str([x["record_id"] for x in bylot]),len(bylot)==1 and bylot[0]["record_id"]==rid))
+            electronic=app.export_electronic(rid)
             st.append(self.s("related history","History linked",f"custody={len(electronic['custody'])};audit={len(electronic['audit'])}",len(electronic["custody"])>=1 and len(electronic["audit"])>=1))
-            st.append(self.s("electronic copy","Accurate structured copy",str(sorted(electronic.keys())),electronic["record"]["record_id"]==rid and set(electronic)=={"record","custody","excursions","audit","signatures"}))
+            human=app.export_human_readable(rid)
             human_ok=rid in human and "LOT-OQ-001" in human and "Custody history:" in human and "Audit trail:" in human and "Signatures:" in human
             st.append(self.s("human-readable copy","Readable record/history copy",human[:180].replace("\n"," | "),human_ok))
+            electronic_ok=electronic["record"]==byid and set(electronic)=={"record","custody","excursions","audit","signatures"}
+            st.append(self.s("electronic copy","Accurate structured copy",str(sorted(electronic.keys())),electronic_ok))
+            key_values=[rid,"DEMO-RX-COLD-001","LOT-OQ-001","24","REFRIGERATED_2_8C","REFR-A1","Quarantine","WH_OP_01"]
+            copies_match=electronic["record"]==byid and all(v in human for v in key_values)
+            st.append(self.s("copy comparison","Both outputs preserve tested record values and meaning",str(copies_match),copies_match))
             ev.append(self.evidence(tid,"electronic-copy",electronic)); ev.append(self.evidence(tid,"human-readable-copy",{"text":human}))
             self.finish(tid,title,st,ev)
         finally:
             app.close(); tmp.cleanup()
-
     def tc006(self):
         tid,title="OQ-TC-006","Storage condition/location compatibility"
         app,c,tmp=self.fresh(); st=[]; ev=[]
@@ -263,17 +289,23 @@ class OQRunner:
                 app.close(); tmp.cleanup()
         ev.append(self.evidence(tid,"temperature-boundaries",payload)); self.finish(tid,title,st,ev)
 
+
     def tc010(self):
         tid,title="OQ-TC-010","Excursion-record completeness and linkage"
         app,c,tmp=self.fresh(); st=[]; ev=[]
         try:
             wh=app.authenticate("WH_OP_01",c["WH_OP_01"]); rid=self.record(app,wh)
             ok,a=self.rejected(lambda: app.record_temperature(wh,rid,8.1,"2026-09-30T12:00:00+00:00","", "10 min"),(ValidationError,)); st.append(self.s("missing source","Rejected",a,ok))
-            result=app.record_temperature(wh,rid,8.1,"2026-09-30T12:00:00+00:00","mock logger","10 min"); e=app.excursion_events(rid)[-1]
+            result=app.record_temperature(wh,rid,8.1,"2026-09-30T12:00:00+00:00","mock logger","10 min")
             st.append(self.s("complete excursion","Saved",f"{result['classification']}/{result['excursion_id']}",result["classification"]=="Excursion" and result["excursion_id"] is not None))
-            ok=e["record_id"]==rid and e["temperature"]==8.1 and e["source"]=="mock logger" and e["reporter"]=="WH_OP_01"
-            st.append(self.s("record linkage/content","Correct record/temp/source/reporter",json.dumps(e,sort_keys=True),ok))
-            ev.append(self.evidence(tid,"excursion-record",{"record":app.get_record(rid),"excursions":app.excursion_events(rid)})); self.finish(tid,title,st,ev)
+            retrieved=app.get_record(rid)
+            st.append(self.s("retrieve affected record","Excursion linked to correct inventory record",retrieved["record_id"],retrieved["record_id"]==rid and retrieved["status"]=="On Hold"))
+            e=app.excursion_events(rid)[-1]
+            ok=e["record_id"]==rid and e["temperature"]==8.1 and e["source"]=="mock logger" and e["reporter"]=="WH_OP_01" and e["event_at"]=="2026-09-30T12:00:00+00:00" and e["duration_details"]=="10 min"
+            st.append(self.s("excursion content","Required content retained",json.dumps(e,sort_keys=True),ok))
+            reread=app.excursion_events(rid)[-1]
+            st.append(self.s("excursion reread","Same event identity and content returned",str(reread["id"]),reread==e))
+            ev.append(self.evidence(tid,"excursion-record",{"record":retrieved,"excursions":app.excursion_events(rid)})); self.finish(tid,title,st,ev)
         finally:
             app.close(); tmp.cleanup()
 
@@ -287,8 +319,11 @@ class OQRunner:
             st.append(self.s("excursion hold","On Hold",app.get_record(rid)["status"],app.get_record(rid)["status"]=="On Hold"))
             ok,a=self.rejected(lambda: app.transition_status(wh,rid,"Released","warehouse attempt","WH_OP_01",c["WH_OP_01"]),(AuthorizationError,)); st.append(self.s("Warehouse release","Denied",a,ok))
             ok,a=self.rejected(lambda: app.disposition_excursion(qa,rid,"Released","","QA_REVIEW_01",c["QA_REVIEW_01"]),(ValidationError,)); st.append(self.s("QA no rationale","Denied",a,ok))
-            sig=app.disposition_excursion(qa,rid,"Released","mock technical disposition: acceptable for workflow test","QA_REVIEW_01",c["QA_REVIEW_01"]); e=app.excursion_events(rid)[-1]
-            st.append(self.s("QA disposition","Released with rationale/signature",f"{app.get_record(rid)['status']}/sig={sig}",app.get_record(rid)["status"]=="Released" and bool(e["rationale"]) and e["signature_id"]==sig))
+            sig=app.disposition_excursion(qa,rid,"Released","mock technical disposition: acceptable for workflow test","QA_REVIEW_01",c["QA_REVIEW_01"])
+            st.append(self.s("QA disposition","Released with rationale/signature",f"{app.get_record(rid)['status']}/sig={sig}",app.get_record(rid)["status"]=="Released"))
+            e=app.excursion_events(rid)[-1]
+            history_ok=e["classification"]=="Excursion" and e["disposition"]=="Released" and e["rationale"]=="mock technical disposition: acceptable for workflow test" and e["disposition_by"]=="QA_REVIEW_01" and bool(e["disposition_at"]) and e["signature_id"]==sig
+            st.append(self.s("excursion/disposition history","Excursion, QA identity/time, rationale, status and signature retained",json.dumps(e,sort_keys=True),history_ok))
             ev.append(self.evidence(tid,"excursion-disposition",{"record":app.get_record(rid),"excursions":app.excursion_events(rid),"audit":app.audit_events(rid),"signatures":app.signature_events(rid)})); self.finish(tid,title,st,ev)
         finally:
             app.close(); tmp.cleanup()
@@ -298,14 +333,15 @@ class OQRunner:
         app,c,tmp=self.fresh(); st=[]; ev=[]
         try:
             w1=app.authenticate("WH_OP_01",c["WH_OP_01"]); w2=app.authenticate("WH_OP_02",c["WH_OP_02"]); rid=self.record(app,w1)
-            app.assign_location(w1,rid,"REFR-A1"); app.custody_transfer(w2,rid,"REFR-A2"); e=app.custody_events(rid)
-            st.append(self.s("first event","WH_OP_01 to REFR-A1",json.dumps(e[0],sort_keys=True),len(e)>=1 and e[0]["actor"]=="WH_OP_01" and e[0]["to_location"]=="REFR-A1"))
-            st.append(self.s("second event","WH_OP_02 REFR-A1 to REFR-A2",json.dumps(e[1],sort_keys=True),len(e)==2 and e[1]["actor"]=="WH_OP_02" and e[1]["from_location"]=="REFR-A1" and e[1]["to_location"]=="REFR-A2"))
-            st.append(self.s("history retained","Two events/current REFR-A2",f"{len(e)}/{app.get_record(rid)['location']}",len(e)==2 and app.get_record(rid)["location"]=="REFR-A2"))
+            app.assign_location(w1,rid,"REFR-A1"); first=app.custody_events(rid)[0]
+            st.append(self.s("first event","WH_OP_01 to REFR-A1 with time",json.dumps(first,sort_keys=True),first["actor"]=="WH_OP_01" and first["to_location"]=="REFR-A1" and bool(first["at"])))
+            app.custody_transfer(w2,rid,"REFR-A2"); e=app.custody_events(rid)
+            st.append(self.s("second event","WH_OP_02 REFR-A1 to REFR-A2",json.dumps(e[1],sort_keys=True),len(e)==2 and e[1]["actor"]=="WH_OP_02" and e[1]["from_location"]=="REFR-A1" and e[1]["to_location"]=="REFR-A2" and bool(e[1]["at"])))
+            st.append(self.s("custody history retrieval","Both chronological events retained",str([x["id"] for x in e]),len(e)==2 and e[0]["id"]<e[1]["id"]))
+            st.append(self.s("current record state","Latest location without history loss",f"{app.get_record(rid)['location']}/{len(e)}",app.get_record(rid)["location"]=="REFR-A2" and len(e)==2))
             ev.append(self.evidence(tid,"custody-history",{"record":app.get_record(rid),"custody":e})); self.finish(tid,title,st,ev)
         finally:
             app.close(); tmp.cleanup()
-
     def tc013(self):
         tid,title="OQ-TC-013","Unique identity and role-based authorization"
         app,c,tmp=self.fresh(); st=[]; ev=[]
@@ -321,15 +357,21 @@ class OQRunner:
         finally:
             app.close(); tmp.cleanup()
 
+
     def tc014(self):
         tid,title="OQ-TC-014","Access-authorisation lifecycle record"
         app,c,tmp=self.fresh(); st=[]; ev=[]
         try:
             ad=app.authenticate("SYS_ADMIN_01",c["SYS_ADMIN_01"]); pw=secrets.token_urlsafe(20)
-            app.create_user(ad,"TEMP_ACCESS_01","Mock Temporary User","Warehouse Operator",pw); app.change_user_role(ad,"TEMP_ACCESS_01","QA Reviewer"); app.disable_user(ad,"TEMP_ACCESS_01")
-            events=app.access_events("TEMP_ACCESS_01"); actions=[x["action"] for x in events]
-            st.append(self.s("lifecycle history","created, role_changed, disabled",str(actions),actions==["created","role_changed","disabled"]))
-            st.append(self.s("admin attribution","Admin and time on every event",json.dumps(events,sort_keys=True),all(x["actor"]=="SYS_ADMIN_01" and x["at"] for x in events)))
+            app.create_user(ad,"TEMP_ACCESS_01","Mock Temporary User","Warehouse Operator",pw)
+            created=app.access_events("TEMP_ACCESS_01")
+            st.append(self.s("access creation","Creation event recorded",json.dumps(created[-1],sort_keys=True),created[-1]["action"]=="created" and created[-1]["new_role"]=="Warehouse Operator"))
+            app.change_user_role(ad,"TEMP_ACCESS_01","QA Reviewer")
+            changed=app.access_events("TEMP_ACCESS_01")
+            st.append(self.s("access change","Role change recorded",json.dumps(changed[-1],sort_keys=True),changed[-1]["action"]=="role_changed" and changed[-1]["old_role"]=="Warehouse Operator" and changed[-1]["new_role"]=="QA Reviewer"))
+            st.append(self.s("access history review","What changed, when, and acting admin attributable",json.dumps(changed,sort_keys=True),all(x["actor"]=="SYS_ADMIN_01" and x["at"] for x in changed)))
+            app.disable_user(ad,"TEMP_ACCESS_01"); events=app.access_events("TEMP_ACCESS_01")
+            st.append(self.s("access cancellation","Disable event recorded",json.dumps(events[-1],sort_keys=True),events[-1]["action"]=="disabled"))
             ok,a=self.rejected(lambda: app.authenticate("TEMP_ACCESS_01",pw),(AuthenticationError,)); st.append(self.s("disabled login","Rejected",a,ok))
             ev.append(self.evidence(tid,"access-lifecycle",{"events":events})); self.finish(tid,title,st,ev)
         finally:
@@ -340,18 +382,23 @@ class OQRunner:
         app,c,tmp=self.fresh(); st=[]; ev=[]
         try:
             wh=app.authenticate("WH_OP_01",c["WH_OP_01"]); qa=app.authenticate("QA_REVIEW_01",c["QA_REVIEW_01"]); rid=self.record(app,wh)
-            app.correct_field(wh,rid,"lot","LOT-OQ-001A","transcription correction"); app.verify_critical_data(qa,rid,"DEMO-RX-COLD-001","LOT-OQ-001A","REFRIGERATED_2_8C")
-            app.transition_status(qa,rid,"Released","QA release","QA_REVIEW_01",c["QA_REVIEW_01"]); app.record_temperature(wh,rid,8.1,"2026-09-30T12:00:00+00:00","mock logger","10 min"); app.disposition_excursion(qa,rid,"Rejected","mock technical disposition","QA_REVIEW_01",c["QA_REVIEW_01"])
-            audit=app.audit_events(rid); actions={x["action"] for x in audit}; needed={"record_created","record_corrected","status_changed","excursion_created","electronic_signature","excursion_disposition"}
-            st.append(self.s("event coverage","Representative GMP events present",str(sorted(actions)),needed.issubset(actions)))
+            app.correct_field(wh,rid,"lot","LOT-OQ-001A","transcription correction")
+            audit=app.audit_events(rid); actions={x["action"] for x in audit}
+            st.append(self.s("creation/correction audit","Creation and correction events present",str(sorted(actions)),{"record_created","record_corrected"}.issubset(actions)))
+            app.verify_critical_data(qa,rid,"DEMO-RX-COLD-001","LOT-OQ-001A","REFRIGERATED_2_8C"); app.transition_status(qa,rid,"Released","QA release","QA_REVIEW_01",c["QA_REVIEW_01"])
+            audit=app.audit_events(rid); st.append(self.s("status-change audit","Status change represented",str([x["action"] for x in audit]),"status_changed" in {x["action"] for x in audit}))
+            app.record_temperature(wh,rid,8.1,"2026-09-30T12:00:00+00:00","mock logger","10 min"); app.disposition_excursion(qa,rid,"Rejected","mock technical disposition","QA_REVIEW_01",c["QA_REVIEW_01"])
+            audit=app.audit_events(rid); actions={x["action"] for x in audit}; needed={"excursion_created","electronic_signature","excursion_disposition"}
+            st.append(self.s("excursion/disposition/signature audit","Risk-relevant events represented",str(sorted(actions)),needed.issubset(actions)))
             corr=[x for x in audit if x["action"]=="record_corrected"][-1]; ok=corr["actor"]=="WH_OP_01" and corr["at"] and corr["old_value"]=="LOT-OQ-001" and corr["new_value"]=="LOT-OQ-001A" and corr["reason"]=="transcription correction"
             st.append(self.s("change content","User/time/prior/new/reason",json.dumps(corr,sort_keys=True),ok))
             ok,a=self.rejected(lambda: app.attempt_modify_audit(wh,audit[0]["id"]),(AuthorizationError,)); st.append(self.s("audit modification","Denied",a,ok))
             st.append(self.s("QA reviewability","Chronological intelligible trail",f"{len(audit)} events",len(audit)>=6 and all(x["at"] and x["actor"] and x["action"] for x in audit)))
+            sequence_ok=audit[0]["action"]=="record_created" and corr in audit and corr["old_value"]=="LOT-OQ-001"
+            st.append(self.s("known-action comparison","Sequence attributable and prior value not obscured",str([x["action"] for x in audit]),sequence_ok))
             ev.append(self.evidence(tid,"audit-trail",{"record":app.get_record(rid),"audit":audit,"signatures":app.signature_events(rid),"excursions":app.excursion_events(rid)})); self.finish(tid,title,st,ev)
         finally:
             app.close(); tmp.cleanup()
-
     def tc016(self):
         tid,title="OQ-TC-016","Electronic-signature manifestation and record linkage"
         app,c,tmp=self.fresh(); st=[]; ev=[]
@@ -367,21 +414,23 @@ class OQRunner:
         finally:
             app.close(); tmp.cleanup()
 
+
     def tc017(self):
         tid,title="OQ-TC-017","Electronic-signature identity and credential challenge"
         app,c,tmp=self.fresh(); st=[]; ev=[]
         try:
             wh=app.authenticate("WH_OP_01",c["WH_OP_01"]); qa=app.authenticate("QA_REVIEW_01",c["QA_REVIEW_01"]); rid=self.record(app,wh)
             app.verify_critical_data(qa,rid,"DEMO-RX-COLD-001","LOT-OQ-001","REFRIGERATED_2_8C")
-            ok,a=self.rejected(lambda: app.transition_status(qa,rid,"Released","QA release","QA_REVIEW_01","wrong-password"),(AuthenticationError,)); st.append(self.s("wrong password","Rejected/no disposition",a,ok and app.get_record(rid)["status"]=="Quarantine"))
+            ok,a=self.rejected(lambda: app.transition_status(qa,rid,"Released","QA release","QA_REVIEW_01","wrong-password"),(AuthenticationError,)); st.append(self.s("wrong password","Rejected",a,ok))
+            st.append(self.s("failed signature leaves protected state","No signature and no completed disposition",f"status={app.get_record(rid)['status']};signatures={len(app.signature_events(rid))}",app.get_record(rid)["status"]=="Quarantine" and len(app.signature_events(rid))==0))
             ok,a=self.rejected(lambda: app.transition_status(qa,rid,"Released","QA release","WH_OP_01",c["QA_REVIEW_01"]),(AuthenticationError,)); st.append(self.s("different ID code","Rejected/no disposition",a,ok and app.get_record(rid)["status"]=="Quarantine"))
             ok,a=self.rejected(lambda: app.transition_status(wh,rid,"Released","Warehouse attempt","WH_OP_01",c["WH_OP_01"]),(AuthorizationError,)); st.append(self.s("Warehouse signed action","Denied",a,ok))
             app.transition_status(qa,rid,"Released","QA release","QA_REVIEW_01",c["QA_REVIEW_01"]); sig=app.signature_events(rid)[-1]
-            st.append(self.s("correct QA credentials","Succeeds/attributed",f"{app.get_record(rid)['status']}/{sig['actor']}",app.get_record(rid)["status"]=="Released" and sig["actor"]=="QA_REVIEW_01"))
+            st.append(self.s("correct QA credentials","Signature/action succeeds",app.get_record(rid)["status"],app.get_record(rid)["status"]=="Released"))
+            st.append(self.s("signature attribution","Attributed to QA_REVIEW_01",sig["actor"],sig["actor"]=="QA_REVIEW_01"))
             ev.append(self.evidence(tid,"signature-authentication",{"record":app.get_record(rid),"signatures":app.signature_events(rid),"audit":app.audit_events(rid)})); self.finish(tid,title,st,ev)
         finally:
             app.close(); tmp.cleanup()
-
     def tc018(self):
         tid,title="OQ-TC-018","End-to-end regulated workflow"
         app,c,tmp=self.fresh(); st=[]; ev=[]

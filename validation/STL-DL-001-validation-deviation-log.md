@@ -105,6 +105,53 @@ DEV-001 is behaviorally resolved. Final package closure still depends on resolvi
 The original run and evidence must remain preserved after correction.
 
 
+
+## DEV-002 — Automated OQ harness did not preserve frozen protocol step coverage
+
+**Training seed category:** Protocol / execution discrepancy.
+
+### Observation
+
+After the first successful behavioral retests, a qualification-apparatus review compared the frozen `STL-OQ-001` steps against the automated `demo/oq_runner.py` implementation.
+
+The review found that several runner cases grouped multiple protocol steps under one assertion, and at least one material frozen requirement was not directly exercised:
+
+- `OQ-TC-001` did not attempt a GxP data-changing function without an authenticated session and did not directly challenge a data-changing function after failed authentication.
+- Other cases combined protocol actions and verification into fewer assertions, reducing step-level inspectability.
+- `OQ-TC-017` did not separately confirm the absence of a signature after a failed credential attempt.
+
+### Classification
+
+**PROTOCOL / EXECUTION APPARATUS DISCREPANCY**
+
+The frozen protocol itself remains unchanged. The gap is between that protocol and the automated qualification harness.
+
+### Impact assessment
+
+The prior case-level 18/18 results remain useful observations of the behavior that was actually exercised.
+
+They are not sufficient, by themselves, to claim complete execution of every frozen OQ step.
+
+Final RTM closure and VSR eligibility are therefore held pending a protocol-conformance correction and full OQ re-execution.
+
+### Root cause
+
+The first runner implementation was designed around case-level behavior and evidence bundles rather than an explicit protocol-step-to-runner conformance check.
+
+### Correction
+
+Without changing any frozen expected result:
+
+1. map every frozen protocol step to an explicit runner assertion or clearly expanded loop case;
+2. add direct unauthenticated GxP access challenges;
+3. add explicit verification that failed electronic-signature authentication leaves no valid signature/disposition;
+4. separate consolidated checks where needed to make the step-level result reconstructable;
+5. rerun the complete frozen OQ.
+
+### Status
+
+`OPEN — HARNESS CORRECTION APPLIED / FULL OQ RETEST REQUIRED`
+
 ## DEV-003 — Qualification evidence execution identity collision
 
 **Training seed category:** Evidence / execution deficiency.
@@ -166,7 +213,22 @@ Because the qualification runner changes, full re-execution is selected even tho
 
 ### Status
 
-`OPEN — APPARATUS CORRECTION APPLIED / FULL RETEST REQUIRED`
+`RESOLVED — UNIQUE EXECUTION ID VERIFIED / FULL OQ PASS`
+
+### Correction and verification receipt
+
+The qualification apparatus now assigns the GitHub Actions run ID as a unique execution identity and includes it inside every evidence JSON object.
+
+Verification run: `36812736825`  
+Candidate: `b3ae9c728cda9d489619c6b0e72b81b43acae5ad`  
+Candidate tree: `e9f322391fd785fe85d0637211a15d20e0cd53e2`  
+Execution ID: `OQ-CI-36812736825`  
+Development tests: **8 / 8 PASS**  
+Frozen OQ case result: **18 / 18 PASS**  
+Artifact: `11139832937`  
+Artifact digest: `sha256:8a2b32fe35e5cd39cc7375fa21926630ae62cafa23c0096b15731807ac0cdea5`
+
+The OQ-TC-009 evidence object was confirmed to carry `execution_id = OQ-CI-36812736825`.
 
 ## Pre-execution apparatus incident — workflow checkout
 
@@ -184,3 +246,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 |---|---|---|
 | 0.1 | Active | DEV-001 opened from preserved first OQ execution; pre-execution workflow incident recorded separately. |
 | 0.2 | Active | DEV-001 corrected and full retest passed; DEV-003 opened for duplicate internal execution identity across evidence bundles. |
+| 0.3 | Active | DEV-003 resolved with unique execution identity; DEV-002 opened after frozen-protocol-to-runner step-coverage audit. |
