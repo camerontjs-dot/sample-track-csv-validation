@@ -60,6 +60,9 @@ class PublicPressureTests(unittest.TestCase):
             "LOT-PRESSURE-001-CORRECTED",
             "pressure-test critical correction",
         )
+        corrected = self.app.get_record(rid, self.wh)
+        self.assertIsNone(corrected["critical_verified_by"])
+        self.assertIsNone(corrected["critical_verified_at"])
         with self.assertRaises(ValidationError):
             self.app.transition_status(
                 self.qa,
@@ -85,11 +88,22 @@ class PublicPressureTests(unittest.TestCase):
     def test_record_retrieval_is_not_available_without_authenticated_authority(self):
         """URS-007/025: regulated-record retrieval is an authorized-user function."""
         rid = self.record()
-        record = self.app.get_record(rid)
-        self.fail(
-            "Unauthenticated get_record returned regulated data: "
-            + str({"record_id": record["record_id"], "lot": record["lot"]})
-        )
+        with self.assertRaises(AuthenticationError):
+            self.app.get_record(rid)
+        with self.assertRaises(AuthenticationError):
+            self.app.find_by_lot("LOT-PRESSURE-001")
+        with self.assertRaises(AuthenticationError):
+            self.app.export_electronic(rid)
+        with self.assertRaises(AuthenticationError):
+            self.app.export_human_readable(rid)
+        with self.assertRaises(AuthenticationError):
+            self.app.audit_events(rid)
+        with self.assertRaises(AuthenticationError):
+            self.app.custody_events(rid)
+        with self.assertRaises(AuthenticationError):
+            self.app.signature_events(rid)
+        with self.assertRaises(AuthenticationError):
+            self.app.excursion_events(rid)
 
     def test_disabled_user_existing_session_is_invalidated(self):
         rid = self.record("LOT-PRESSURE-SESSION")
