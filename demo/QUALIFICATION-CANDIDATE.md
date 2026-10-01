@@ -1,8 +1,8 @@
-# SampleTrack Surrogate Qualification Candidate
+# SampleTrack Surrogate Qualification Candidate - Historical Record
 
-> **MOCK / FICTIONAL — TRAINING & INTERVIEW DEMONSTRATION ONLY — NOT FOR GxP USE**
+> **MOCK / FICTIONAL - DEMONSTRATION ONLY - NOT FOR GxP USE**
 
-This record submits the current pull-request head to the repaired GitHub Actions qualification apparatus. It does not modify the frozen validation protocol or expected results.
+This historical record identifies the pre-correction surrogate state submitted to the repaired GitHub Actions qualification apparatus. It does not represent the final qualified candidate. The final qualified candidate is `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`; see `validation/STL-OQ-001-final-qualification-receipt.md`.
 
 ## System-under-test source objects
 
