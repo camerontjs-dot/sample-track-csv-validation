@@ -16,7 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SUT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-      OQ_OUTPUT: validation/evidence/OQ-EXEC-001
+      OQ_EXECUTION_ID: OQ-CI-${{ github.run_id }}
+      OQ_OUTPUT: validation/evidence/OQ-CI-${{ github.run_id }}
     steps:
       - name: Checkout exact candidate
         uses: actions/checkout@v4
@@ -65,7 +66,8 @@ jobs:
           python demo/oq_runner.py \
             --output "$OQ_OUTPUT" \
             --tester "Cameron" \
-            --system-identity "$SUT_SHA"
+            --system-identity "$SUT_SHA" \
+            --execution-id "$OQ_EXECUTION_ID"
 
       - name: Summarize OQ
         if: always()
@@ -73,9 +75,9 @@ jobs:
         run: |
           if [ -f "$OQ_OUTPUT/execution.json" ]; then
             python - <<'PY'
-          import json
+          import json, os
           from pathlib import Path
-          p = Path("validation/evidence/OQ-EXEC-001/execution.json")
+          p = Path(os.environ["OQ_OUTPUT"]) / "execution.json"
           d = json.loads(p.read_text())
           print("OQ summary:", d["summary"])
           failures = []
@@ -101,8 +103,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: sampletrack-oq-exec-001
-          path: validation/evidence/OQ-EXEC-001
+          name: sampletrack-oq-${{ github.run_id }}
+          path: ${{ env.OQ_OUTPUT }}
           if-no-files-found: error
           retention-days: 30
 

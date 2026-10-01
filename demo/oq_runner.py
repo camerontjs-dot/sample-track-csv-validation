@@ -35,10 +35,11 @@ class Case:
 
 
 class OQRunner:
-    def __init__(self, output: Path, tester: str, system_identity: str):
+    def __init__(self, output: Path, tester: str, system_identity: str, execution_id: str):
         self.output = output
         self.tester = tester
         self.system_identity = system_identity
+        self.execution_id = execution_id
         self.output.mkdir(parents=True, exist_ok=True)
         self.evidence_dir = self.output / "evidence"
         self.evidence_dir.mkdir(exist_ok=True)
@@ -84,6 +85,7 @@ class OQRunner:
             json.dumps(
                 {
                     "evidence_id": eid,
+                    "execution_id": self.execution_id,
                     "test_id": tid,
                     "captured_at": now_utc(),
                     "system_identity": self.system_identity,
@@ -409,7 +411,7 @@ class OQRunner:
 
     def write_outputs(self):
         doc={
-            "execution_id":self.output.name,
+            "execution_id":self.execution_id,
             "executed_at":now_utc(),
             "tester":self.tester,
             "system_identity":self.system_identity,
@@ -446,8 +448,9 @@ def main() -> int:
     p.add_argument("--output",required=True)
     p.add_argument("--tester",required=True)
     p.add_argument("--system-identity",required=True)
+    p.add_argument("--execution-id",required=True)
     a=p.parse_args()
-    return OQRunner(Path(a.output),a.tester,a.system_identity).run()
+    return OQRunner(Path(a.output),a.tester,a.system_identity,a.execution_id).run()
 
 
 if __name__=="__main__":

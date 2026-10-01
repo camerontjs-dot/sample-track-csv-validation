@@ -81,9 +81,92 @@ Run the complete frozen OQ against the corrected candidate. Full re-execution is
 
 ### Status
 
-`OPEN — CORRECTION AUTHORIZED / RETEST REQUIRED`
+`RESOLVED — CORRECTED / FULL RETEST PASS`
+
+### Correction and retest receipt
+
+The authorized comparison correction was applied without changing the frozen expected result.
+
+Corrected candidate: `7a8f114bfd67935d8354e922873fa54f0a2c37c9`  
+Candidate tree: `07182c62c251f767ccfde481816d5f22a84daecc`  
+GitHub Actions run: `36812375284`  
+Job: `110210033595`  
+Development tests: **8 / 8 PASS**  
+Frozen OQ: **18 / 18 PASS**  
+Corrected `sampletrack.py` SHA-256: `96c033656393a8a7f8896dfe9ac8cd868895f4aae8ce52999ea20f41d6ae3ddb`  
+OQ runner SHA-256: `9e11e8474bc97bc6b5c9fe8f6ae461cce82b07047486dda2937db6ee0dd53c1b`  
+Retest artifact: `11139822400`  
+Artifact digest: `sha256:95739a76b983693e2d438ee1eecbc7584fdbf2aba16b2d7e9cfc08ea76d45d78`
+
+All six frozen boundary values passed on the corrected candidate, including **8.0 °C → Within range** and **8.1 °C → Excursion**.
+
+DEV-001 is behaviorally resolved. Final package closure still depends on resolving the separate evidence-identification deficiency recorded as DEV-003.
 
 The original run and evidence must remain preserved after correction.
+
+
+## DEV-003 — Qualification evidence execution identity collision
+
+**Training seed category:** Evidence / execution deficiency.
+
+**Observed runs:** `36812149305` and `36812375284`
+
+### Observation
+
+The initial failed OQ bundle and the corrected 18/18 retest bundle were generated in separate clean GitHub Actions runs with different candidate commits, timestamps, artifact IDs, and artifact digests.
+
+However, both bundles internally reported:
+
+`execution_id = OQ-EXEC-001`
+
+because the workflow used a fixed output directory and the qualification runner derived its execution ID from that directory name.
+
+The individual evidence IDs also repeat across runs and rely on bundle context for disambiguation.
+
+### Classification
+
+**EVIDENCE / EXECUTION APPARATUS DEFICIENCY**
+
+This is not a SampleTrack business-function failure and does not change the observed 18/18 behavioral result of run `36812375284`.
+
+### Impact assessment
+
+GitHub metadata still uniquely identifies each run through:
+
+- workflow run ID;
+- candidate commit/tree;
+- execution timestamp;
+- artifact ID and digest;
+- source SHA-256;
+- execution-file SHA-256.
+
+Therefore the observations remain attributable.
+
+The internal bundle identity is nevertheless insufficient for a clean standalone validation evidence package because two different executions should not claim the same execution ID.
+
+### Root cause
+
+The workflow hardcoded `validation/evidence/OQ-EXEC-001` as the output directory, and the runner used the output directory basename as the execution ID.
+
+### Correction
+
+The qualification apparatus will:
+
+1. assign a unique execution ID from the GitHub Actions run ID;
+2. use a unique evidence output directory for each run;
+3. pass the execution ID explicitly to the runner;
+4. include that execution ID inside every evidence JSON object;
+5. preserve the frozen expected results and test logic unchanged.
+
+### Re-test requirement
+
+Run the complete frozen OQ once more after the evidence-identity apparatus correction.
+
+Because the qualification runner changes, full re-execution is selected even though the change is intended to affect metadata only.
+
+### Status
+
+`OPEN — APPARATUS CORRECTION APPLIED / FULL RETEST REQUIRED`
 
 ## Pre-execution apparatus incident — workflow checkout
 
@@ -100,3 +183,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | Revision | Status | Description |
 |---|---|---|
 | 0.1 | Active | DEV-001 opened from preserved first OQ execution; pre-execution workflow incident recorded separately. |
+| 0.2 | Active | DEV-001 corrected and full retest passed; DEV-003 opened for duplicate internal execution identity across evidence bundles. |
