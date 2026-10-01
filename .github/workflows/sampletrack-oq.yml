@@ -49,7 +49,7 @@ jobs:
 
       - name: Development unit tests
         working-directory: demo
-        run: python -m unittest -v test_sampletrack.py
+        run: python -m unittest discover -v
 
       - name: Source digests
         shell: bash
