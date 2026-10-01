@@ -1,4 +1,4 @@
-# SampleTrack CSV Validation
+# Sample Track CSV Validation
 
 > **MOCK / FICTIONAL - DEMONSTRATION ONLY - NOT FOR GxP USE**
 
