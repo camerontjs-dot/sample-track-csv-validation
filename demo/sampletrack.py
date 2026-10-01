@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import math
 import secrets
 import sqlite3
 import uuid
@@ -277,6 +278,20 @@ class SampleTrackDemo:
         old = row[field]
         self.conn.execute(f"UPDATE inventory SET {field}=? WHERE record_id=?", (new_value, record_id))
         self._audit(session.user_id, "record_corrected", record_id, field, old, new_value, reason)
+        if field == "lot" and row["critical_verified_by"] is not None:
+            self.conn.execute(
+                "UPDATE inventory SET critical_verified_by=NULL, critical_verified_at=NULL WHERE record_id=?",
+                (record_id,),
+            )
+            self._audit(
+                session.user_id,
+                "critical_verification_invalidated",
+                record_id,
+                field="critical_verification",
+                old_value=row["critical_verified_by"],
+                new_value=None,
+                reason="critical lot data changed after verification",
+            )
         self.conn.commit()
 
     def attempt_delete_record(self, session: Session, record_id: str) -> None:
@@ -352,6 +367,7 @@ class SampleTrackDemo:
         signing_user_id: str | None = None,
         password: str | None = None,
     ) -> int | None:
+        self._require_role(session, "Warehouse Operator", "QA Reviewer")
         row = self._record(record_id)
         if new_status not in self.VALID_STATUSES:
             raise ValidationError("unconfigured status")
@@ -377,7 +393,8 @@ class SampleTrackDemo:
                 raise ValidationError("QA electronic signature required")
             sig_id = self._signature(session, record_id, f"{new_status} disposition", f"status:{old}->{new_status}", signing_user_id, password)
         elif new_status == "On Hold":
-            self._require_role(session, "Warehouse Operator", "QA Reviewer")
+            if not reason:
+                raise ValidationError("GMP-relevant status change reason required")
         else:
             raise AuthorizationError("transition not authorized")
         self.conn.execute("UPDATE inventory SET status=? WHERE record_id=?", (new_status, record_id))
@@ -391,7 +408,13 @@ class SampleTrackDemo:
             raise ValidationError("unknown product")
         lower = float(product["lower_limit"])
         upper = float(product["upper_limit"])
-        is_excursion = float(temperature) < lower or float(temperature) > upper
+        try:
+            value = float(temperature)
+        except (TypeError, ValueError) as exc:
+            raise ValidationError("temperature must be numeric") from exc
+        if not math.isfinite(value):
+            raise ValidationError("temperature must be a finite numeric value")
+        is_excursion = value < lower or value > upper
         return "Excursion" if is_excursion else "Within range"
 
     def record_temperature(
@@ -497,10 +520,12 @@ class SampleTrackDemo:
         )
         self.conn.commit()
 
-    def access_events(self, user_id: str) -> list[dict[str, Any]]:
+    def access_events(self, user_id: str, session: Session | None = None) -> list[dict[str, Any]]:
+        self._require_role(session, "System Administrator")
         return [dict(r) for r in self.conn.execute("SELECT * FROM access_history WHERE target_user=? ORDER BY id", (user_id,)).fetchall()]
 
-    def audit_events(self, record_id: str) -> list[dict[str, Any]]:
+    def audit_events(self, record_id: str, session: Session | None = None) -> list[dict[str, Any]]:
+        self._require_role(session, "Warehouse Operator", "QA Reviewer")
         return [dict(r) for r in self.conn.execute("SELECT * FROM audit WHERE record_id=? ORDER BY id", (record_id,)).fetchall()]
 
     def attempt_modify_audit(self, session: Session, audit_id: int) -> None:
@@ -511,32 +536,39 @@ class SampleTrackDemo:
         self._require_role(session, "Warehouse Operator", "QA Reviewer")
         raise AuthorizationError("existing signatures cannot be transferred to another record")
 
-    def custody_events(self, record_id: str) -> list[dict[str, Any]]:
+    def custody_events(self, record_id: str, session: Session | None = None) -> list[dict[str, Any]]:
+        self._require_role(session, "Warehouse Operator", "QA Reviewer")
         return [dict(r) for r in self.conn.execute("SELECT * FROM custody WHERE record_id=? ORDER BY id", (record_id,)).fetchall()]
 
-    def signature_events(self, record_id: str) -> list[dict[str, Any]]:
+    def signature_events(self, record_id: str, session: Session | None = None) -> list[dict[str, Any]]:
+        self._require_role(session, "Warehouse Operator", "QA Reviewer")
         return [dict(r) for r in self.conn.execute("SELECT * FROM signatures WHERE record_id=? ORDER BY id", (record_id,)).fetchall()]
 
-    def excursion_events(self, record_id: str) -> list[dict[str, Any]]:
+    def excursion_events(self, record_id: str, session: Session | None = None) -> list[dict[str, Any]]:
+        self._require_role(session, "Warehouse Operator", "QA Reviewer")
         return [dict(r) for r in self.conn.execute("SELECT * FROM excursions WHERE record_id=? ORDER BY id", (record_id,)).fetchall()]
 
-    def get_record(self, record_id: str) -> dict[str, Any]:
+    def get_record(self, record_id: str, session: Session | None = None) -> dict[str, Any]:
+        self._require_role(session, "Warehouse Operator", "QA Reviewer")
         return dict(self._record(record_id))
 
-    def find_by_lot(self, lot: str) -> list[dict[str, Any]]:
+    def find_by_lot(self, lot: str, session: Session | None = None) -> list[dict[str, Any]]:
+        self._require_role(session, "Warehouse Operator", "QA Reviewer")
         return [dict(r) for r in self.conn.execute("SELECT * FROM inventory WHERE lot=? ORDER BY created_at", (lot,)).fetchall()]
 
-    def export_electronic(self, record_id: str) -> dict[str, Any]:
+    def export_electronic(self, record_id: str, session: Session | None = None) -> dict[str, Any]:
+        self._require_role(session, "Warehouse Operator", "QA Reviewer")
         return {
-            "record": self.get_record(record_id),
-            "custody": self.custody_events(record_id),
-            "excursions": self.excursion_events(record_id),
-            "audit": self.audit_events(record_id),
-            "signatures": self.signature_events(record_id),
+            "record": self.get_record(record_id, session),
+            "custody": self.custody_events(record_id, session),
+            "excursions": self.excursion_events(record_id, session),
+            "audit": self.audit_events(record_id, session),
+            "signatures": self.signature_events(record_id, session),
         }
 
-    def export_human_readable(self, record_id: str) -> str:
-        data = self.export_electronic(record_id)
+    def export_human_readable(self, record_id: str, session: Session | None = None) -> str:
+        self._require_role(session, "Warehouse Operator", "QA Reviewer")
+        data = self.export_electronic(record_id, session)
         r = data["record"]
         lines = [
             f"SampleTrack record: {r['record_id']}",

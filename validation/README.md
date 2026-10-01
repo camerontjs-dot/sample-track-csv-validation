@@ -13,17 +13,20 @@
 - [STL-OQ-001 - Operational Qualification Protocol](STL-OQ-001-operational-qualification.md)
 - [STL-OQ-001 - Protocol Freeze Record](STL-OQ-001-protocol-freeze.md)
 - [STL-OQ-001 - Execution Readiness Record](STL-OQ-001-execution-readiness.md)
-- [STL-OQ-001 - Final Qualification Receipt](STL-OQ-001-final-qualification-receipt.md)
+- [STL-OQ-001 - Public-Release Pressure Qualification Receipt](STL-OQ-001-public-release-pressure-qualification.md)
+- [STL-OQ-001 - Historical pre-pressure Qualification Receipt](STL-OQ-001-final-qualification-receipt.md)
 - [STL-OQ-001 - Test Configuration and Data Set](fixtures/STL-OQ-001-test-configuration.md)
 - [STL-DL-001 - Validation Deviation Log](STL-DL-001-validation-deviation-log.md)
 - [STL-VSR-001 - Validation Summary Report](STL-VSR-001-validation-summary-report.md)
 - [OQ evidence directory](evidence/README.md)
-- [Final OQ execution receipt](evidence/OQ-CI-36813357212/README.md)
-- [Final OQ step-level execution record](evidence/OQ-CI-36813357212/execution.md)
+- [Current OQ execution receipt](evidence/OQ-CI-36897449285/README.md)
+- [Historical pre-pressure OQ execution receipt](evidence/OQ-CI-36813357212/README.md)
+- [Current OQ step-level execution record](evidence/OQ-CI-36897449285/execution.md)
+- [Historical pre-pressure OQ step-level execution record](evidence/OQ-CI-36813357212/execution.md)
 
 ## Current package state
 
-No core validation deliverables remain planned for the current bounded mock scope.
+No core validation deliverables remain planned for the current bounded mock scope. The package has also completed a separate public-release pressure test; DEV-001 through DEV-010 are resolved for the current successor candidate.
 
 Final bounded disposition:
 

@@ -6,7 +6,7 @@
 |---|---|
 | Document ID | STL-DL-001 |
 | System | SampleTrack Lite demonstration surrogate |
-| Status | Closed for qualified mock candidate `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e` |
+| Status | Closed for successor candidate `b528234a0a14db68200c9213516d0ed6a76ca56b` |
 | Approval status | Mock approval: Not executed |
 
 ## DEV-001 — Upper temperature boundary classified as excursion
@@ -398,18 +398,255 @@ Artifact digest: `sha256:8a2b32fe35e5cd39cc7375fa21926630ae62cafa23c0096b1573180
 
 The OQ-TC-009 evidence object was confirmed to carry `execution_id = OQ-CI-36812736825`.
 
+## DEV-005 — Critical-data correction does not invalidate prior QA verification
+
+**Discovered during:** public-release pressure test  
+**Candidate:** `718ce8e065d78e6df7a8d837cf71c68ad3909590`  
+**Candidate tree:** `f92e671a17957a262349062d137a533bb47d143c`  
+**GitHub Actions run:** `36895767954`  
+**Job:** `110482246469`  
+**Affected requirement:** `URS-004`  
+**Affected risk:** `RSK-003`
+
+### Observation
+
+A receiving record was successfully QA-verified for the current product, lot and storage condition. The lot was then corrected. The prior verification remained set and the system permitted release without re-verification of the corrected critical data.
+
+The adversarial test expected release to remain blocked until the corrected critical value was independently verified.
+
+### Classification
+
+**SYSTEM / WORKFLOW STATE INVALIDATION FAILURE**
+
+The application treats critical-data verification as a one-time flag rather than evidence bound to the current critical values.
+
+### Impact
+
+A quality release could rely on a verification performed against superseded critical data.
+
+This invalidates final closure of URS-004 until corrected and requalified.
+
+### Status
+
+`RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
+
+---
+
+## DEV-006 — GMP status change can be recorded without required rationale
+
+**Discovered during:** public-release pressure test  
+**Candidate:** `718ce8e065d78e6df7a8d837cf71c68ad3909590`  
+**GitHub Actions run:** `36895767954`  
+**Affected requirement:** `URS-015`  
+**Affected risks:** `RSK-005`, `RSK-015`
+
+### Observation
+
+A Warehouse Operator could execute a permitted `Quarantine -> On Hold` transition without supplying a reason.
+
+The system recorded the status change with a null reason even though URS-015 requires the required reason or disposition rationale for GMP-relevant material-status changes.
+
+### Classification
+
+**SYSTEM / WORKFLOW DATA-INTEGRITY FAILURE**
+
+### Impact
+
+The resulting history can be attributable in user/time/status terms while still lacking the required reason for the change.
+
+### Status
+
+`RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
+
+---
+
+## DEV-007 — Regulated record retrieval is available without authenticated authority
+
+**Discovered during:** public-release pressure test  
+**Candidate:** `718ce8e065d78e6df7a8d837cf71c68ad3909590`  
+**GitHub Actions run:** `36895767954`  
+**Affected requirements:** `URS-007`, `URS-025`  
+**Affected risks:** `RSK-010`, `RSK-014`
+
+### Observation
+
+The public application method `get_record(record_id)` returned regulated record content without receiving or validating an authenticated session.
+
+The pressure test retrieved the SampleTrack record ID and lot without any authenticated authority.
+
+### Classification
+
+**SYSTEM AUTHENTICATION / AUTHORIZATION BOUNDARY FAILURE**
+
+### Impact
+
+The qualified surrogate's write paths had an authentication boundary, but its public read/retrieval boundary did not consistently enforce the same authority model.
+
+Final validation consideration is blocked until regulated record retrieval paths require authenticated authority and the relevant OQ/retrieval paths are re-executed.
+
+### Status
+
+`RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
+
+---
+
+## DEV-008 — Same-status request bypasses authentication
+
+**Discovered during:** public-release pressure test  
+**Candidate:** `718ce8e065d78e6df7a8d837cf71c68ad3909590`  
+**GitHub Actions run:** `36895767954`  
+**Affected requirement:** `URS-025`  
+**Affected risk:** `RSK-010`
+
+### Observation
+
+`transition_status(None, record_id, "Quarantine")` returned successfully when the record was already in Quarantine.
+
+The function read the record and returned for the no-op case before calling its role/authentication check.
+
+### Classification
+
+**SYSTEM AUTHENTICATION-CHECK ORDERING FAILURE**
+
+### Impact
+
+The same status function that enforces authentication for state-changing paths exposes an unauthenticated execution path for a no-op request.
+
+The observation does not itself alter material state, but it contradicts the requirement that authentication precede access to the GxP function.
+
+### Status
+
+`RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
+
+---
+
+## Public-release pressure-test execution receipt
+
+Candidate: `718ce8e065d78e6df7a8d837cf71c68ad3909590`  
+Tree: `f92e671a17957a262349062d137a533bb47d143c`  
+Run: `36895767954`  
+Job: `110482246469`  
+Environment: Ubuntu 24.04 / x86_64 / Python 3.13.15 / SQLite 3.45.1  
+Compilation: **PASS**  
+Development + adversarial tests: **12 PASS / 4 FAIL / 16 total**  
+Frozen OQ: **NOT ENTERED** because the adversarial gate failed.  
+Artifact: `11179707347`  
+Artifact ZIP SHA-256: `f8606ee2973be47b4c62e786ffc4cf25707eb44c01ed16b11fc9d313ac6d0e44`
+
+Passing pressure controls:
+
+- existing session invalidated after user disable;
+- existing session invalidated after role change.
+
+Failing controls are preserved above as DEV-005 through DEV-008.
+
+Publication remains blocked until a corrected successor passes the pressure suite and the complete frozen OQ.
+
+---
+
+## DEV-009 — Temperature data-limit handling accepts non-finite values and leaks raw conversion errors
+
+**Discovered during:** second public-release pressure sweep  
+**Candidate:** `d1471b983d06c3564531e505dcd75f407993a52c`  
+**Candidate tree:** `78b462ade0c4c3f7cd8499e7586e479638c0debf`  
+**GitHub Actions run:** `36897292169`  
+**Job:** `110487364234`  
+**Affected requirements:** `URS-016`, `URS-017`  
+**Affected risk:** `RSK-006`
+
+### Observation
+
+Requirement-derived data-limit/error-handling tests challenged the temperature path with:
+
+- `NaN`;
+- positive infinity;
+- negative infinity;
+- nonnumeric text.
+
+Observed:
+
+- all three non-finite numeric values were accepted rather than rejected;
+- `NaN` follows comparison semantics that can appear in-range because both limit comparisons are false;
+- nonnumeric text raised an uncontrolled Python `ValueError` rather than a controlled application validation error.
+
+Pressure gate result: existing corrected controls passed, but these new data-limit cases failed before frozen OQ execution.
+
+### Classification
+
+**SYSTEM / INPUT-VALIDATION AND ERROR-HANDLING FAILURE**
+
+### Impact
+
+The excursion decision path can receive values that are not valid finite temperature measurements. In particular, a NaN value can bypass normal lower/upper comparison semantics.
+
+This is material to the High-risk excursion-detection path and must be corrected before public release.
+
+### Required correction
+
+Normalize temperature input through one controlled conversion step and reject nonnumeric or non-finite values with `ValidationError` before range classification or evidence creation.
+
+### Status
+
+`RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
+
+---
+
+## DEV-010 — TC-015 QA audit-review assertion used Warehouse read authority after read-boundary hardening
+
+**Discovered during:** public-release protocol-conformance inspection  
+**Affected test:** `OQ-TC-015`  
+**Affected requirement:** `URS-032`
+
+### Observation
+
+After the DEV-007 read-authorization correction, the automated OQ runner was updated to pass authenticated sessions to record-inspection helpers.
+
+Inspection found that TC-015's step labelled **QA reviewability** still retrieved the audit trail using the Warehouse Operator session.
+
+The audit content itself was exercised, but the exact frozen protocol step requiring a QA Reviewer to retrieve/review the associated audit trail was not demonstrated by that assertion.
+
+### Classification
+
+**QUALIFICATION APPARATUS / PROTOCOL-CONFORMANCE DISCREPANCY**
+
+This is not evidence of a product failure. The system authorization model permits QA audit retrieval; the qualification apparatus must exercise the role specified by the frozen protocol.
+
+### Required correction
+
+Retrieve the audit trail with `QA_REVIEW_01` for the frozen QA-reviewability step and preserve the complete successor run.
+
+### Status
+
+`RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
+
+---
+
+## Second public-release pressure-sweep receipt
+
+Candidate: `d1471b983d06c3564531e505dcd75f407993a52c`  
+Tree: `78b462ade0c4c3f7cd8499e7586e479638c0debf`  
+Run: `36897292169`  
+Job: `110487364234`  
+Environment: Ubuntu 24.04 / x86_64 / Python 3.13.15 / SQLite 3.45.1  
+Compilation: **PASS**  
+Development/adversarial suite: original and first-wave pressure controls passed; non-finite/malformed temperature tests failed.  
+Frozen OQ: **NOT ENTERED** because the pressure gate failed.  
+Artifact: `11179849851`  
+Artifact ZIP SHA-256: `c137814080ba4cfa35169471d4ef19e8ab3cad722d495acfeaf091a52a9e8f9f`
+
+---
+
 ## Final deviation closure summary
 
-| Deviation | Classification | Final status | Closing evidence |
-|---|---|---|---|
-| DEV-001 | System / configuration | RESOLVED | Corrected boundary logic; final full OQ 18/18 PASS |
-| DEV-002 | Protocol / execution apparatus | RESOLVED | Protocol-conformance correction; final full OQ 18/18 PASS |
-| DEV-003 | Evidence / execution apparatus | RESOLVED | Unique execution ID verified; final execution uses `OQ-CI-36813357212` |
-| DEV-004 | Authentication / authorization system boundary | RESOLVED | Forged-session defect confirmed, corrected, 10/10 development tests and final full OQ 18/18 PASS |
+Successor qualification: `OQ-CI-36897449285` on exact application/runner candidate `b528234a0a14db68200c9213516d0ed6a76ca56b`.
 
-No recorded validation deviation remains open for the exact candidate `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`.
+- compilation: **PASS**
+- expanded development/adversarial suite: **18 / 18 PASS**
+- unchanged frozen OQ: **18 / 18 PASS**
+- open validation deviations: **0**
+- no frozen expected result was changed to obtain the pass
 
-This closure does not erase the failed executions or broaden the validation claim beyond the mock application/OQ boundary.
+DEV-005 through DEV-010 are resolved for the successor candidate. Earlier failed runs remain preserved in this log.
 
 ## Pre-execution apparatus incident — workflow checkout
 
@@ -432,3 +669,6 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 0.5 | Active | DEV-004 adversarial test confirmed forged-session authorization bypass; session authority correction applied pending full qualification. |
 | 0.6 | Closed for qualified candidate | DEV-002 and DEV-004 closed by exact-candidate run 36813357212; all four recorded validation deviations resolved with failed evidence preserved. |
 | 0.7 | Closed / supplemented | Added local preservation receipt for original fed1f956 candidate; corroborates DEV-001 defect while preserving unknown historical environment/invocation limits. |
+| 0.8 | Reopened | Public-release pressure test run 36895767954 found four requirement-level gaps; DEV-005 through DEV-008 opened and publication blocked pending successor qualification. |
+| 0.9 | Reopened | Second pressure sweep found temperature data-limit failure (DEV-009) and QA-review apparatus discrepancy (DEV-010); full successor qualification required. |
+| 1.0 | Closed for successor candidate | DEV-005 through DEV-010 resolved; expanded pressure suite 18/18 PASS and unchanged frozen OQ 18/18 PASS. |

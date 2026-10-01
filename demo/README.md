@@ -11,7 +11,7 @@ The implementation uses only Python's standard library and SQLite so the tested 
 ## Development tests
 
 ```bash
-python3 -m unittest -v test_sampletrack.py
+python3 -m unittest discover -v
 ```
 
 ## Local OQ reproduction
@@ -26,4 +26,4 @@ python3 oq_runner.py \
 
 The unit tests are development evidence only. The frozen `STL-OQ-001` protocol remains the qualification authority.
 
-The authoritative final qualification was executed against exact commit `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`; see the repository-level final qualification receipt and VSR for evidence identity and limitations.
+The authoritative final qualification was executed against exact commit `b528234a0a14db68200c9213516d0ed6a76ca56b`; see the public-release pressure qualification receipt and VSR for evidence identity and limitations.
