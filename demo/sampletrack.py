@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import math
 import secrets
 import sqlite3
 import uuid
@@ -407,7 +408,13 @@ class SampleTrackDemo:
             raise ValidationError("unknown product")
         lower = float(product["lower_limit"])
         upper = float(product["upper_limit"])
-        is_excursion = float(temperature) < lower or float(temperature) > upper
+        try:
+            value = float(temperature)
+        except (TypeError, ValueError) as exc:
+            raise ValidationError("temperature must be numeric") from exc
+        if not math.isfinite(value):
+            raise ValidationError("temperature must be a finite numeric value")
+        is_excursion = value < lower or value > upper
         return "Excursion" if is_excursion else "Within range"
 
     def record_temperature(
