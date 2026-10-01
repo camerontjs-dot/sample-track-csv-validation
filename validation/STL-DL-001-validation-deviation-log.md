@@ -6,7 +6,7 @@
 |---|---|
 | Document ID | STL-DL-001 |
 | System | SampleTrack Lite demonstration surrogate |
-| Status | Closed for qualified mock candidate `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e` |
+| Status | REOPENED — public-release pressure-test findings require correction and successor qualification |
 | Approval status | Mock approval: Not executed |
 
 ## DEV-001 — Upper temperature boundary classified as excursion
@@ -398,6 +398,152 @@ Artifact digest: `sha256:8a2b32fe35e5cd39cc7375fa21926630ae62cafa23c0096b1573180
 
 The OQ-TC-009 evidence object was confirmed to carry `execution_id = OQ-CI-36812736825`.
 
+## DEV-005 — Critical-data correction does not invalidate prior QA verification
+
+**Discovered during:** public-release pressure test  
+**Candidate:** `718ce8e065d78e6df7a8d837cf71c68ad3909590`  
+**Candidate tree:** `f92e671a17957a262349062d137a533bb47d143c`  
+**GitHub Actions run:** `36895767954`  
+**Job:** `110482246469`  
+**Affected requirement:** `URS-004`  
+**Affected risk:** `RSK-003`
+
+### Observation
+
+A receiving record was successfully QA-verified for the current product, lot and storage condition. The lot was then corrected. The prior verification remained set and the system permitted release without re-verification of the corrected critical data.
+
+The adversarial test expected release to remain blocked until the corrected critical value was independently verified.
+
+### Classification
+
+**SYSTEM / WORKFLOW STATE INVALIDATION FAILURE**
+
+The application treats critical-data verification as a one-time flag rather than evidence bound to the current critical values.
+
+### Impact
+
+A quality release could rely on a verification performed against superseded critical data.
+
+This invalidates final closure of URS-004 until corrected and requalified.
+
+### Status
+
+`OPEN — CORRECTION / RETEST REQUIRED`
+
+---
+
+## DEV-006 — GMP status change can be recorded without required rationale
+
+**Discovered during:** public-release pressure test  
+**Candidate:** `718ce8e065d78e6df7a8d837cf71c68ad3909590`  
+**GitHub Actions run:** `36895767954`  
+**Affected requirement:** `URS-015`  
+**Affected risks:** `RSK-005`, `RSK-015`
+
+### Observation
+
+A Warehouse Operator could execute a permitted `Quarantine -> On Hold` transition without supplying a reason.
+
+The system recorded the status change with a null reason even though URS-015 requires the required reason or disposition rationale for GMP-relevant material-status changes.
+
+### Classification
+
+**SYSTEM / WORKFLOW DATA-INTEGRITY FAILURE**
+
+### Impact
+
+The resulting history can be attributable in user/time/status terms while still lacking the required reason for the change.
+
+### Status
+
+`OPEN — CORRECTION / RETEST REQUIRED`
+
+---
+
+## DEV-007 — Regulated record retrieval is available without authenticated authority
+
+**Discovered during:** public-release pressure test  
+**Candidate:** `718ce8e065d78e6df7a8d837cf71c68ad3909590`  
+**GitHub Actions run:** `36895767954`  
+**Affected requirements:** `URS-007`, `URS-025`  
+**Affected risks:** `RSK-010`, `RSK-014`
+
+### Observation
+
+The public application method `get_record(record_id)` returned regulated record content without receiving or validating an authenticated session.
+
+The pressure test retrieved the SampleTrack record ID and lot without any authenticated authority.
+
+### Classification
+
+**SYSTEM AUTHENTICATION / AUTHORIZATION BOUNDARY FAILURE**
+
+### Impact
+
+The qualified surrogate's write paths had an authentication boundary, but its public read/retrieval boundary did not consistently enforce the same authority model.
+
+Final validation consideration is blocked until regulated record retrieval paths require authenticated authority and the relevant OQ/retrieval paths are re-executed.
+
+### Status
+
+`OPEN — CORRECTION / RETEST REQUIRED`
+
+---
+
+## DEV-008 — Same-status request bypasses authentication
+
+**Discovered during:** public-release pressure test  
+**Candidate:** `718ce8e065d78e6df7a8d837cf71c68ad3909590`  
+**GitHub Actions run:** `36895767954`  
+**Affected requirement:** `URS-025`  
+**Affected risk:** `RSK-010`
+
+### Observation
+
+`transition_status(None, record_id, "Quarantine")` returned successfully when the record was already in Quarantine.
+
+The function read the record and returned for the no-op case before calling its role/authentication check.
+
+### Classification
+
+**SYSTEM AUTHENTICATION-CHECK ORDERING FAILURE**
+
+### Impact
+
+The same status function that enforces authentication for state-changing paths exposes an unauthenticated execution path for a no-op request.
+
+The observation does not itself alter material state, but it contradicts the requirement that authentication precede access to the GxP function.
+
+### Status
+
+`OPEN — CORRECTION / RETEST REQUIRED`
+
+---
+
+## Public-release pressure-test execution receipt
+
+Candidate: `718ce8e065d78e6df7a8d837cf71c68ad3909590`  
+Tree: `f92e671a17957a262349062d137a533bb47d143c`  
+Run: `36895767954`  
+Job: `110482246469`  
+Environment: Ubuntu 24.04 / x86_64 / Python 3.13.15 / SQLite 3.45.1  
+Compilation: **PASS**  
+Development + adversarial tests: **12 PASS / 4 FAIL / 16 total**  
+Frozen OQ: **NOT ENTERED** because the adversarial gate failed.  
+Artifact: `11179707347`  
+Artifact ZIP SHA-256: `f8606ee2973be47b4c62e786ffc4cf25707eb44c01ed16b11fc9d313ac6d0e44`
+
+Passing pressure controls:
+
+- existing session invalidated after user disable;
+- existing session invalidated after role change.
+
+Failing controls are preserved above as DEV-005 through DEV-008.
+
+Publication remains blocked until a corrected successor passes the pressure suite and the complete frozen OQ.
+
+---
+
 ## Final deviation closure summary
 
 | Deviation | Classification | Final status | Closing evidence |
@@ -432,3 +578,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 0.5 | Active | DEV-004 adversarial test confirmed forged-session authorization bypass; session authority correction applied pending full qualification. |
 | 0.6 | Closed for qualified candidate | DEV-002 and DEV-004 closed by exact-candidate run 36813357212; all four recorded validation deviations resolved with failed evidence preserved. |
 | 0.7 | Closed / supplemented | Added local preservation receipt for original fed1f956 candidate; corroborates DEV-001 defect while preserving unknown historical environment/invocation limits. |
+| 0.8 | Reopened | Public-release pressure test run 36895767954 found four requirement-level gaps; DEV-005 through DEV-008 opened and publication blocked pending successor qualification. |
