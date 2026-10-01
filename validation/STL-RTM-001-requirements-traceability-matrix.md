@@ -55,7 +55,7 @@ The identifiers below are planning anchors only. The detailed test scripts and e
 | URS-004 | Accuracy check for critical manual receiving data | RSK-003 | MEDIUM | OQ-TC-003 | NOT EXECUTED | TBD | TBD | OPEN |
 | URS-005 | Corrections preserve prior GxP information | RSK-012 | HIGH | OQ-TC-004, OQ-TC-015 | NOT EXECUTED | TBD | TBD | OPEN |
 | URS-006 | Standard users cannot permanently delete completed GxP record | RSK-014 | HIGH | OQ-TC-004 | NOT EXECUTED | TBD | TBD | OPEN |
-| URS-007 | Retrieve by ID/lot and generate accurate complete human-readable copy | RSK-014 | HIGH | OQ-TC-005, OQ-TC-018 | NOT EXECUTED | TBD | TBD | OPEN |
+| URS-007 | Retrieve by ID/lot and generate accurate complete human-readable and electronic copies | RSK-014 | HIGH | OQ-TC-005, OQ-TC-018 | NOT EXECUTED | TBD | TBD | OPEN |
 | URS-008 | Retain relationship among record and associated histories | RSK-014, RSK-012, RSK-013 | HIGH | OQ-TC-005, OQ-TC-018 | NOT EXECUTED | TBD | TBD | OPEN |
 | URS-009 | Required storage condition | RSK-004 | HIGH | OQ-TC-006 | NOT EXECUTED | TBD | TBD | OPEN |
 | URS-010 | Only compatible configured storage locations | RSK-004 | HIGH | OQ-TC-006 | NOT EXECUTED | TBD | TBD | OPEN |
@@ -137,3 +137,4 @@ A green aggregate test count is not a substitute for those paths.
 | Revision | Status | Description |
 |---|---|---|
 | 0.1 | Draft / pre-execution | Initial URS → risk → planned OQ traceability skeleton. |
+| 0.2 | Draft / pre-execution | Pre-OQ source review: URS-007/RSK-014 traceability aligned to human-readable plus electronic record copies. |
