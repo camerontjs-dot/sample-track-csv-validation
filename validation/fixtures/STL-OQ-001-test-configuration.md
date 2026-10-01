@@ -204,7 +204,7 @@ For this exercise, a QA electronic signature:
 
 - is executed only by QA_REVIEW_01 for defined QA actions;
 - is bound to the currently authenticated unique QA user identity;
-- requires re-authentication using the configured non-biometric identification/password control;
+- requires entry of QA_REVIEW_01's configured identification code and password for each signing action;
 - records the signer's displayed name;
 - records date/time;
 - records the meaning of the signing action;
@@ -253,3 +253,4 @@ When those conditions are not met, create a dedicated test record.
 | Revision | Status | Description |
 |---|---|---|
 | 0.1 | Draft / pre-execution | Initial frozen candidate configuration and test-data set. |
+| 0.2 | Draft / pre-execution | Pre-OQ source review: made the non-biometric signature credential rule explicit for every signing action. |
