@@ -371,8 +371,7 @@ class SampleTrackDemo:
             raise ValidationError("unknown product")
         lower = float(product["lower_limit"])
         upper = float(product["upper_limit"])
-        # Seeded training defect in initial candidate: upper bound treated as exclusive.
-        is_excursion = float(temperature) < lower or float(temperature) >= upper
+        is_excursion = float(temperature) < lower or float(temperature) > upper
         return "Excursion" if is_excursion else "Within range"
 
     def record_temperature(
