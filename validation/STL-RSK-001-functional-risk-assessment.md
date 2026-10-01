@@ -219,7 +219,7 @@ V3 does not mean "more screenshots." It means stronger opportunities for the sys
 | RSK-011 | Revoked access remains usable or access-authorisation changes are not reconstructable. | URS-027, URS-028 | 4 | 2 | 4 | 32 | HIGH | Disable an account and verify rejection; inspect creation/change/cancellation records for access authorisation. | V3 | OPEN — pending verification |
 | RSK-012 | GMP-relevant audit trail is absent, incomplete, alterable by ordinary users, or not reviewable, hiding changes to critical records. | URS-005, URS-029–URS-032 | 4 | 3 | 4 | 48 | HIGH | Exercise representative create/change/status/disposition/signature events; verify prior/new values, user/time/reason, immutability, retrieval, and intelligibility. | V3 | OPEN — pending verification |
 | RSK-013 | Electronic signature lacks required identity/meaning/date-time, is detachable from the record, or can be applied through another user's credentials. | URS-033–URS-035 | 4 | 2 | 4 | 32 | HIGH | Verify manifestation, permanent record linkage, human-readable output, unique identity, and negative authentication/signature attempt. | V3 | OPEN — pending verification |
-| RSK-014 | Required GxP record can be permanently deleted, cannot be reliably retrieved, loses related history, or produces an inaccurate/incomplete human-readable copy. | URS-006–URS-008 | 4 | 2 | 4 | 32 | HIGH | Attempt ordinary-user deletion; retrieve by key identifiers; compare human-readable copy with stored record/history relationships. | V3 | OPEN — pending verification |
+| RSK-014 | Required GxP record can be permanently deleted, cannot be reliably retrieved, loses related history, or produces an inaccurate/incomplete human-readable or electronic copy. | URS-006–URS-008 | 4 | 2 | 4 | 32 | HIGH | Attempt ordinary-user deletion; retrieve by key identifiers; compare human-readable and electronic copies with stored record/history relationships. | V3 | OPEN — pending verification |
 | RSK-015 | System records the wrong user or time for a GxP action, weakening attribution and reconstruction even when the business action itself succeeds. | URS-003, URS-015, URS-022, URS-030 | 3 | 2 | 4 | 24 | MEDIUM | Compare acting user/time with receiving, status, custody, and audit events across representative workflows. | V2 | OPEN — pending verification |
 
 ### 9.1 Rating rationale
@@ -352,3 +352,4 @@ Primary sources used:
 | Revision | Status | Description |
 |---|---|---|
 | 0.1 | Draft | Initial risk method, 15 functional failure modes, and verification-depth decisions. |
+| 0.2 | Draft | Pre-OQ source review: RSK-014 aligned to both human-readable and electronic record-copy requirements. |
