@@ -61,7 +61,7 @@ The 21 CFR Part 11 references are the conditional exercise overlay defined in ST
 | URS-004 | For critical manually entered receiving data identified by risk assessment, the system shall require an independent verification step or a validated electronic accuracy check before the record can enter a Released state. | Reduces risk from erroneous critical manual data. | HC-0050 4.6 | OQ / configuration review |
 | URS-005 | The system shall preserve previously recorded GxP information when a permitted correction is made rather than overwriting the prior value without history. | Protects data integrity and reconstructability. | HC-0050 4.9; P11 11.10(e) overlay | OQ |
 | URS-006 | The system shall prevent standard Warehouse Operator and QA Reviewer users from permanently deleting a completed GxP receiving/inventory record. | Protects required records from loss. | HC-0050 4.7/4.9; P11 11.10(c) overlay | OQ |
-| URS-007 | Authorized users shall be able to retrieve a receiving/inventory record by its unique SampleTrack record ID and by lot/batch identifier and generate an accurate, complete human-readable copy of the retrieved regulated record. | Supports investigation, recall, inspection-like review, and accurate record copying. | HC-0001; HC-0050 4.7/4.8; P11 11.10(b) overlay | OQ |
+| URS-007 | Authorized users shall be able to retrieve a receiving/inventory record by its unique SampleTrack record ID and by lot/batch identifier and generate accurate, complete copies of the retrieved regulated record in both human-readable and electronic form. | Supports investigation, recall, inspection-like review, and accurate record copying. | HC-0001; HC-0050 4.7/4.8; P11 11.10(b) overlay | OQ |
 | URS-008 | The system shall retain the relationship between the current record state and its associated receiving, status, custody, excursion, disposition, audit-trail, and signature information. | Prevents fragmented evidence and supports inspection/reconstruction. | HC-0001; HC-0050 4.7/4.9 | OQ |
 
 ## 5. Storage location and material status
@@ -98,7 +98,7 @@ The 21 CFR Part 11 references are the conditional exercise overlay defined in ST
 
 | ID | User requirement | GxP rationale | Source mapping | Planned verification |
 |---|---|---|---|---|
-| URS-024 | The system shall assign each user a unique user identity and shall not permit a single active user identity to be shared by multiple named users. | Supports attributable actions and signature identity. | HC-0050 4.12; P11 11.100/11.300 overlay | OQ / configuration review |
+| URS-024 | The system shall assign each user a unique user identity and shall not permit a single active user identity to be shared by multiple named users. | Supports attributable actions and signature identity. | HC-0050 4.12; P11 11.100(a), 11.300(a) overlay | OQ / configuration review |
 | URS-025 | The system shall require successful authentication before a user can access GxP functions. | Restricts system access to authorized users. | HC-0050 4.12(1); P11 11.10(d) overlay | OQ |
 | URS-026 | The system shall restrict functions and data-changing actions according to the user's configured role and authority. | Prevents unauthorized operations. | HC-0050 4.12; P11 11.10(g) overlay | OQ |
 | URS-027 | A disabled or cancelled user account shall be prevented from authenticating to the system. | Ensures revoked access is effective. | HC-0050 4.12(3); P11 11.300 overlay | OQ |
@@ -119,7 +119,7 @@ The 21 CFR Part 11 references are the conditional exercise overlay defined in ST
 |---|---|---|---|---|
 | URS-033 | A required electronic signature shall display or retain the signer's name, date/time of signing, and meaning of the signature such as review or approval. | Establishes who signed, when, and for what purpose. | HC-0050 4.14; P11 11.50 overlay | OQ |
 | URS-034 | An electronic signature shall remain permanently linked to the specific electronic record/action it signs and shall be included with the signature information in human-readable record output. | Prevents detached or misleading signatures. | HC-0050 4.14; P11 11.50/11.70 overlay | OQ |
-| URS-035 | Each electronic signature shall be associated with one unique user identity and, for this non-biometric exercise, the signing action shall require the configured identification code and password controls so that another user cannot ordinarily apply that signature. | Supports signature authenticity and non-repudiation controls. | P11 11.100/11.200/11.300 overlay; HC-0050 4.12/4.14 | OQ negative/authentication testing |
+| URS-035 | Each electronic signature shall be associated with one unique user identity and, for this non-biometric exercise, each signing action shall require entry of that user's configured identification code and password so that another user cannot ordinarily apply that signature. | Supports signature authenticity and non-repudiation controls. | P11 11.100(a), 11.200(a)(1), 11.300(a) overlay; HC-0050 4.12/4.14 | OQ negative/authentication testing |
 
 ## 11. Record-copy and retention expectations
 
@@ -185,3 +185,4 @@ This URS intentionally does not predeclare risk rankings before STL-RSK-001 is a
 | Revision | Status | Description |
 |---|---|---|
 | 0.1 | Draft | Initial set of 35 testable user requirements. |
+| 0.2 | Draft | Pre-OQ source review: expanded URS-007 to electronic plus human-readable copies and narrowed Part 11 signature/password mappings to tested subsections. |
