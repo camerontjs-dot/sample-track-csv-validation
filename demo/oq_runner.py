@@ -393,10 +393,11 @@ class OQRunner:
             corr=[x for x in audit if x["action"]=="record_corrected"][-1]; ok=corr["actor"]=="WH_OP_01" and corr["at"] and corr["old_value"]=="LOT-OQ-001" and corr["new_value"]=="LOT-OQ-001A" and corr["reason"]=="transcription correction"
             st.append(self.s("change content","User/time/prior/new/reason",json.dumps(corr,sort_keys=True),ok))
             ok,a=self.rejected(lambda: app.attempt_modify_audit(wh,audit[0]["id"]),(AuthorizationError,)); st.append(self.s("audit modification","Denied",a,ok))
-            st.append(self.s("QA reviewability","Chronological intelligible trail",f"{len(audit)} events",len(audit)>=6 and all(x["at"] and x["actor"] and x["action"] for x in audit)))
-            sequence_ok=audit[0]["action"]=="record_created" and corr in audit and corr["old_value"]=="LOT-OQ-001"
-            st.append(self.s("known-action comparison","Sequence attributable and prior value not obscured",str([x["action"] for x in audit]),sequence_ok))
-            ev.append(self.evidence(tid,"audit-trail",{"record":app.get_record(rid, wh),"audit":audit,"signatures":app.signature_events(rid, wh),"excursions":app.excursion_events(rid, wh)})); self.finish(tid,title,st,ev)
+            qa_audit=app.audit_events(rid, qa)
+            st.append(self.s("QA reviewability","QA Reviewer can retrieve a chronological intelligible trail",f"{len(qa_audit)} events",len(qa_audit)>=6 and all(x["at"] and x["actor"] and x["action"] for x in qa_audit)))
+            sequence_ok=qa_audit[0]["action"]=="record_created" and any(x["id"]==corr["id"] for x in qa_audit) and corr["old_value"]=="LOT-OQ-001"
+            st.append(self.s("known-action comparison","Sequence attributable and prior value not obscured",str([x["action"] for x in qa_audit]),sequence_ok))
+            ev.append(self.evidence(tid,"audit-trail",{"record":app.get_record(rid, qa),"audit":qa_audit,"signatures":app.signature_events(rid, qa),"excursions":app.excursion_events(rid, qa)})); self.finish(tid,title,st,ev)
         finally:
             app.close(); tmp.cleanup()
     def tc016(self):
