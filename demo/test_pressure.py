@@ -105,6 +105,34 @@ class PublicPressureTests(unittest.TestCase):
         with self.assertRaises(AuthenticationError):
             self.app.excursion_events(rid)
 
+    def test_non_finite_temperature_is_rejected(self):
+        """GUI-0050 data-limit/error handling: non-finite temperature is not a valid measurement."""
+        rid = self.record("LOT-PRESSURE-TEMP")
+        for value in (float("nan"), float("inf"), float("-inf")):
+            with self.subTest(value=value):
+                with self.assertRaises(ValidationError):
+                    self.app.record_temperature(
+                        self.wh,
+                        rid,
+                        value,
+                        "2026-10-01T12:00:00Z",
+                        "pressure-test logger",
+                        "pressure test",
+                    )
+
+    def test_nonnumeric_temperature_is_controlled_validation_error(self):
+        """Malformed temperature input should fail as a controlled validation error."""
+        rid = self.record("LOT-PRESSURE-TEMP-TEXT")
+        with self.assertRaises(ValidationError):
+            self.app.record_temperature(
+                self.wh,
+                rid,
+                "not-a-temperature",
+                "2026-10-01T12:00:00Z",
+                "pressure-test logger",
+                "pressure test",
+            )
+
     def test_disabled_user_existing_session_is_invalidated(self):
         rid = self.record("LOT-PRESSURE-SESSION")
         self.app.disable_user(self.admin, "WH_OP_01")
