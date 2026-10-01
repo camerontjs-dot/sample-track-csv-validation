@@ -41,7 +41,7 @@ class SampleTrackDemoTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             self.app.assign_location(self.wh, rid, "CRT-A1")
         self.app.assign_location(self.wh, rid, "REFR-A1")
-        self.assertEqual(self.app.get_record(rid)["location"], "REFR-A1")
+        self.assertEqual(self.app.get_record(rid, self.wh)["location"], "REFR-A1")
 
     def test_warehouse_cannot_release(self):
         rid = self.record()
@@ -53,17 +53,17 @@ class SampleTrackDemoTests(unittest.TestCase):
         rid = self.record()
         result = self.app.record_temperature(self.wh, rid, 8.1, "2026-09-30T12:00:00Z", "mock logger", "10 min")
         self.assertEqual(result["classification"], "Excursion")
-        self.assertEqual(self.app.get_record(rid)["status"], "On Hold")
+        self.assertEqual(self.app.get_record(rid, self.wh)["status"], "On Hold")
 
     def test_inclusive_upper_temperature_boundary_is_within_range(self):
         rid = self.record()
         result = self.app.record_temperature(self.wh, rid, 8.0, "2026-09-30T12:00:00Z", "mock logger", "10 min")
         self.assertEqual(result["classification"], "Within range")
-        self.assertEqual(self.app.get_record(rid)["status"], "Quarantine")
+        self.assertEqual(self.app.get_record(rid, self.wh)["status"], "Quarantine")
 
     def test_audit_cannot_be_modified_by_ordinary_user(self):
         rid = self.record()
-        event_id = self.app.audit_events(rid)[0]["id"]
+        event_id = self.app.audit_events(rid, self.qa)[0]["id"]
         with self.assertRaises(AuthorizationError):
             self.app.attempt_modify_audit(self.wh, event_id)
 
@@ -73,8 +73,8 @@ class SampleTrackDemoTests(unittest.TestCase):
         with self.assertRaises(AuthenticationError):
             self.app.transition_status(self.qa, rid, "Released", "QA review complete", "QA_REVIEW_01", "wrong")
         self.app.transition_status(self.qa, rid, "Released", "QA review complete", "QA_REVIEW_01", self.credentials["QA_REVIEW_01"])
-        self.assertEqual(self.app.get_record(rid)["status"], "Released")
-        self.assertEqual(len(self.app.signature_events(rid)), 1)
+        self.assertEqual(self.app.get_record(rid, self.wh)["status"], "Released")
+        self.assertEqual(len(self.app.signature_events(rid, self.qa)), 1)
 
 
     def test_unauthenticated_gxp_write_is_controlled_denial(self):
