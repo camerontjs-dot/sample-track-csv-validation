@@ -6,7 +6,7 @@
 |---|---|
 | Document ID | STL-DL-001 |
 | System | SampleTrack Lite demonstration surrogate |
-| Status | REOPENED — public-release pressure-test findings require correction and successor qualification |
+| Status | Closed for successor candidate `b528234a0a14db68200c9213516d0ed6a76ca56b` |
 | Approval status | Mock approval: Not executed |
 
 ## DEV-001 — Upper temperature boundary classified as excursion
@@ -428,7 +428,7 @@ This invalidates final closure of URS-004 until corrected and requalified.
 
 ### Status
 
-`OPEN — CORRECTION / RETEST REQUIRED`
+`RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
 
 ---
 
@@ -456,7 +456,7 @@ The resulting history can be attributable in user/time/status terms while still 
 
 ### Status
 
-`OPEN — CORRECTION / RETEST REQUIRED`
+`RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
 
 ---
 
@@ -486,7 +486,7 @@ Final validation consideration is blocked until regulated record retrieval paths
 
 ### Status
 
-`OPEN — CORRECTION / RETEST REQUIRED`
+`RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
 
 ---
 
@@ -516,7 +516,7 @@ The observation does not itself alter material state, but it contradicts the req
 
 ### Status
 
-`OPEN — CORRECTION / RETEST REQUIRED`
+`RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
 
 ---
 
@@ -587,7 +587,7 @@ Normalize temperature input through one controlled conversion step and reject no
 
 ### Status
 
-`OPEN — CORRECTION / FULL RETEST REQUIRED`
+`RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
 
 ---
 
@@ -617,7 +617,7 @@ Retrieve the audit trail with `QA_REVIEW_01` for the frozen QA-reviewability ste
 
 ### Status
 
-`OPEN — APPARATUS CORRECTION / FULL RETEST REQUIRED`
+`RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
 
 ---
 
@@ -638,16 +638,15 @@ Artifact ZIP SHA-256: `c137814080ba4cfa35169471d4ef19e8ab3cad722d495acfeaf091a52
 
 ## Final deviation closure summary
 
-| Deviation | Classification | Final status | Closing evidence |
-|---|---|---|---|
-| DEV-001 | System / configuration | RESOLVED | Corrected boundary logic; final full OQ 18/18 PASS |
-| DEV-002 | Protocol / execution apparatus | RESOLVED | Protocol-conformance correction; final full OQ 18/18 PASS |
-| DEV-003 | Evidence / execution apparatus | RESOLVED | Unique execution ID verified; final execution uses `OQ-CI-36813357212` |
-| DEV-004 | Authentication / authorization system boundary | RESOLVED | Forged-session defect confirmed, corrected, 10/10 development tests and final full OQ 18/18 PASS |
+Successor qualification: `OQ-CI-36897449285` on exact application/runner candidate `b528234a0a14db68200c9213516d0ed6a76ca56b`.
 
-No recorded validation deviation remains open for the exact candidate `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`.
+- compilation: **PASS**
+- expanded development/adversarial suite: **18 / 18 PASS**
+- unchanged frozen OQ: **18 / 18 PASS**
+- open validation deviations: **0**
+- no frozen expected result was changed to obtain the pass
 
-This closure does not erase the failed executions or broaden the validation claim beyond the mock application/OQ boundary.
+DEV-005 through DEV-010 are resolved for the successor candidate. Earlier failed runs remain preserved in this log.
 
 ## Pre-execution apparatus incident — workflow checkout
 
@@ -672,3 +671,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 0.7 | Closed / supplemented | Added local preservation receipt for original fed1f956 candidate; corroborates DEV-001 defect while preserving unknown historical environment/invocation limits. |
 | 0.8 | Reopened | Public-release pressure test run 36895767954 found four requirement-level gaps; DEV-005 through DEV-008 opened and publication blocked pending successor qualification. |
 | 0.9 | Reopened | Second pressure sweep found temperature data-limit failure (DEV-009) and QA-review apparatus discrepancy (DEV-010); full successor qualification required. |
+| 1.0 | Closed for successor candidate | DEV-005 through DEV-010 resolved; expanded pressure suite 18/18 PASS and unchanged frozen OQ 18/18 PASS. |
