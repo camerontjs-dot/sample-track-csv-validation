@@ -55,6 +55,12 @@ class SampleTrackDemoTests(unittest.TestCase):
         self.assertEqual(result["classification"], "Excursion")
         self.assertEqual(self.app.get_record(rid)["status"], "On Hold")
 
+    def test_inclusive_upper_temperature_boundary_is_within_range(self):
+        rid = self.record()
+        result = self.app.record_temperature(self.wh, rid, 8.0, "2026-09-30T12:00:00Z", "mock logger", "10 min")
+        self.assertEqual(result["classification"], "Within range")
+        self.assertEqual(self.app.get_record(rid)["status"], "Quarantine")
+
     def test_audit_cannot_be_modified_by_ordinary_user(self):
         rid = self.record()
         event_id = self.app.audit_events(rid)[0]["id"]
