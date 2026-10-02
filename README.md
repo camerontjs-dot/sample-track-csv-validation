@@ -2,6 +2,47 @@
 
 > **MOCK / FICTIONAL - DEMONSTRATION ONLY - NOT FOR GxP USE**
 
+## One-page summary
+
+I built this to show how I would validate a GxP computerized system end to end, at a size one person can actually check. The system is fictional. The execution evidence is real: every pass and every failure below came from a GitHub Actions run against an exact commit.
+
+The hard part was not getting to 18 / 18. It was keeping the earlier failures, like the 8.0 °C boundary defect (DEV-001) and the forgeable session (DEV-004), on the record after they were fixed.
+
+### What I built
+
+- A mock validation package for SampleTrack Lite, a fictional sample and inventory tracker in a pharmaceutical warehouse scenario: intended use (STL-SD-001), regulatory applicability (STL-RA-001), validation plan (STL-VP-001), 35 user requirements (STL-URS-001), 15 functional risks (STL-RSK-001), an 18-case OQ protocol (STL-OQ-001), a traceability matrix (STL-RTM-001), a deviation log (STL-DL-001), and a summary report (STL-VSR-001).
+- A small Python and SQLite demonstration surrogate (`demo/sampletrack.py`), an automated OQ runner (`demo/oq_runner.py`), and 20 development and adversarial tests.
+- A CI workflow (`.github/workflows/sampletrack-oq.yml`) that stops unless six frozen validation artifacts (five documents and the test configuration) still match their pinned Git blob hashes, then compiles, runs the tests, runs the frozen OQ once, and keeps the evidence with SHA-256 digests.
+
+### What I own
+
+This is a single-owner exercise. Every commit in the history is under my GitHub account, and the scenario, requirement, risk, freeze, and deviation decisions recorded here are mine. Because I also built the surrogate and the runner, the OQ is reproducible behavioral evidence, not independent validation. The VSR says the same thing in section 7.
+
+### What it shows
+
+- Writing testable requirements and tracing them both ways: 35 URS to 15 risks to 18 OQ cases.
+- FMEA-style risk scoring with explicit severity overrides, and keeping the design-time scores unchanged after testing instead of lowering them after a pass.
+- Freezing the protocol and expected results before execution, then fixing the system or the test apparatus, not the expected results, when a run failed.
+- Deviation handling: each finding classified, corrected, and retested or reconciled, with the failed runs preserved.
+- Mapping controls to Health Canada GUI-0050 and GUI-0069, with selected 21 CFR Part 11 controls as a conditional overlay only.
+- Using CI as the qualification apparatus: hash-pinned inputs, exact-commit checkout, and an evidence manifest per run.
+
+### Headline numbers
+
+Taken from STL-RTM-001 (section 4) and STL-VSR-001 (sections 9, 11 and 12):
+
+- URS traceability: 35 / 35 VERIFIED - PASS
+- functional risks: 15 (9 High, 4 Medium, 2 Low), each with at least one executed OQ path
+- frozen OQ: 18 / 18 PASS on candidate `c3463a18`, execution `OQ-CI-36947930824`
+- development and adversarial tests: 20 / 20 PASS
+- recorded validation deviations: 12 / 12 resolved, 0 open
+
+### Limits
+
+Everything here is mock. There is no production IQ or PQ, no supplier qualification, no real QA approval, and no claim of regulatory compliance. The approval blocks in the package are deliberately unsigned. The final disposition is ACCEPTED FOR BOUNDED MOCK DEMONSTRATION USE and NOT APPROVED FOR GxP PRODUCTION USE.
+
+## Repository overview
+
 This repository is a bounded computerized system validation (CSV) exercise for **SampleTrack Lite**, a fictional sample and inventory tracking system in a pharmaceutical warehouse/distribution scenario.
 
 It follows one validation thread from intended use through requirements, risk, frozen qualification, observed failures, controlled correction, traceability closure, and a final bounded decision.
