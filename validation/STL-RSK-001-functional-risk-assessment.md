@@ -7,9 +7,9 @@
 | Document ID | STL-RSK-001 |
 | Title | SampleTrack Lite Functional Risk Assessment |
 | System | SampleTrack Lite |
-| Document status | Draft |
+| Document status | Approved (mock) |
 | Risk method | FMEA-style qualitative functional risk assessment |
-| Approval status | Mock approval: Not executed |
+| Approval status | Mock approval blocks present, `UNSIGNED – MOCK` (section 18); no real approval executed |
 
 ## 1. Purpose
 
@@ -204,22 +204,22 @@ V3 does not mean "more screenshots." It means stronger opportunities for the sys
 
 ## 9. Functional risk register
 
-| Risk ID | Failure mode / harmful condition | Principal URS | S | P | D | RPN | Class | Planned control / verification focus | Depth | Residual status |
+| Risk ID | Failure mode / harmful condition | Linked URS | S | P | D | RPN | Class | Planned control / verification focus | Depth | Residual status |
 |---|---|---|---:|---:|---:|---:|---|---|---|---|
 | RSK-001 | Duplicate or non-persistent SampleTrack record identity causes ambiguity between otherwise controlled records. | URS-001 | 3 | 1 | 2 | 6 | LOW | Verify unique/persistent identifier behavior and attempt a duplicate/identity-conflict condition where practical. | V1 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
 | RSK-002 | A receiving record can be completed without required GxP fields, leaving material identity/storage information incomplete. | URS-002 | 4 | 2 | 2 | 16 | MEDIUM | Verify required fields, rejected incomplete completion, and retained completed record content. | V2 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
 | RSK-003 | Critical manually entered receiving data is wrong and can support later release without the defined independent/electronic accuracy check. | URS-004 | 4 | 3 | 3 | 36 | MEDIUM | Exercise the configured accuracy-check gate with correct and deliberately discrepant critical data. | V2 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
 | RSK-004 | Material can be assigned an incorrect required storage condition or an incompatible storage location, creating risk of environmental exposure outside approved conditions. | URS-009, URS-010 | 5 | 2 | 3 | 30 | HIGH | Challenge compatible/incompatible locations and storage conditions; verify rejection and retained state. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
-| RSK-005 | Invalid workflow transition or unauthorized disposition can place unreviewed/held material into Released status or otherwise bypass required QA control. | URS-011–URS-015 | 5 | 2 | 4 | 40 | HIGH | Challenge initial state, allowed/prohibited transitions, Warehouse Operator vs QA authority, rationale, and status history. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
+| RSK-005 | Invalid workflow transition or unauthorized disposition can place unreviewed/held material into Released status or otherwise bypass required QA control. | URS-011, URS-012, URS-013, URS-014, URS-015 | 5 | 2 | 4 | 40 | HIGH | Challenge initial state, allowed/prohibited transitions, Warehouse Operator vs QA authority, rationale, and status history. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
 | RSK-006 | Temperature-excursion logic fails at or around configured limits, allowing an out-of-range condition to appear acceptable. | URS-016, URS-017 | 5 | 3 | 5 | 75 | HIGH | Boundary-value challenge immediately inside, at, and outside both limits; preserve exact input/output evidence. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
 | RSK-007 | Excursion record is incomplete or linked to the wrong material, preventing reliable scientific/quality assessment. | URS-018 | 4 | 3 | 3 | 36 | MEDIUM | Verify required excursion fields, affected-record linkage, rejected incomplete data, and retrieval. | V2 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
-| RSK-008 | Material with an unresolved excursion can leave On Hold or be dispositioned without required QA authority/rationale. | URS-019, URS-020 | 5 | 2 | 4 | 40 | HIGH | Challenge hold enforcement, unauthorized release attempt, QA disposition, rationale, history, and end-to-end state. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
-| RSK-009 | Custody/history events are lost, overwritten, or associated with the wrong record, reducing handling traceability. | URS-021–URS-023 | 3 | 2 | 3 | 18 | LOW | Record successive transfers and verify all prior events remain linked and intelligible. | V1 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
-| RSK-010 | Authentication, unique-user, or role controls fail, allowing unauthorized access or data-changing actions. | URS-024–URS-026 | 4 | 3 | 4 | 48 | HIGH | Valid/invalid authentication, shared-identity prohibition as configured, cross-role negative tests, and attempted unauthorized changes. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
+| RSK-008 | Material with an unresolved excursion can leave On Hold or be dispositioned without required QA authority/rationale. | URS-014, URS-019, URS-020 | 5 | 2 | 4 | 40 | HIGH | Challenge hold enforcement, unauthorized release attempt, QA disposition, rationale, history, and end-to-end state. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
+| RSK-009 | Custody/history events are lost, overwritten, or associated with the wrong record, reducing handling traceability. | URS-021, URS-022, URS-023 | 3 | 2 | 3 | 18 | LOW | Record successive transfers and verify all prior events remain linked and intelligible. | V1 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
+| RSK-010 | Authentication, unique-user, or role controls fail, allowing unauthorized access or data-changing actions. | URS-024, URS-025, URS-026, URS-035 | 4 | 3 | 4 | 48 | HIGH | Valid/invalid authentication, shared-identity prohibition as configured, cross-role negative tests, and attempted unauthorized changes. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
 | RSK-011 | Revoked access remains usable or access-authorisation changes are not reconstructable. | URS-027, URS-028 | 4 | 2 | 4 | 32 | HIGH | Disable an account and verify rejection; inspect creation/change/cancellation records for access authorisation. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
-| RSK-012 | GMP-relevant audit trail is absent, incomplete, alterable by ordinary users, or not reviewable, hiding changes to critical records. | URS-005, URS-029–URS-032 | 4 | 3 | 4 | 48 | HIGH | Exercise representative create/change/status/disposition/signature events; verify prior/new values, user/time/reason, immutability, retrieval, and intelligibility. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
-| RSK-013 | Electronic signature lacks required identity/meaning/date-time, is detachable from the record, or can be applied through another user's credentials. | URS-033–URS-035 | 4 | 2 | 4 | 32 | HIGH | Verify manifestation, permanent record linkage, human-readable output, unique identity, and negative authentication/signature attempt. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
-| RSK-014 | Required GxP record can be permanently deleted, cannot be reliably retrieved, loses related history, or produces an inaccurate/incomplete human-readable or electronic copy. | URS-006–URS-008 | 4 | 2 | 4 | 32 | HIGH | Attempt ordinary-user deletion; retrieve by key identifiers; compare human-readable and electronic copies with stored record/history relationships. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
+| RSK-012 | GMP-relevant audit trail is absent, incomplete, alterable by ordinary users, or not reviewable, hiding changes to critical records. | URS-005, URS-008, URS-029, URS-030, URS-031, URS-032 | 4 | 3 | 4 | 48 | HIGH | Exercise representative create/change/status/disposition/signature events; verify prior/new values, user/time/reason, immutability, retrieval, and intelligibility. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
+| RSK-013 | Electronic signature lacks required identity/meaning/date-time, is detachable from the record, or can be applied through another user's credentials. | URS-008, URS-033, URS-034, URS-035 | 4 | 2 | 4 | 32 | HIGH | Verify manifestation, permanent record linkage, human-readable output, unique identity, and negative authentication/signature attempt. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
+| RSK-014 | Required GxP record can be permanently deleted, cannot be reliably retrieved, loses related history, or produces an inaccurate/incomplete human-readable or electronic copy. | URS-006, URS-007, URS-008 | 4 | 2 | 4 | 32 | HIGH | Attempt ordinary-user deletion; retrieve by key identifiers; compare human-readable and electronic copies with stored record/history relationships. | V3 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
 | RSK-015 | System records the wrong user or time for a GxP action, weakening attribution and reconstruction even when the business action itself succeeds. | URS-003, URS-015, URS-022, URS-030 | 3 | 2 | 4 | 24 | MEDIUM | Compare acting user/time with receiving, status, custody, and audit events across representative workflows. | V2 | SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS |
 
 ### 9.1 Rating rationale
@@ -243,6 +243,56 @@ The numerical values above are not self-explanatory. The following notes record 
 | RSK-013 | **S4:** a detached, misattributed, or weakly authenticated signature can invalidate attribution of a quality decision. **P2:** signature controls are deliberate configured functions, making failure less frequent but credible. **D4:** a malformed or mislinked signature may appear valid to ordinary users without targeted review. |
 | RSK-014 | **S4:** loss, deletion, incomplete retrieval, or inaccurate copies can compromise required records, recall support, and inspection/investigation evidence. **P2:** persistence/retrieval functions are standard but defects or permissions can still create loss. **D4:** missing historical content may not be recognized until the record is needed. |
 | RSK-015 | **S3:** incorrect user/time attribution weakens reconstruction and accountability but does not necessarily alter the underlying material state. **P2:** attribution is normally system-generated, reducing opportunity for error. **D4:** incorrect metadata can appear authoritative and may not be discovered without comparison to a known execution context. |
+
+### 9.2 Requirement-to-risk reverse traceability
+
+Earlier revisions of the register listed linked requirements as ranges (for example `URS-011–URS-015`) and, for some risks, only the principal requirement. That made it hard to confirm from this document alone that every requirement maps back to a risk.
+
+The `Linked URS` column now lists every requirement explicitly. The table below runs the other direction, from each requirement to its risk(s). It is copied from the `Risk ID(s)` column of STL-RTM-001 section 3 so the two documents agree. STL-RTM-001 remains the traceability authority.
+
+Requirements that this register previously covered only by a range: URS-007, URS-012, URS-013, URS-014, URS-025, URS-031, URS-034. Secondary STL-RTM-001 links now also shown in the register: URS-014 to RSK-008, URS-035 to RSK-010, URS-008 to RSK-012 and RSK-013.
+
+No Severity, Probability, Detectability, RPN, class, verification depth, or residual status was changed by this reconciliation.
+
+| URS ID | Requirement focus (from STL-RTM-001) | Risk ID(s) |
+|---|---|---|
+| URS-001 | Unique persistent inventory/receiving record ID | RSK-001 |
+| URS-002 | Required receiving fields | RSK-002 |
+| URS-003 | Creator identity and creation date/time | RSK-015 |
+| URS-004 | Accuracy check for critical manual receiving data | RSK-003 |
+| URS-005 | Corrections preserve prior GxP information | RSK-012 |
+| URS-006 | Standard users cannot permanently delete completed GxP record | RSK-014 |
+| URS-007 | Retrieve by ID/lot and generate accurate complete human-readable and electronic copies | RSK-014 |
+| URS-008 | Retain relationship among record and associated histories | RSK-014, RSK-012, RSK-013 |
+| URS-009 | Required storage condition | RSK-004 |
+| URS-010 | Only compatible configured storage locations | RSK-004 |
+| URS-011 | Initial Quarantine status | RSK-005 |
+| URS-012 | Controlled status values | RSK-005 |
+| URS-013 | Enforce permitted status transitions | RSK-005 |
+| URS-014 | QA authority required for disposition after hold/review | RSK-005, RSK-008 |
+| URS-015 | Status change records user/time/prior/new/reason | RSK-005, RSK-015 |
+| URS-016 | Identify out-of-range temperature excursion | RSK-006 |
+| URS-017 | Correct lower/upper boundary behavior | RSK-006 |
+| URS-018 | Excursion record completeness and affected-record linkage | RSK-007 |
+| URS-019 | Unresolved excursion remains On Hold; Warehouse Operator cannot release | RSK-008 |
+| URS-020 | QA excursion disposition requires rationale and preserves history | RSK-008 |
+| URS-021 | Record each custody/responsibility transfer | RSK-009 |
+| URS-022 | Custody event user/time/prior-new information | RSK-009, RSK-015 |
+| URS-023 | New custody event does not overwrite prior history | RSK-009 |
+| URS-024 | Unique active user identity; no shared named-user identity | RSK-010 |
+| URS-025 | Authentication required before GxP access | RSK-010 |
+| URS-026 | Functions/data changes restricted by configured role/authority | RSK-010 |
+| URS-027 | Disabled/cancelled account cannot authenticate | RSK-011 |
+| URS-028 | Access authorisation creation/change/cancellation is recorded | RSK-011 |
+| URS-029 | Audit trail for risk-identified GMP actions | RSK-012 |
+| URS-030 | Audit trail contains user/time/record/change/values/reason | RSK-012, RSK-015 |
+| URS-031 | Ordinary users cannot alter/delete audit trail; changes do not obscure prior data | RSK-012 |
+| URS-032 | QA can retrieve/review intelligible audit trail | RSK-012 |
+| URS-033 | Signature shows/retains signer, date/time, and meaning | RSK-013 |
+| URS-034 | Signature permanently linked to record and included in human-readable output | RSK-013 |
+| URS-035 | Signature uses unique user identity and configured credential controls | RSK-013, RSK-010 |
+
+Coverage check: 35 / 35 requirements map to at least one risk, and 15 / 15 risks map to at least one requirement, in both this register and STL-RTM-001.
 
 ## 10. Risk distribution
 
@@ -312,7 +362,7 @@ Observed:
 - expanded development/adversarial pressure tests: **20 / 20 PASS**;
 - unchanged frozen OQ: **18 / 18 PASS**;
 - all 15 risk scenarios retain at least one executed OQ path;
-- all twelve recorded validation deviations are resolved for the exact successor candidate;
+- all thirteen recorded validation deviations are resolved for the exact successor candidate (DEV-013 corrected evidence custody and provenance only and did not change the candidate);
 - no frozen expected result was changed to obtain the final pass;
 - the public-release pressure suite specifically challenged stale critical verification, missing status rationale, unauthenticated regulated reads, authentication ordering, session invalidation, malformed/non-finite temperature data, and QA audit-review authority.
 
@@ -412,7 +462,17 @@ Primary sources used:
   https://www.canada.ca/en/health-canada/services/drugs-health-products/drug-products/applications-submissions/guidance-documents/international-council-harmonisation/guidelines.html
 - ISPE GAMP 5 Second Edition — industry guidance; copyrighted guide text is not reproduced here.
 
-## 18. Revision history
+## 18. Mock approval
+
+> **MOCK APPROVAL BLOCK. No real person has signed this document.** The `Approved (mock)` status shows where document control would record approval. It is not a GxP approval. Consistent with STL-VP-001, no fictional named approvers or signatures are created. In a real system the status would change only after all three signatures were executed.
+
+| Signatory role | Name | Date | Meaning of signature | Signature |
+|---|---|---|---|---|
+| Author (validation lead / exercise owner) | Not entered (mock) | YYYY-MM-DD, not signed | I prepared this document and confirm it is accurate and complete for its stated scope. | `UNSIGNED – MOCK` |
+| Reviewer (technical / process SME) | Not entered (mock) | YYYY-MM-DD, not signed | I reviewed this document for technical accuracy, consistency with upstream documents, and traceability. | `UNSIGNED – MOCK` |
+| QA Approver (Quality Assurance) | Not entered (mock) | YYYY-MM-DD, not signed | I approve this document for use within the bounded mock validation package. | `UNSIGNED – MOCK` |
+
+## 19. Revision history
 
 | Revision | Status | Description |
 |---|---|---|
@@ -421,3 +481,5 @@ Primary sources used:
 | 0.3 | Executed / reconciled | Final OQ control evidence linked; design-time scores preserved; all 15 functional risks supported with bounds under exact mock qualification conditions. |
 | 0.4 | Pressure-tested successor | DEV-005 through DEV-011 reconciled; final pressure-qualified successor OQ-CI-36947244505 supports all 15 functional risk controls with original design-time scores preserved. |
 | 0.4 | Pressure-tested / reconciled | DEV-005 through DEV-010 incorporated; successor pressure suite 18/18 and unchanged frozen OQ 18/18 support the bounded residual-risk disposition. |
+| 0.5 | Traceability reconciliation | Linked URS listed explicitly for every risk; secondary STL-RTM-001 links added (URS-014 to RSK-008, URS-035 to RSK-010, URS-008 to RSK-012/RSK-013); section 9.2 reverse URS-to-risk table added; deviation count updated to thirteen for DEV-013. No scores, classes, depths, or residual statuses changed. |
+| 1.0 | Approved (mock) | Status moved from Draft to Approved (mock); mock Author / Reviewer / QA Approver block added, all `UNSIGNED – MOCK`. No content, scores, or traceability changed. |
