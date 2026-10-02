@@ -26,4 +26,4 @@ python3 oq_runner.py \
 
 The unit tests are development evidence only. The frozen `STL-OQ-001` protocol remains the qualification authority.
 
-The authoritative final qualification was executed against exact commit `b528234a0a14db68200c9213516d0ed6a76ca56b`; see the public-release pressure qualification receipt and VSR for evidence identity and limitations.
+The current release authority is the terminal pressure-qualified candidate `c3463a18b18c359d4d639055c4e3f6121df79f80`, execution `OQ-CI-36947930824`; see the public-release pressure qualification receipt and VSR for evidence identity and limitations.

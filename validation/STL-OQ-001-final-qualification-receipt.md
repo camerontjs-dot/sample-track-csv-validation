@@ -1,6 +1,6 @@
 # STL-OQ-001 — Historical Qualification Receipt
 
-> **SUPERSEDED FOR RELEASE:** This receipt records the earlier bounded qualification of candidate `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`. A later public-release pressure test found additional validation gaps. The current release authority is [STL-OQ-001 — Public-Release Pressure Qualification Receipt](STL-OQ-001-public-release-pressure-qualification.md), candidate `b528234a0a14db68200c9213516d0ed6a76ca56b`.
+> **SUPERSEDED FOR RELEASE:** This receipt records the earlier bounded qualification of candidate `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`. A later public-release pressure test found additional validation gaps. The current release authority is [STL-OQ-001 — Public-Release Pressure Qualification Receipt](STL-OQ-001-public-release-pressure-qualification.md), terminal candidate `c3463a18b18c359d4d639055c4e3f6121df79f80`, execution `OQ-CI-36947930824`.
 
 The historical result below remains preserved because it is part of the qualification/deviation lineage.
 

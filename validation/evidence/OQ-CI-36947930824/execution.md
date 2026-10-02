@@ -269,3 +269,4 @@ Result: PASS
 | sequence reconstruction | Creation/excursion/disposition reconstructable | ['record_created', 'critical_verification_complete', 'location_changed', 'electronic_signature', 'status_changed', 'location_changed', 'excursion_created', 'status_changed', 'electronic_signature', 'excursion_disposition'] | PASS |
 
 Evidence: STL-EV-OQ-018-01
+
