@@ -1,6 +1,6 @@
 # STL-DL-001 — SampleTrack Lite Validation Deviation Log
 
-> **MOCK / FICTIONAL — TRAINING & INTERVIEW DEMONSTRATION ONLY — NOT FOR GxP USE**
+> **MOCK / FICTIONAL - DEMONSTRATION ONLY - NOT FOR GxP USE**
 
 | Field | Value |
 |---|---|

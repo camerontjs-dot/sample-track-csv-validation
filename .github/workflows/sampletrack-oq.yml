@@ -52,7 +52,7 @@ jobs:
         run: |
           mkdir -p "$OQ_OUTPUT"
           {
-            echo "MOCK / FICTIONAL — TRAINING & INTERVIEW DEMONSTRATION ONLY — NOT FOR GxP USE"
+            echo "MOCK / FICTIONAL - DEMONSTRATION ONLY - NOT FOR GxP USE"
             echo "candidate_sha=$(git rev-parse HEAD)"
             echo "candidate_tree=$(git rev-parse HEAD^{tree})"
             echo "git_status_begin"

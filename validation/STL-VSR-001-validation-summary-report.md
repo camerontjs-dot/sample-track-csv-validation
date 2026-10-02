@@ -1,6 +1,6 @@
 # STL-VSR-001 — SampleTrack Lite Validation Summary Report
 
-> **MOCK / FICTIONAL — TRAINING & INTERVIEW DEMONSTRATION ONLY — NOT FOR GxP USE**
+> **MOCK / FICTIONAL - DEMONSTRATION ONLY - NOT FOR GxP USE**
 
 | Field | Value |
 |---|---|
