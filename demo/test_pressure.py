@@ -41,6 +41,17 @@ class PublicPressureTests(unittest.TestCase):
             "REFRIGERATED_2_8C",
         )
 
+    def test_receipt_date_is_required_before_receiving_completion(self):
+        """URS-002: a receiving record requires a distinct receipt date."""
+        with self.assertRaises(ValidationError):
+            self.app.create_inventory(
+                self.wh,
+                "DEMO-RX-COLD-001",
+                "LOT-PRESSURE-RECEIPT-DATE",
+                24,
+                "REFRIGERATED_2_8C",
+            )
+
     def test_critical_verification_is_invalidated_after_critical_lot_correction(self):
         """URS-004: release must rely on verification of current critical data."""
         rid = self.record()
