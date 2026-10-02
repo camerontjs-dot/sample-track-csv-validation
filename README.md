@@ -12,14 +12,14 @@ It does **not** establish production validation, regulatory compliance, supplier
 
 Exact qualified custom demonstration surrogate:
 
-`b528234a0a14db68200c9213516d0ed6a76ca56b`
+`df40d5b71517e30af425d3b0f02e4e05c920cca6`
 
 Final qualification evidence:
 
-- development and adversarial pressure tests: **18 / 18 PASS**;
+- development and adversarial pressure tests: **19 / 19 PASS**;
 - frozen OQ: **18 / 18 PASS**;
 - URS traceability: **35 / 35 VERIFIED - PASS**;
-- recorded validation deviations: **10 / 10 resolved**;
+- recorded validation deviations: **11 / 11 resolved**;
 - final mock disposition: **ACCEPTED FOR BOUNDED MOCK DEMONSTRATION USE**;
 - production disposition: **NOT APPROVED FOR GxP PRODUCTION USE**.
 
@@ -29,7 +29,7 @@ The passing final run does not replace the failed executions that preceded it. T
 
 A separate pre-publication adversarial pass challenged behaviors beyond the original OQ examples. It found additional defects in stale verification state, status-change rationale, regulated read authorization, authentication ordering, malformed temperature handling, and one qualification-role mismatch.
 
-Those findings were preserved as DEV-005 through DEV-010. Publication remained blocked until a successor passed both the expanded 18-test pressure suite and the unchanged 18-case frozen OQ.
+Those findings were preserved as DEV-005 through DEV-010. A final source-to-URS pass then found DEV-011: receiving could complete without the distinct receipt date required by URS-002. Publication remained blocked until the corrected successor passed the expanded 19-test pressure suite and the unchanged 18-case frozen OQ.
 
 ## Reproduce the demonstration
 
@@ -69,7 +69,7 @@ A local reproduction is useful behavioral evidence, but it is not the authoritat
 - [Current Public-Release Pressure Qualification Receipt](validation/STL-OQ-001-public-release-pressure-qualification.md)
 - [Historical pre-pressure qualification receipt](validation/STL-OQ-001-final-qualification-receipt.md)
 - [Validation Summary Report](validation/STL-VSR-001-validation-summary-report.md)
-- [Current step-level OQ execution record](validation/evidence/OQ-CI-36897449285/execution.md)
+- [Current step-level OQ execution record](validation/evidence/OQ-CI-36947244505/execution.md)
 - [Original package plan](docs/VALIDATION-PACKAGE-PLAN.md)
 
 ## Scenario boundary
@@ -100,10 +100,10 @@ Material failures remain visible after correction.
 
 Final GitHub Actions execution:
 
-- run: `36897449285`;
-- execution ID: `OQ-CI-36897449285`;
-- exact qualified commit: `b528234a0a14db68200c9213516d0ed6a76ca56b`;
-- evidence artifact SHA-256: `7c1d8c52dd6161b16130d20699ce1a5ff47a4edc9ef54454cd469966af6c05af`.
+- run: `36947244505`;
+- execution ID: `OQ-CI-36947244505`;
+- exact qualified commit: `df40d5b71517e30af425d3b0f02e4e05c920cca6`;
+- evidence artifact SHA-256: `45c51df8787a32a5851ee6895d89a4c7bfc3e424364b49019f08ebe232b28845`.
 
 See the Validation Summary Report for residual limitations and the exact final decision.
 
