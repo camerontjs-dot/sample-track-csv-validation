@@ -6,7 +6,7 @@
 |---|---|
 | Document ID | STL-DL-001 |
 | System | SampleTrack Lite demonstration surrogate |
-| Status | Closed for successor candidate `b528234a0a14db68200c9213516d0ed6a76ca56b` |
+| Status | Closed for successor candidate `c3463a18b18c359d4d639055c4e3f6121df79f80` |
 | Approval status | Mock approval: Not executed |
 
 ## DEV-001 — Upper temperature boundary classified as excursion
@@ -638,15 +638,200 @@ Artifact ZIP SHA-256: `c137814080ba4cfa35169471d4ef19e8ab3cad722d495acfeaf091a52
 
 ## Final deviation closure summary
 
-Successor qualification: `OQ-CI-36897449285` on exact application/runner candidate `b528234a0a14db68200c9213516d0ed6a76ca56b`.
+Successor qualification: `OQ-CI-36947930824` on exact application/runner candidate `c3463a18b18c359d4d639055c4e3f6121df79f80`.
 
 - compilation: **PASS**
-- expanded development/adversarial suite: **18 / 18 PASS**
+- expanded development/adversarial suite: **20 / 20 PASS**
 - unchanged frozen OQ: **18 / 18 PASS**
 - open validation deviations: **0**
 - no frozen expected result was changed to obtain the pass
 
-DEV-005 through DEV-010 are resolved for the successor candidate. Earlier failed runs remain preserved in this log.
+DEV-001 through DEV-012 are resolved for the current successor candidate. Earlier failed runs remain preserved in this log.
+
+## DEV-011 — Receiving record can complete without required receipt date
+
+**Discovered during:** final source-to-URS public-release pressure test  
+**Candidate:** `915e3f7215c33fdc2646c74ae168c94080fdf306`  
+**Candidate tree:** `22baa35067b994399744875fd4889f5eeb037851`  
+**GitHub Actions run:** `36946957100`  
+**Job:** `110651165310`  
+**Affected requirement:** `URS-002`  
+**Affected risk:** `RSK-002`
+
+### Observation
+
+URS-002 requires a receiving record to contain a distinct **receipt date** before completion.
+
+The demonstration surrogate accepted and completed a receiving record through:
+
+`create_inventory(session, product_id, lot, quantity, storage_condition)`
+
+without any receipt-date field or receipt-date completion gate.
+
+The pressure-test challenge expected the missing receipt date to raise `ValidationError`; no exception was raised.
+
+Run result:
+
+- frozen-authority guard: **PASS**
+- compilation: **PASS**
+- development/adversarial tests: **18 PASS / 1 FAIL**
+- frozen OQ: **NOT ENTERED**
+
+### Classification
+
+**SYSTEM / REQUIRED-DATA COMPLETENESS FAILURE**
+
+There is also a **qualification-coverage gap**: the frozen OQ and test fixture did not separately exercise the receipt-date element of URS-002.
+
+The frozen URS remains authoritative and is not weakened or reinterpreted to make the implementation pass.
+
+### Impact assessment
+
+A receiving record could be considered complete while omitting one of the explicitly required receiving fields.
+
+This prevents continued final closure of URS-002 and RSK-002 for the current candidate.
+
+The system-generated creation timestamp is not silently substituted for the separately specified receipt date.
+
+### Required correction
+
+- add a distinct required receipt-date field to the receiving record;
+- validate receipt date as a controlled ISO calendar date;
+- retain it in the authoritative record and human-readable/electronic outputs;
+- update valid demonstration callers to provide the frozen-scenario receipt date;
+- add supplemental adversarial verification for missing, malformed, and retained receipt date;
+- rerun the complete expanded pressure suite and unchanged frozen OQ.
+
+### Status
+
+`RESOLVED — REQUIRED RECEIPT DATE ADDED / SUCCESSOR QUALIFICATION PASS`
+
+### Correction and successor qualification
+
+The surrogate now:
+
+- requires a distinct receipt date before receiving completion;
+- validates the supplied value as an ISO calendar date;
+- retains the normalized receipt date in the authoritative receiving record;
+- includes it in electronic and human-readable record output;
+- preserves system creation time separately from the business receipt date.
+
+Supplemental pressure verification challenges:
+
+- missing receipt date;
+- malformed receipt date;
+- valid receipt-date retention;
+- electronic-copy retention;
+- human-readable output.
+
+Successor candidate: `df40d5b71517e30af425d3b0f02e4e05c920cca6`  
+Candidate tree: `14431f747e3072435f7664263724cd10c3365da1`  
+GitHub Actions run: `36947244505`  
+Job: `110652043880`  
+Development/adversarial suite: **19 / 19 PASS**  
+Unchanged frozen OQ: **18 / 18 PASS**  
+`sampletrack.py` SHA-256: `f61136b70b020d1516470c263308750427ac65fff621be73dacf824ef70a35d0`  
+`test_sampletrack.py` SHA-256: `36b0f41d79476d9f42f412e33a20f71de2840ea5c3eee4c2adb1895589d1928a`  
+`test_pressure.py` SHA-256: `dc35140bde0618f769f3897d31debad643c2e7c581b1d63f03bfe802f636df94`  
+`oq_runner.py` SHA-256: `982a635c3fff19e942401e272cba5f2c061572c614d192951b4f44632c7bbf37`  
+Artifact ID: `11203030254`  
+Artifact ZIP SHA-256: `45c51df8787a32a5851ee6895d89a4c7bfc3e424364b49019f08ebe232b28845`
+
+DEV-011 is resolved for this exact successor candidate. The failed 18/1 run remains preserved.
+
+### Preserved failure receipt
+
+Artifact ID: `11202038732`  
+Artifact ZIP SHA-256: `1b8bde6ab6122ba979c8a73e04db0e2b2b1efde10fcdc83c2249d7cf344b0adb`
+
+At this stage of the preserved failure lineage, publication remained blocked until DEV-011 was resolved by an exact successor candidate.
+
+---
+
+## DEV-012 — Denied GMP record deletion attempt leaves no audit event
+
+**Discovered during:** final requirement-by-requirement public-release pressure pass  
+**Candidate:** `87a62bfb5646ef528cb219368e601f9cdd57419e`  
+**Candidate tree:** `1eb5b84f11fcaf410f98393bab0952a1bf80347f`  
+**GitHub Actions run:** `36947828276`  
+**Job:** `110653825639`  
+**Affected requirement:** `URS-029`  
+**Affected risk:** `RSK-012`
+
+### Observation
+
+The application supports an explicit completed-record deletion attempt through `attempt_delete_record`, and correctly denies the deletion.
+
+However, the denied attempt did not create a GMP audit event.
+
+The adversarial test observed the same audit-event count before and after the denied deletion attempt:
+
+`1 not greater than 1`
+
+Run result:
+
+- frozen-authority guard: **PASS**
+- compilation: **PASS**
+- development/adversarial tests: **19 PASS / 1 FAIL**
+- frozen OQ: **NOT ENTERED**
+
+### Classification
+
+**SYSTEM / AUDIT-COVERAGE FAILURE**
+
+URS-029 explicitly requires audit-trail coverage for a GMP-relevant deletion attempt where supported. The surrogate exposes the deletion-attempt function, so the attempt is within the supported behavior boundary.
+
+### Impact assessment
+
+The material record remains protected from deletion, but a denied attempt against a completed GxP record is not reconstructable from the audit trail.
+
+This prevents continued closure of URS-029 / RSK-012 for the current candidate.
+
+### Required correction
+
+- authenticate/authorize before exposing record existence;
+- preserve the denial behavior;
+- write an attributable `delete_attempt_denied` audit event for the affected record before returning the denial;
+- retain user, date/time, record identity, and reason;
+- rerun the complete expanded pressure suite and unchanged frozen OQ.
+
+### Status
+
+`RESOLVED — DENIED DELETION ATTEMPT AUDITED / SUCCESSOR QUALIFICATION PASS`
+
+### Correction and successor qualification
+
+The surrogate now:
+
+- authenticates and validates role authority before resolving the target record;
+- continues to deny permanent deletion of completed GxP records;
+- writes and commits an attributable `delete_attempt_denied` audit event before returning the denial;
+- retains actor, date/time, affected record, and denial reason;
+- does not create a misleading deletion audit event for an unauthenticated attempt.
+
+Successor candidate: `c3463a18b18c359d4d639055c4e3f6121df79f80`  
+Candidate tree: `dcc0159f5cfaca61e3768497442e3fce8ae9613f`  
+GitHub Actions run: `36947930824`  
+Job: `110654144729`  
+Development/adversarial suite: **20 / 20 PASS**  
+Unchanged frozen OQ: **18 / 18 PASS**  
+`sampletrack.py` SHA-256: `1e1b016debc4ca45319171468b2fe048a473e92b5eb6a5f1e60d4a95412db939`  
+`test_sampletrack.py` SHA-256: `36b0f41d79476d9f42f412e33a20f71de2840ea5c3eee4c2adb1895589d1928a`  
+`test_pressure.py` SHA-256: `34c05b01dad118b06b32ec0fcc56e616e72411c50e0ed3a20a1fe3db3c97609a`  
+`oq_runner.py` SHA-256: `982a635c3fff19e942401e272cba5f2c061572c614d192951b4f44632c7bbf37`  
+Artifact ID: `11203126111`  
+Artifact ZIP SHA-256: `0ac0db89702f40c98204f65537e23950b04fb3b5348bc0c11d03ca54f4315749`
+
+DEV-012 is resolved for this exact successor candidate. The failed 19/1 run remains preserved.
+
+### Preserved failure receipt
+
+Artifact ID: `11203235312`  
+Artifact ZIP SHA-256: `f4322ed3183f8f1f8796f01a8a82ed93b053d624caa24d8e18e38e660aa6439c`
+
+At this stage, publication is blocked pending an exact successor qualification.
+
+---
 
 ## Pre-execution apparatus incident — workflow checkout
 
@@ -672,3 +857,7 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 0.8 | Reopened | Public-release pressure test run 36895767954 found four requirement-level gaps; DEV-005 through DEV-008 opened and publication blocked pending successor qualification. |
 | 0.9 | Reopened | Second pressure sweep found temperature data-limit failure (DEV-009) and QA-review apparatus discrepancy (DEV-010); full successor qualification required. |
 | 1.0 | Closed for successor candidate | DEV-005 through DEV-010 resolved; expanded pressure suite 18/18 PASS and unchanged frozen OQ 18/18 PASS. |
+| 1.1 | Reopened | Final source-to-URS pressure test exposed missing required receipt-date control as DEV-011; OQ not entered and publication blocked. |
+| 1.2 | Closed for successor candidate | DEV-011 resolved; expanded suite 19/19 PASS and unchanged frozen OQ 18/18 PASS on exact candidate df40d5b. |
+| 1.3 | Reopened | Final requirement-level pressure pass exposed missing audit coverage for denied deletion attempts as DEV-012; OQ not entered. |
+| 1.4 | Closed for successor candidate | DEV-012 resolved; final pressure suite 20/20 PASS and unchanged frozen OQ 18/18 PASS on exact candidate c3463a18. |

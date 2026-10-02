@@ -14,13 +14,13 @@
 
 ## 1. Purpose
 
-This matrix records lifecycle traceability from SampleTrack user requirements to functional risks, executed OQ verification, evidence, deviations, and final requirement status for the qualified mock candidate `b528234a0a14db68200c9213516d0ed6a76ca56b`.
+This matrix records lifecycle traceability from SampleTrack user requirements to functional risks, executed OQ verification, evidence, deviations, and final requirement status for the qualified mock candidate `c3463a18b18c359d4d639055c4e3f6121df79f80`.
 
-Final execution authority: `OQ-CI-36897449285`, GitHub Actions run `36813357212`, frozen OQ result **18 / 18 PASS**.
+Final execution authority: `OQ-CI-36947930824`, GitHub Actions run `36947930824`, frozen OQ result **18 / 18 PASS**.
 
-## 2. Planned OQ test architecture
+## 2. Frozen OQ test architecture
 
-The identifiers below are planning anchors only. The detailed test scripts and expected results will be authored in STL-OQ-001 after the risk/traceability slice is reviewed.
+The identifiers below originated as pre-execution planning anchors. The corresponding detailed test scripts and expected results were subsequently frozen in STL-OQ-001 and executed without changing the frozen oracle to accommodate observed failures.
 
 | OQ ID | Planned test focus | Primary risk depth |
 |---|---|---|
@@ -47,41 +47,41 @@ The identifiers below are planning anchors only. The detailed test scripts and e
 
 | URS ID | Requirement focus | Risk ID(s) | Highest class | Planned OQ | Execution | Evidence | Deviation | Final status |
 |---|---|---|---|---|---|---|---|---|
-| URS-001 | Unique persistent inventory/receiving record ID | RSK-001 | LOW | OQ-TC-002 | PASS — OQ-CI-36897449285 | STL-EV-OQ-002-01 | None | VERIFIED — PASS |
-| URS-002 | Required receiving fields | RSK-002 | MEDIUM | OQ-TC-002 | PASS — OQ-CI-36897449285 | STL-EV-OQ-002-01 | None | VERIFIED — PASS |
-| URS-003 | Creator identity and creation date/time | RSK-015 | MEDIUM | OQ-TC-002, OQ-TC-018 | PASS — OQ-CI-36897449285 | STL-EV-OQ-002-01, STL-EV-OQ-018-01 | None | VERIFIED — PASS |
-| URS-004 | Accuracy check for critical manual receiving data | RSK-003 | MEDIUM | OQ-TC-003 | PASS — OQ-CI-36897449285 | STL-EV-OQ-003-01 | DEV-005 (resolved) | VERIFIED — PASS |
-| URS-005 | Corrections preserve prior GxP information | RSK-012 | HIGH | OQ-TC-004, OQ-TC-015 | PASS — OQ-CI-36897449285 | STL-EV-OQ-004-01, STL-EV-OQ-015-01 | None | VERIFIED — PASS |
-| URS-006 | Standard users cannot permanently delete completed GxP record | RSK-014 | HIGH | OQ-TC-004 | PASS — OQ-CI-36897449285 | STL-EV-OQ-004-01 | None | VERIFIED — PASS |
-| URS-007 | Retrieve by ID/lot and generate accurate complete human-readable and electronic copies | RSK-014 | HIGH | OQ-TC-005, OQ-TC-018 | PASS — OQ-CI-36897449285 | STL-EV-OQ-005-01, STL-EV-OQ-005-02, STL-EV-OQ-018-01 | DEV-007 (resolved) | VERIFIED — PASS |
-| URS-008 | Retain relationship among record and associated histories | RSK-014, RSK-012, RSK-013 | HIGH | OQ-TC-005, OQ-TC-018 | PASS — OQ-CI-36897449285 | STL-EV-OQ-005-01, STL-EV-OQ-005-02, STL-EV-OQ-018-01 | None | VERIFIED — PASS |
-| URS-009 | Required storage condition | RSK-004 | HIGH | OQ-TC-006 | PASS — OQ-CI-36897449285 | STL-EV-OQ-006-01 | None | VERIFIED — PASS |
-| URS-010 | Only compatible configured storage locations | RSK-004 | HIGH | OQ-TC-006 | PASS — OQ-CI-36897449285 | STL-EV-OQ-006-01 | None | VERIFIED — PASS |
-| URS-011 | Initial Quarantine status | RSK-005 | HIGH | OQ-TC-007, OQ-TC-018 | PASS — OQ-CI-36897449285 | STL-EV-OQ-007-01, STL-EV-OQ-018-01 | None | VERIFIED — PASS |
-| URS-012 | Controlled status values | RSK-005 | HIGH | OQ-TC-007 | PASS — OQ-CI-36897449285 | STL-EV-OQ-007-01 | None | VERIFIED — PASS |
-| URS-013 | Enforce permitted status transitions | RSK-005 | HIGH | OQ-TC-008 | PASS — OQ-CI-36897449285 | STL-EV-OQ-008-01 | None | VERIFIED — PASS |
-| URS-014 | QA authority required for disposition after hold/review | RSK-005, RSK-008 | HIGH | OQ-TC-008, OQ-TC-011 | PASS — OQ-CI-36897449285 | STL-EV-OQ-008-01, STL-EV-OQ-011-01 | None | VERIFIED — PASS |
-| URS-015 | Status change records user/time/prior/new/reason | RSK-005, RSK-015 | HIGH | OQ-TC-008, OQ-TC-015 | PASS — OQ-CI-36897449285 | STL-EV-OQ-008-01, STL-EV-OQ-015-01 | DEV-006 (resolved) | VERIFIED — PASS |
-| URS-016 | Identify out-of-range temperature excursion | RSK-006 | HIGH | OQ-TC-009 | PASS — OQ-CI-36897449285 | STL-EV-OQ-009-01 | DEV-001 (resolved); DEV-009 (resolved) | VERIFIED — PASS |
-| URS-017 | Correct lower/upper boundary behavior | RSK-006 | HIGH | OQ-TC-009 | PASS — OQ-CI-36897449285 | STL-EV-OQ-009-01 | DEV-001 (resolved); DEV-009 (resolved) | VERIFIED — PASS |
-| URS-018 | Excursion record completeness and affected-record linkage | RSK-007 | MEDIUM | OQ-TC-010 | PASS — OQ-CI-36897449285 | STL-EV-OQ-010-01 | None | VERIFIED — PASS |
-| URS-019 | Unresolved excursion remains On Hold; Warehouse Operator cannot release | RSK-008 | HIGH | OQ-TC-011, OQ-TC-018 | PASS — OQ-CI-36897449285 | STL-EV-OQ-011-01, STL-EV-OQ-018-01 | None | VERIFIED — PASS |
-| URS-020 | QA excursion disposition requires rationale and preserves history | RSK-008 | HIGH | OQ-TC-011, OQ-TC-018 | PASS — OQ-CI-36897449285 | STL-EV-OQ-011-01, STL-EV-OQ-018-01 | None | VERIFIED — PASS |
-| URS-021 | Record each custody/responsibility transfer | RSK-009 | LOW | OQ-TC-012 | PASS — OQ-CI-36897449285 | STL-EV-OQ-012-01 | None | VERIFIED — PASS |
-| URS-022 | Custody event user/time/prior-new information | RSK-009, RSK-015 | MEDIUM | OQ-TC-012 | PASS — OQ-CI-36897449285 | STL-EV-OQ-012-01 | None | VERIFIED — PASS |
-| URS-023 | New custody event does not overwrite prior history | RSK-009 | LOW | OQ-TC-012 | PASS — OQ-CI-36897449285 | STL-EV-OQ-012-01 | None | VERIFIED — PASS |
-| URS-024 | Unique active user identity; no shared named-user identity | RSK-010 | HIGH | OQ-TC-013 | PASS — OQ-CI-36897449285 | STL-EV-OQ-013-01 | DEV-004 (resolved) | VERIFIED — PASS |
-| URS-025 | Authentication required before GxP access | RSK-010 | HIGH | OQ-TC-001 | PASS — OQ-CI-36897449285 | STL-EV-OQ-001-01 | DEV-004 (resolved); DEV-007, DEV-008 (resolved) | VERIFIED — PASS |
-| URS-026 | Functions/data changes restricted by configured role/authority | RSK-010 | HIGH | OQ-TC-013 | PASS — OQ-CI-36897449285 | STL-EV-OQ-013-01 | DEV-004 (resolved) | VERIFIED — PASS |
-| URS-027 | Disabled/cancelled account cannot authenticate | RSK-011 | HIGH | OQ-TC-001, OQ-TC-014 | PASS — OQ-CI-36897449285 | STL-EV-OQ-001-01, STL-EV-OQ-014-01 | DEV-004 (resolved) | VERIFIED — PASS |
-| URS-028 | Access authorisation creation/change/cancellation is recorded | RSK-011 | HIGH | OQ-TC-014 | PASS — OQ-CI-36897449285 | STL-EV-OQ-014-01 | None | VERIFIED — PASS |
-| URS-029 | Audit trail for risk-identified GMP actions | RSK-012 | HIGH | OQ-TC-015 | PASS — OQ-CI-36897449285 | STL-EV-OQ-015-01 | None | VERIFIED — PASS |
-| URS-030 | Audit trail contains user/time/record/change/values/reason | RSK-012, RSK-015 | HIGH | OQ-TC-015 | PASS — OQ-CI-36897449285 | STL-EV-OQ-015-01 | None | VERIFIED — PASS |
-| URS-031 | Ordinary users cannot alter/delete audit trail; changes do not obscure prior data | RSK-012 | HIGH | OQ-TC-015 | PASS — OQ-CI-36897449285 | STL-EV-OQ-015-01 | None | VERIFIED — PASS |
-| URS-032 | QA can retrieve/review intelligible audit trail | RSK-012 | HIGH | OQ-TC-015 | PASS — OQ-CI-36897449285 | STL-EV-OQ-015-01 | DEV-010 (resolved) | VERIFIED — PASS |
-| URS-033 | Signature shows/retains signer, date/time, and meaning | RSK-013 | HIGH | OQ-TC-016 | PASS — OQ-CI-36897449285 | STL-EV-OQ-016-01 | None | VERIFIED — PASS |
-| URS-034 | Signature permanently linked to record and included in human-readable output | RSK-013 | HIGH | OQ-TC-016, OQ-TC-005 | PASS — OQ-CI-36897449285 | STL-EV-OQ-016-01, STL-EV-OQ-005-01, STL-EV-OQ-005-02 | None | VERIFIED — PASS |
-| URS-035 | Signature uses unique user identity and configured credential controls | RSK-013, RSK-010 | HIGH | OQ-TC-017 | PASS — OQ-CI-36897449285 | STL-EV-OQ-017-01 | None | VERIFIED — PASS |
+| URS-001 | Unique persistent inventory/receiving record ID | RSK-001 | LOW | OQ-TC-002 | PASS — OQ-CI-36947930824 | STL-EV-OQ-002-01 | None | VERIFIED — PASS |
+| URS-002 | Required receiving fields | RSK-002 | MEDIUM | OQ-TC-002 | PASS — OQ-CI-36947930824 | STL-EV-OQ-002-01 + receipt-date pressure test | DEV-011 (resolved) | VERIFIED — PASS |
+| URS-003 | Creator identity and creation date/time | RSK-015 | MEDIUM | OQ-TC-002, OQ-TC-018 | PASS — OQ-CI-36947930824 | STL-EV-OQ-002-01, STL-EV-OQ-018-01 | None | VERIFIED — PASS |
+| URS-004 | Accuracy check for critical manual receiving data | RSK-003 | MEDIUM | OQ-TC-003 | PASS — OQ-CI-36947930824 | STL-EV-OQ-003-01 | DEV-005 (resolved) | VERIFIED — PASS |
+| URS-005 | Corrections preserve prior GxP information | RSK-012 | HIGH | OQ-TC-004, OQ-TC-015 | PASS — OQ-CI-36947930824 | STL-EV-OQ-004-01, STL-EV-OQ-015-01 | None | VERIFIED — PASS |
+| URS-006 | Standard users cannot permanently delete completed GxP record | RSK-014 | HIGH | OQ-TC-004 | PASS — OQ-CI-36947930824 | STL-EV-OQ-004-01 | None | VERIFIED — PASS |
+| URS-007 | Retrieve by ID/lot and generate accurate complete human-readable and electronic copies | RSK-014 | HIGH | OQ-TC-005, OQ-TC-018 | PASS — OQ-CI-36947930824 | STL-EV-OQ-005-01, STL-EV-OQ-005-02, STL-EV-OQ-018-01 | DEV-007 (resolved) | VERIFIED — PASS |
+| URS-008 | Retain relationship among record and associated histories | RSK-014, RSK-012, RSK-013 | HIGH | OQ-TC-005, OQ-TC-018 | PASS — OQ-CI-36947930824 | STL-EV-OQ-005-01, STL-EV-OQ-005-02, STL-EV-OQ-018-01 | None | VERIFIED — PASS |
+| URS-009 | Required storage condition | RSK-004 | HIGH | OQ-TC-006 | PASS — OQ-CI-36947930824 | STL-EV-OQ-006-01 | None | VERIFIED — PASS |
+| URS-010 | Only compatible configured storage locations | RSK-004 | HIGH | OQ-TC-006 | PASS — OQ-CI-36947930824 | STL-EV-OQ-006-01 | None | VERIFIED — PASS |
+| URS-011 | Initial Quarantine status | RSK-005 | HIGH | OQ-TC-007, OQ-TC-018 | PASS — OQ-CI-36947930824 | STL-EV-OQ-007-01, STL-EV-OQ-018-01 | None | VERIFIED — PASS |
+| URS-012 | Controlled status values | RSK-005 | HIGH | OQ-TC-007 | PASS — OQ-CI-36947930824 | STL-EV-OQ-007-01 | None | VERIFIED — PASS |
+| URS-013 | Enforce permitted status transitions | RSK-005 | HIGH | OQ-TC-008 | PASS — OQ-CI-36947930824 | STL-EV-OQ-008-01 | None | VERIFIED — PASS |
+| URS-014 | QA authority required for disposition after hold/review | RSK-005, RSK-008 | HIGH | OQ-TC-008, OQ-TC-011 | PASS — OQ-CI-36947930824 | STL-EV-OQ-008-01, STL-EV-OQ-011-01 | None | VERIFIED — PASS |
+| URS-015 | Status change records user/time/prior/new/reason | RSK-005, RSK-015 | HIGH | OQ-TC-008, OQ-TC-015 | PASS — OQ-CI-36947930824 | STL-EV-OQ-008-01, STL-EV-OQ-015-01 | DEV-006 (resolved) | VERIFIED — PASS |
+| URS-016 | Identify out-of-range temperature excursion | RSK-006 | HIGH | OQ-TC-009 | PASS — OQ-CI-36947930824 | STL-EV-OQ-009-01 | DEV-001 (resolved); DEV-009 (resolved) | VERIFIED — PASS |
+| URS-017 | Correct lower/upper boundary behavior | RSK-006 | HIGH | OQ-TC-009 | PASS — OQ-CI-36947930824 | STL-EV-OQ-009-01 | DEV-001 (resolved); DEV-009 (resolved) | VERIFIED — PASS |
+| URS-018 | Excursion record completeness and affected-record linkage | RSK-007 | MEDIUM | OQ-TC-010 | PASS — OQ-CI-36947930824 | STL-EV-OQ-010-01 | None | VERIFIED — PASS |
+| URS-019 | Unresolved excursion remains On Hold; Warehouse Operator cannot release | RSK-008 | HIGH | OQ-TC-011, OQ-TC-018 | PASS — OQ-CI-36947930824 | STL-EV-OQ-011-01, STL-EV-OQ-018-01 | None | VERIFIED — PASS |
+| URS-020 | QA excursion disposition requires rationale and preserves history | RSK-008 | HIGH | OQ-TC-011, OQ-TC-018 | PASS — OQ-CI-36947930824 | STL-EV-OQ-011-01, STL-EV-OQ-018-01 | None | VERIFIED — PASS |
+| URS-021 | Record each custody/responsibility transfer | RSK-009 | LOW | OQ-TC-012 | PASS — OQ-CI-36947930824 | STL-EV-OQ-012-01 | None | VERIFIED — PASS |
+| URS-022 | Custody event user/time/prior-new information | RSK-009, RSK-015 | MEDIUM | OQ-TC-012 | PASS — OQ-CI-36947930824 | STL-EV-OQ-012-01 | None | VERIFIED — PASS |
+| URS-023 | New custody event does not overwrite prior history | RSK-009 | LOW | OQ-TC-012 | PASS — OQ-CI-36947930824 | STL-EV-OQ-012-01 | None | VERIFIED — PASS |
+| URS-024 | Unique active user identity; no shared named-user identity | RSK-010 | HIGH | OQ-TC-013 | PASS — OQ-CI-36947930824 | STL-EV-OQ-013-01 | DEV-004 (resolved) | VERIFIED — PASS |
+| URS-025 | Authentication required before GxP access | RSK-010 | HIGH | OQ-TC-001 | PASS — OQ-CI-36947930824 | STL-EV-OQ-001-01 | DEV-004 (resolved); DEV-007, DEV-008 (resolved) | VERIFIED — PASS |
+| URS-026 | Functions/data changes restricted by configured role/authority | RSK-010 | HIGH | OQ-TC-013 | PASS — OQ-CI-36947930824 | STL-EV-OQ-013-01 | DEV-004 (resolved) | VERIFIED — PASS |
+| URS-027 | Disabled/cancelled account cannot authenticate | RSK-011 | HIGH | OQ-TC-001, OQ-TC-014 | PASS — OQ-CI-36947930824 | STL-EV-OQ-001-01, STL-EV-OQ-014-01 | DEV-004 (resolved) | VERIFIED — PASS |
+| URS-028 | Access authorisation creation/change/cancellation is recorded | RSK-011 | HIGH | OQ-TC-014 | PASS — OQ-CI-36947930824 | STL-EV-OQ-014-01 | None | VERIFIED — PASS |
+| URS-029 | Audit trail for risk-identified GMP actions | RSK-012 | HIGH | OQ-TC-015 | PASS — OQ-CI-36947930824 | STL-EV-OQ-015-01 + deletion-attempt pressure test | DEV-012 (resolved) | VERIFIED — PASS |
+| URS-030 | Audit trail contains user/time/record/change/values/reason | RSK-012, RSK-015 | HIGH | OQ-TC-015 | PASS — OQ-CI-36947930824 | STL-EV-OQ-015-01 | None | VERIFIED — PASS |
+| URS-031 | Ordinary users cannot alter/delete audit trail; changes do not obscure prior data | RSK-012 | HIGH | OQ-TC-015 | PASS — OQ-CI-36947930824 | STL-EV-OQ-015-01 | None | VERIFIED — PASS |
+| URS-032 | QA can retrieve/review intelligible audit trail | RSK-012 | HIGH | OQ-TC-015 | PASS — OQ-CI-36947930824 | STL-EV-OQ-015-01 | DEV-010 (resolved) | VERIFIED — PASS |
+| URS-033 | Signature shows/retains signer, date/time, and meaning | RSK-013 | HIGH | OQ-TC-016 | PASS — OQ-CI-36947930824 | STL-EV-OQ-016-01 | None | VERIFIED — PASS |
+| URS-034 | Signature permanently linked to record and included in human-readable output | RSK-013 | HIGH | OQ-TC-016, OQ-TC-005 | PASS — OQ-CI-36947930824 | STL-EV-OQ-016-01, STL-EV-OQ-005-01, STL-EV-OQ-005-02 | None | VERIFIED — PASS |
+| URS-035 | Signature uses unique user identity and configured credential controls | RSK-013, RSK-010 | HIGH | OQ-TC-017 | PASS — OQ-CI-36947930824 | STL-EV-OQ-017-01 | None | VERIFIED — PASS |
 
 ## 4. Coverage checks
 
@@ -100,7 +100,7 @@ High-risk controls are generally covered by V3 tests and, where the control depe
 ### 4.3 Execution status
 
 - Final candidate: `b528234a0a14db68200c9213516d0ed6a76ca56b`
-- Execution ID: `OQ-CI-36897449285`
+- Execution ID: `OQ-CI-36947930824`
 - Frozen OQ result: **18 / 18 PASS**
 - URS final status: **35 / 35 VERIFIED — PASS**
 - Open validation deviations: **0**
@@ -132,6 +132,28 @@ Supplemental mappings:
 | URS-032 | Frozen QA audit-review step executed using QA_REVIEW_01 | PASS | DEV-010 |
 
 These supplemental tests do not redefine the frozen OQ oracle. They close coverage gaps discovered by adversarial review and are preserved as additional evidence.
+
+### 4.4 Supplemental public-release pressure coverage
+
+The final public-release pressure suite supplements the frozen OQ without changing its expected results.
+
+For URS-002, the pressure suite separately verifies that:
+
+- a missing receipt date prevents receiving completion;
+- a malformed receipt date is rejected with a controlled validation error;
+- a valid receipt date is retained in the authoritative record;
+- the receipt date is retained in the electronic copy;
+- the receipt date is present in human-readable output.
+
+This supplemental check closed DEV-011 on intermediate candidate `df40d5b71517e30af425d3b0f02e4e05c920cca6`, run `36947244505`.
+
+For URS-029, the final pressure suite additionally verifies that:
+
+- an unauthenticated deletion attempt is rejected before target-record disclosure;
+- an authorized Warehouse Operator's denied completed-record deletion attempt remains denied;
+- the denied attempt creates an attributable `delete_attempt_denied` audit event with actor, timestamp, affected record, and reason.
+
+This supplemental check closed DEV-012 on exact final pressure candidate `c3463a18b18c359d4d639055c4e3f6121df79f80`, run `36947930824`.
 
 ## 5. Traceability rules applied during execution
 
@@ -166,4 +188,6 @@ A green aggregate test count is not a substitute for those paths.
 |---|---|---|
 | 0.1 | Draft / pre-execution | Initial URS → risk → planned OQ traceability skeleton. |
 | 0.2 | Draft / pre-execution | Pre-OQ source review: URS-007/RSK-014 traceability aligned to human-readable plus electronic record copies. |
-| 0.3 | Executed / reconciled | Final run OQ-CI-36897449285 traced across all 35 URS requirements; 18/18 OQ PASS; all recorded validation deviations resolved. |
+| 0.3 | Executed / reconciled | Final run OQ-CI-36813357212 traced across all 35 URS requirements; 18/18 OQ PASS; initial recorded validation deviations resolved. |
+| 0.4 | Pressure-tested successor | DEV-005 through DEV-011 reconciled; intermediate successor OQ-CI-36947244505 provided 19/19 supplemental development/adversarial PASS plus unchanged 18/18 frozen OQ PASS. |
+| 0.5 | Final pressure successor | DEV-012 deletion-attempt audit coverage resolved; exact final successor OQ-CI-36947930824 passed 20/20 development/adversarial tests plus unchanged 18/18 frozen OQ. |

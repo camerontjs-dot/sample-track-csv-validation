@@ -6,7 +6,7 @@ import secrets
 import sqlite3
 import uuid
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Any
 
 
@@ -109,6 +109,7 @@ class SampleTrackDemo:
                 quantity INTEGER NOT NULL,
                 storage_condition TEXT NOT NULL,
                 received_by TEXT NOT NULL,
+                receipt_date TEXT NOT NULL,
                 created_at TEXT NOT NULL,
                 status TEXT NOT NULL,
                 location TEXT,
@@ -251,10 +252,22 @@ class SampleTrackDemo:
             ),
         )
 
-    def create_inventory(self, session: Session, product_id: str, lot: str, quantity: int, storage_condition: str) -> str:
+    def create_inventory(
+        self,
+        session: Session,
+        product_id: str,
+        lot: str,
+        quantity: int,
+        storage_condition: str,
+        receipt_date: str | None = None,
+    ) -> str:
         self._require_role(session, "Warehouse Operator", "QA Reviewer")
-        if not product_id or not lot or quantity is None or not storage_condition:
+        if not product_id or not lot or quantity is None or not storage_condition or not receipt_date:
             raise ValidationError("required receiving fields missing")
+        try:
+            normalized_receipt_date = date.fromisoformat(str(receipt_date)).isoformat()
+        except (TypeError, ValueError) as exc:
+            raise ValidationError("receipt date must be a valid ISO date") from exc
         product = self.conn.execute("SELECT * FROM products WHERE product_id=?", (product_id,)).fetchone()
         if product is None:
             raise ValidationError("unknown product")
@@ -263,8 +276,21 @@ class SampleTrackDemo:
         record_id = f"STL-{uuid.uuid4().hex[:12].upper()}"
         created = utc_now()
         self.conn.execute(
-            "INSERT INTO inventory VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-            (record_id, product_id, lot, int(quantity), storage_condition, session.user_id, created, "Quarantine", None, None, None),
+            "INSERT INTO inventory VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                record_id,
+                product_id,
+                lot,
+                int(quantity),
+                storage_condition,
+                session.user_id,
+                normalized_receipt_date,
+                created,
+                "Quarantine",
+                None,
+                None,
+                None,
+            ),
         )
         self._audit(session.user_id, "record_created", record_id, new_value="Quarantine")
         self.conn.commit()
@@ -295,8 +321,15 @@ class SampleTrackDemo:
         self.conn.commit()
 
     def attempt_delete_record(self, session: Session, record_id: str) -> None:
-        self._record(record_id)
         self._require_role(session, "Warehouse Operator", "QA Reviewer")
+        self._record(record_id)
+        self._audit(
+            session.user_id,
+            "delete_attempt_denied",
+            record_id,
+            reason="permanent deletion of completed GxP record is not permitted",
+        )
+        self.conn.commit()
         raise AuthorizationError("permanent deletion of completed GxP record is not permitted")
 
     def verify_critical_data(self, session: Session, record_id: str, product_id: str, lot: str, storage_condition: str) -> bool:
@@ -579,6 +612,7 @@ class SampleTrackDemo:
             f"Location: {r['location']}",
             f"Status: {r['status']}",
             f"Received by: {r['received_by']}",
+            f"Receipt date: {r['receipt_date']}",
             f"Created at: {r['created_at']}",
             "", "Custody history:",
         ]

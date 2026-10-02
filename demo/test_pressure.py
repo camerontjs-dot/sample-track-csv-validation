@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from sampletrack import SampleTrackDemo, AuthenticationError, ValidationError
+from sampletrack import SampleTrackDemo, AuthenticationError, AuthorizationError, ValidationError
 
 
 class PublicPressureTests(unittest.TestCase):
@@ -39,7 +39,44 @@ class PublicPressureTests(unittest.TestCase):
             lot,
             24,
             "REFRIGERATED_2_8C",
+            "2026-10-01",
         )
+
+    def test_receipt_date_is_required_before_receiving_completion(self):
+        """URS-002: receipt date is required, valid, retained, and exportable."""
+        with self.assertRaises(ValidationError):
+            self.app.create_inventory(
+                self.wh,
+                "DEMO-RX-COLD-001",
+                "LOT-PRESSURE-RECEIPT-DATE-MISSING",
+                24,
+                "REFRIGERATED_2_8C",
+            )
+
+        with self.assertRaises(ValidationError):
+            self.app.create_inventory(
+                self.wh,
+                "DEMO-RX-COLD-001",
+                "LOT-PRESSURE-RECEIPT-DATE-BAD",
+                24,
+                "REFRIGERATED_2_8C",
+                "2026-13-40",
+            )
+
+        rid = self.app.create_inventory(
+            self.wh,
+            "DEMO-RX-COLD-001",
+            "LOT-PRESSURE-RECEIPT-DATE-VALID",
+            24,
+            "REFRIGERATED_2_8C",
+            "2026-10-01",
+        )
+        record = self.app.get_record(rid, self.wh)
+        self.assertEqual(record["receipt_date"], "2026-10-01")
+        electronic = self.app.export_electronic(rid, self.wh)
+        self.assertEqual(electronic["record"]["receipt_date"], "2026-10-01")
+        human = self.app.export_human_readable(rid, self.wh)
+        self.assertIn("Receipt date: 2026-10-01", human)
 
     def test_critical_verification_is_invalidated_after_critical_lot_correction(self):
         """URS-004: release must rely on verification of current critical data."""
@@ -72,6 +109,28 @@ class PublicPressureTests(unittest.TestCase):
                 "QA_REVIEW_01",
                 self.credentials["QA_REVIEW_01"],
             )
+
+    def test_denied_record_deletion_attempt_is_audited(self):
+        """URS-029: a supported GMP-relevant deletion attempt leaves audit evidence."""
+        rid = self.record("LOT-PRESSURE-DELETE")
+        before = len(self.app.audit_events(rid, self.qa))
+        with self.assertRaises(AuthenticationError):
+            self.app.attempt_delete_record(None, rid)
+        self.assertEqual(len(self.app.audit_events(rid, self.qa)), before)
+
+        with self.assertRaises(AuthorizationError):
+            self.app.attempt_delete_record(self.wh, rid)
+        audit = self.app.audit_events(rid, self.qa)
+        self.assertGreater(len(audit), before)
+        denied = [e for e in audit if e["action"] == "delete_attempt_denied"]
+        self.assertEqual(len(denied), 1)
+        self.assertEqual(denied[0]["actor"], "WH_OP_01")
+        self.assertEqual(denied[0]["record_id"], rid)
+        self.assertTrue(denied[0]["at"])
+        self.assertEqual(
+            denied[0]["reason"],
+            "permanent deletion of completed GxP record is not permitted",
+        )
 
     def test_gmp_status_change_requires_reason(self):
         """URS-015: a GMP-relevant status change requires a reason/rationale."""

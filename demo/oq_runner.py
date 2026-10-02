@@ -105,7 +105,7 @@ class OQRunner:
         self.cases.append(Case(tid, title, steps, evidence, result))
 
     def record(self, app, wh, lot="LOT-OQ-001"):
-        return app.create_inventory(wh, "DEMO-RX-COLD-001", lot, 24, "REFRIGERATED_2_8C")
+        return app.create_inventory(wh, "DEMO-RX-COLD-001", lot, 24, "REFRIGERATED_2_8C", "2026-09-30")
 
 
     def tc001(self):
@@ -113,7 +113,7 @@ class OQRunner:
         app, c, tmp = self.fresh(); st=[]; ev=[]
         try:
             ok,a=self.rejected(
-                lambda: app.create_inventory(None,"DEMO-RX-COLD-001","LOT-UNAUTH-1",1,"REFRIGERATED_2_8C"),
+                lambda: app.create_inventory(None,"DEMO-RX-COLD-001","LOT-UNAUTH-1",1,"REFRIGERATED_2_8C","2026-09-30"),
                 (AuthenticationError, AuthorizationError, ValidationError),
             )
             st.append(self.s("unauthenticated GxP access","Controlled access denial",a,ok))
@@ -125,14 +125,14 @@ class OQRunner:
             ok,a=self.rejected(lambda: app.authenticate("WH_OP_01","wrong"),(AuthenticationError,))
             st.append(self.s("invalid password","Authentication rejected",a,ok))
             ok2,a2=self.rejected(
-                lambda: app.create_inventory(None,"DEMO-RX-COLD-001","LOT-UNAUTH-2",1,"REFRIGERATED_2_8C"),
+                lambda: app.create_inventory(None,"DEMO-RX-COLD-001","LOT-UNAUTH-2",1,"REFRIGERATED_2_8C","2026-09-30"),
                 (AuthenticationError, AuthorizationError, ValidationError),
             )
             st.append(self.s("GxP access after invalid authentication","No data-changing operation permitted",a2,ok2))
             ok,a=self.rejected(lambda: app.authenticate("WH_DISABLED_01",c["WH_DISABLED_01"]),(AuthenticationError,))
             st.append(self.s("disabled account","Authentication rejected",a,ok))
             ok2,a2=self.rejected(
-                lambda: app.create_inventory(None,"DEMO-RX-COLD-001","LOT-UNAUTH-3",1,"REFRIGERATED_2_8C"),
+                lambda: app.create_inventory(None,"DEMO-RX-COLD-001","LOT-UNAUTH-3",1,"REFRIGERATED_2_8C","2026-09-30"),
                 (AuthenticationError, AuthorizationError, ValidationError),
             )
             st.append(self.s("GxP access after disabled authentication","No data-changing operation permitted",a2,ok2))
@@ -146,7 +146,7 @@ class OQRunner:
         app,c,tmp=self.fresh(); st=[]; ev=[]
         try:
             wh=app.authenticate("WH_OP_01",c["WH_OP_01"])
-            ok,a=self.rejected(lambda: app.create_inventory(wh,"DEMO-RX-COLD-001","",24,"REFRIGERATED_2_8C"),(ValidationError,))
+            ok,a=self.rejected(lambda: app.create_inventory(wh,"DEMO-RX-COLD-001","",24,"REFRIGERATED_2_8C","2026-09-30"),(ValidationError,))
             st.append(self.s("missing lot","Completion blocked",a,ok))
             r1=self.record(app,wh,"LOT-OQ-001"); row=app.get_record(r1, wh)
             st.append(self.s("complete record","Valid record completes",r1,bool(r1)))

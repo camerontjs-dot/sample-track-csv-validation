@@ -25,7 +25,7 @@ class SampleTrackDemoTests(unittest.TestCase):
         self.tmp.cleanup()
 
     def record(self, lot="LOT-U-001"):
-        return self.app.create_inventory(self.wh, "DEMO-RX-COLD-001", lot, 24, "REFRIGERATED_2_8C")
+        return self.app.create_inventory(self.wh, "DEMO-RX-COLD-001", lot, 24, "REFRIGERATED_2_8C", "2026-10-01")
 
     def test_authentication_and_disabled_account(self):
         with self.assertRaises(AuthenticationError):
@@ -79,12 +79,12 @@ class SampleTrackDemoTests(unittest.TestCase):
 
     def test_unauthenticated_gxp_write_is_controlled_denial(self):
         with self.assertRaises(AuthenticationError):
-            self.app.create_inventory(None, "DEMO-RX-COLD-001", "LOT-UNAUTH", 1, "REFRIGERATED_2_8C")
+            self.app.create_inventory(None, "DEMO-RX-COLD-001", "LOT-UNAUTH", 1, "REFRIGERATED_2_8C", "2026-10-01")
 
     def test_forged_session_cannot_authorize_gxp_write(self):
         forged = Session("WH_OP_01", "Warehouse Operator", "FORGED-TOKEN")
         with self.assertRaises(AuthenticationError):
-            self.app.create_inventory(forged, "DEMO-RX-COLD-001", "LOT-FORGED", 1, "REFRIGERATED_2_8C")
+            self.app.create_inventory(forged, "DEMO-RX-COLD-001", "LOT-FORGED", 1, "REFRIGERATED_2_8C", "2026-10-01")
 
 
 if __name__ == "__main__":

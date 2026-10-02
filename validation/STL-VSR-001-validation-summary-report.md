@@ -29,11 +29,11 @@ Validation scenario:
 
 Exact qualified system-under-test candidate:
 
-- commit: `b528234a0a14db68200c9213516d0ed6a76ca56b`
-- tree: `834831c3df75d2a610c338c02657036c8ee9695a`
-- `demo/sampletrack.py` SHA-256: `c719094618123bc280cb0d9ce204da1f7072004e40e48a9787b38b02f1aa14b5`
-- `demo/test_sampletrack.py` SHA-256: `1a9a45f3710b452b9b078d738698011b21d964f4803e97b510afe410f1484363`
-- `demo/oq_runner.py` SHA-256: `aac407bec114b285298642f4ae22f8fa8d32d384e5cd170542073687689ea5b6`
+- commit: `c3463a18b18c359d4d639055c4e3f6121df79f80`
+- tree: `dcc0159f5cfaca61e3768497442e3fce8ae9613f`
+- `demo/sampletrack.py` SHA-256: `1e1b016debc4ca45319171468b2fe048a473e92b5eb6a5f1e60d4a95412db939`
+- `demo/test_sampletrack.py` SHA-256: `36b0f41d79476d9f42f412e33a20f71de2840ea5c3eee4c2adb1895589d1928a`
+- `demo/oq_runner.py` SHA-256: `982a635c3fff19e942401e272cba5f2c061572c614d192951b4f44632c7bbf37`
 
 The repository branch later advanced through documentation-only reconciliation commits.
 
@@ -110,9 +110,9 @@ Formal production IQ and PQ were not executed.
 
 Final full OQ:
 
-- GitHub Actions run: `36897449285`
-- job: `110487913996`
-- execution ID: `OQ-CI-36897449285`
+- GitHub Actions run: `36947930824`
+- job: `110654144729`
+- execution ID: `OQ-CI-36947930824`
 - executed: 2026-10-01T17:10:53+00:00
 - GitHub-hosted Ubuntu 24.04 runner
 - architecture: x86_64
@@ -141,7 +141,7 @@ This limitation is retained in the final claim rather than describing CI executi
 Before final OQ execution:
 
 - Python compilation: **PASS**
-- development/adversarial tests: **18 / 18 PASS**
+- development/adversarial tests: **20 / 20 PASS**
 
 The development suite included targeted regression/adversarial checks for:
 
@@ -176,21 +176,21 @@ OQ-TC-001 expands one combined frozen step into separate invalid-password and di
 
 GitHub Actions artifact:
 
-- artifact ID: `11180665087`
-- artifact: `sampletrack-oq-36897449285`
-- artifact ZIP SHA-256: `7c1d8c52dd6161b16130d20699ce1a5ff47a4edc9ef54454cd469966af6c05af`
+- artifact ID: `11203126111`
+- artifact: `sampletrack-oq-36947930824`
+- artifact ZIP SHA-256: `0ac0db89702f40c98204f65537e23950b04fb3b5348bc0c11d03ca54f4315749`
 
 Core execution hashes:
 
-- `execution.json`: `1ccd18f02deaf920f08f2742906a37e70d375e6b0f7f3f87c13e39df774e2b3b`
-- `execution.md`: `6129581178cad83cd9fadf64a20795ea4128e73d220794c78dd9358b8fad55d7`
-- `manifest.json`: `2f572bad3c11ea34a2c343da5dee839b602874c14ce36c9bbee3772f56df1e08`
+- `execution.json`: `6463f66f0a3d8a32c44368e9fc314a7b13ab90f26fcaa577f82726db6e3396f4`
+- `execution.md`: `560add9b413a2ada9e5803a5f9857c274035aee96ca33fe3d2fac38984650904`
+- `manifest.json`: `80d8d58ce14cb0e0561957fb8443622e2148a369a7d572314d044b69b989a9e6`
 
 Individual evidence IDs and hashes are preserved in the execution manifest and final qualification receipt.
 
 ## 10. Validation deviations
 
-Four validation deviations were preserved during qualification.
+Twelve validation deviations were preserved across qualification and public-release pressure testing.
 
 ### DEV-001 — Upper temperature boundary defect
 
@@ -285,6 +285,24 @@ Correction: the frozen QA-reviewability step now retrieves and evaluates the aud
 
 Final status: **RESOLVED**.
 
+### DEV-011 — Required receipt date absent from receiving record
+
+Final source-to-URS review showed that URS-002 explicitly required a distinct receipt date before receiving completion, while the surrogate stored only system creation time and had no receipt-date field.
+
+Classification: system / required-data completeness failure, with a qualification-coverage gap because the frozen OQ fixture did not separately exercise receipt date.
+
+Correction: the surrogate now requires a valid ISO receipt date, retains it separately from system creation time, and includes it in electronic and human-readable output.
+
+Final status: **RESOLVED**.
+
+### DEV-012 — Denied deletion attempt lacked audit evidence
+
+Final requirement-level review showed that the surrogate correctly denied permanent deletion of a completed GxP record but did not create an audit event for the denied deletion attempt required by URS-029 where supported.
+
+Correction: authentication/authority is evaluated before target-record disclosure, the deletion remains denied, and an attributable `delete_attempt_denied` audit event records the actor, date/time, record, and reason.
+
+Final status: **RESOLVED**.
+
 ### Public-release pressure qualification
 
 Pressure-test lineage:
@@ -292,7 +310,10 @@ Pressure-test lineage:
 - run `36895767954`: four requirement-level failures, frozen OQ not entered;
 - run `36896153123`: first-wave corrections passed 16/16 development/adversarial tests and 18/18 frozen OQ;
 - run `36897292169`: second-wave data-limit tests exposed malformed/non-finite temperature handling, frozen OQ not entered;
-- run `36897449285`: **18/18 development/adversarial tests PASS and 18/18 unchanged frozen OQ PASS**.
+- run `36946957100`: final source-to-URS receipt-date challenge exposed DEV-011, frozen OQ not entered;
+- run `36947244505`: DEV-011 correction passed 19/19 development/adversarial tests and 18/18 unchanged frozen OQ;
+- run `36947828276`: deletion-attempt audit challenge exposed DEV-012, frozen OQ not entered;
+- run `36947930824`: **20/20 development/adversarial tests PASS and 18/18 unchanged frozen OQ PASS**.
 
 The final pressure test therefore did not merely rerun the previous success. It added new falsifiers that found additional defects, preserved them, and required a successor qualification.
 
@@ -315,11 +336,11 @@ Final RTM status:
 - requirements with final OQ evidence: **35 / 35**
 - final requirement status: **35 / 35 VERIFIED — PASS**
 - open validation deviations: **0**
-- total recorded validation deviations: **10 / 10 resolved**
+- total recorded validation deviations: **12 / 12 resolved**
 
 Requirement-specific deviation history remains visible for the affected temperature and authentication controls.
 
-The RTM references exact final OQ evidence IDs and separately records supplemental public-release pressure evidence for the requirements that exposed DEV-005 through DEV-010.
+The RTM references exact final OQ evidence IDs and separately records supplemental public-release pressure evidence for the requirements that exposed DEV-005 through DEV-012.
 
 ## 12. Functional risk disposition
 
@@ -334,7 +355,7 @@ The original Severity, Probability, Detectability, RPN, and class values remain 
 Following final OQ:
 
 - all 15 functional risks have at least one executed verification path;
-- the associated application controls are marked **SUPPORTED WITH BOUNDS — OQ-CI-36897449285 PASS**.
+- the associated application controls are marked **SUPPORTED WITH BOUNDS — OQ-CI-36947930824 PASS**.
 
 A successful OQ does not mean the risks cease to exist or that real production probability has been measured.
 
@@ -344,10 +365,10 @@ A successful OQ does not mean the risks cease to exist or that real production p
 |---|---|---|
 | Final in-scope URS uniquely identified | PASS | STL-URS-001, 35 requirements |
 | Every in-scope URS traced or explicitly dispositioned | PASS | STL-RTM-001, 35/35 |
-| All planned OQ tests executed or formally dispositioned | PASS | OQ-CI-36897449285, 18/18 executed |
+| All planned OQ tests executed or formally dispositioned | PASS | OQ-CI-36947930824, 18/18 executed |
 | High-risk functions receive risk-proportionate verification | PASS | STL-RSK-001 V3 paths; final OQ |
 | No unresolved deviation invalidates a high-risk requirement or conclusion | PASS | STL-DL-001, 0 open deviations |
-| Failed tests corrected through impact assessment and justified retest | PASS | DEV-001 through DEV-010 lineage |
+| Failed tests corrected through impact assessment and justified retest | PASS | DEV-001 through DEV-012 lineage |
 | Access, status, excursion, audit, e-signature, and record-retrieval controls meet applicable criteria | PASS | Final 18/18 OQ evidence |
 | Tested system/configuration identity known | PASS | exact commit/tree/source SHA-256 |
 | RTM reflects final executed evidence | PASS | STL-RTM-001 executed/reconciled revision |
@@ -386,7 +407,7 @@ These are boundaries, not hidden assumptions that are being treated as passed.
 
 **ACCEPTED FOR BOUNDED MOCK DEMONSTRATION USE**
 
-Within the defined fictional scenario, the exact custom demonstration surrogate candidate `b528234a0a14db68200c9213516d0ed6a76ca56b` satisfied the frozen functional URS/OQ acceptance criteria after documented correction and requalification of the observed validation deviations.
+Within the defined fictional scenario, the exact custom demonstration surrogate candidate `c3463a18b18c359d4d639055c4e3f6121df79f80` satisfied the frozen functional URS/OQ acceptance criteria after documented correction and requalification of the observed validation deviations.
 
 ### Production decision
 
@@ -443,7 +464,7 @@ The evidence supports the bounded mock disposition above and no broader claim.
 - STL-RTM-001 — Requirements Traceability Matrix
 - STL-DL-001 — Validation Deviation Log
 - STL-OQ-001 — Final Qualification Receipt
-- GitHub Actions run `36897449285`
+- GitHub Actions run `36947930824`
 
 ## 19. Revision history
 
@@ -452,3 +473,5 @@ The evidence supports the bounded mock disposition above and no broader claim.
 | 1.0 | Final mock summary | Final bounded validation decision for exact qualified candidate after complete deviation reconciliation. |
 | 1.1 | Final mock summary | Clarified automated execution ownership, limited independence, and non-executed mock approval boundary. |
 | 2.0 | Final pressure-tested summary | Public-release adversarial review preserved DEV-005 through DEV-010 and qualified successor b528234a with 18/18 pressure tests plus unchanged 18/18 frozen OQ. |
+| 2.1 | Final source-to-URS successor | DEV-011 receipt-date completeness failure preserved and resolved; intermediate successor df40d5b passed 19/19 expanded development/adversarial tests plus unchanged 18/18 frozen OQ. |
+| 2.2 | Final requirement-level pressure successor | DEV-012 denied-deletion audit gap preserved and resolved; exact successor c3463a18 passed 20/20 development/adversarial tests plus unchanged 18/18 frozen OQ. |
