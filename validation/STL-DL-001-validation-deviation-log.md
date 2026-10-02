@@ -6,7 +6,7 @@
 |---|---|
 | Document ID | STL-DL-001 |
 | System | SampleTrack Lite demonstration surrogate |
-| Status | REOPENED — DEV-011 receipt-date requirement failure; publication blocked pending successor qualification |
+| Status | Closed for successor candidate `df40d5b71517e30af425d3b0f02e4e05c920cca6` |
 | Approval status | Mock approval: Not executed |
 
 ## DEV-001 — Upper temperature boundary classified as excursion
@@ -704,7 +704,40 @@ The system-generated creation timestamp is not silently substituted for the sepa
 
 ### Status
 
-`OPEN — CORRECTION / SUCCESSOR QUALIFICATION REQUIRED`
+`RESOLVED — REQUIRED RECEIPT DATE ADDED / SUCCESSOR QUALIFICATION PASS`
+
+### Correction and successor qualification
+
+The surrogate now:
+
+- requires a distinct receipt date before receiving completion;
+- validates the supplied value as an ISO calendar date;
+- retains the normalized receipt date in the authoritative receiving record;
+- includes it in electronic and human-readable record output;
+- preserves system creation time separately from the business receipt date.
+
+Supplemental pressure verification challenges:
+
+- missing receipt date;
+- malformed receipt date;
+- valid receipt-date retention;
+- electronic-copy retention;
+- human-readable output.
+
+Successor candidate: `df40d5b71517e30af425d3b0f02e4e05c920cca6`  
+Candidate tree: `14431f747e3072435f7664263724cd10c3365da1`  
+GitHub Actions run: `36947244505`  
+Job: `110652043880`  
+Development/adversarial suite: **19 / 19 PASS**  
+Unchanged frozen OQ: **18 / 18 PASS**  
+`sampletrack.py` SHA-256: `f61136b70b020d1516470c263308750427ac65fff621be73dacf824ef70a35d0`  
+`test_sampletrack.py` SHA-256: `36b0f41d79476d9f42f412e33a20f71de2840ea5c3eee4c2adb1895589d1928a`  
+`test_pressure.py` SHA-256: `dc35140bde0618f769f3897d31debad643c2e7c581b1d63f03bfe802f636df94`  
+`oq_runner.py` SHA-256: `982a635c3fff19e942401e272cba5f2c061572c614d192951b4f44632c7bbf37`  
+Artifact ID: `11203030254`  
+Artifact ZIP SHA-256: `45c51df8787a32a5851ee6895d89a4c7bfc3e424364b49019f08ebe232b28845`
+
+DEV-011 is resolved for this exact successor candidate. The failed 18/1 run remains preserved.
 
 ### Preserved failure receipt
 
@@ -740,3 +773,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 0.9 | Reopened | Second pressure sweep found temperature data-limit failure (DEV-009) and QA-review apparatus discrepancy (DEV-010); full successor qualification required. |
 | 1.0 | Closed for successor candidate | DEV-005 through DEV-010 resolved; expanded pressure suite 18/18 PASS and unchanged frozen OQ 18/18 PASS. |
 | 1.1 | Reopened | Final source-to-URS pressure test exposed missing required receipt-date control as DEV-011; OQ not entered and publication blocked. |
+| 1.2 | Closed for successor candidate | DEV-011 resolved; expanded suite 19/19 PASS and unchanged frozen OQ 18/18 PASS on exact candidate df40d5b. |
