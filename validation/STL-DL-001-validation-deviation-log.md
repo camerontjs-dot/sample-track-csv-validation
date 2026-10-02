@@ -141,125 +141,6 @@ Accordingly, this local receipt is treated as **corroborating preservation evide
 
 It does not change the final DEV-001 resolution on the corrected candidate.
 
-
-
-
-
-## DEV-004 — Authentication boundary does not provide controlled denial
-
-**Discovered during:** corrected protocol-conformance execution `OQ-CI-36813093395`  
-**Candidate:** `9dfe0aa25ecd86173fc654b90665d51455ebb156`  
-**Affected test:** `OQ-TC-001`  
-**Affected requirements:** `URS-024`, `URS-025`, `URS-026`, `URS-027`  
-**Affected risks:** `RSK-010`, `RSK-011`
-
-### Observation
-
-After DEV-002 corrected the OQ harness to execute the frozen unauthenticated-access steps, `OQ-TC-001` failed.
-
-Three unauthenticated GxP-write challenges produced:
-
-`AttributeError: 'NoneType' object has no attribute 'role'`
-
-instead of a controlled authentication/access denial.
-
-The run result was **17 PASS / 1 FAIL**.
-
-### Classification
-
-**SYSTEM AUTHENTICATION / AUTHORIZATION BOUNDARY FAILURE**
-
-The qualification harness used the frozen expected behavior: a GxP data-changing function must require authenticated access and reject an unauthenticated attempt.
-
-### Additional code-inspection finding
-
-The current `Session` object is directly caller-constructible and `_require_role` trusts its role field without checking that the application actually issued the session.
-
-This creates a plausible forged-session authorization path.
-
-This exposure was subsequently **confirmed by a requirement-derived adversarial test** before implementation repair.
-
-### Impact assessment
-
-The observed uncontrolled exception is a validation failure for the authentication boundary.
-
-If the forged-session path is executable, the impact is more severe because an unauthenticated caller could potentially construct an apparently authorized Warehouse or QA session and bypass the intended authentication gate.
-
-Final validation disposition is blocked until this boundary is corrected and requalified.
-
-### Pre-correction adversarial test
-
-Before implementation repair, add development tests derived from the authentication requirement that require:
-
-1. an unauthenticated GxP write to raise a controlled `AuthenticationError`;
-2. a caller-constructed forged Warehouse session to be rejected with `AuthenticationError`.
-
-Preserve the first test result.
-
-### Planned correction
-
-If the adversarial test confirms the exposure:
-
-- issue opaque session tokens only after successful authentication;
-- validate each session token and its user/role against application-owned state before protected operations;
-- reject absent, forged, expired, disabled-user, or role-stale sessions with controlled authentication errors;
-- invalidate existing sessions when access is disabled or role authorization changes.
-
-### Status
-
-`RESOLVED — AUTHORITY CORRECTED / ADVERSARIAL TEST PASS / FULL OQ PASS`
-
-### Pre-correction adversarial receipt
-
-Candidate: `5a77e66e0bb165fb040c33e9445925b3e9eb070d`  
-Candidate tree: `0c90945319a2304d90394aae94ac0d3b65147967`  
-GitHub Actions run: `36813247201`  
-Job: `110212683378`
-
-Development gate result: **10 tests, 1 failure, 1 error**.
-
-Observed:
-
-- unauthenticated GxP write raised uncontrolled `AttributeError`, not `AuthenticationError`;
-- a caller-constructed Warehouse `Session` did **not** raise `AuthenticationError` and successfully passed the application role gate.
-
-The forged-session bypass is therefore OBSERVED, not merely inferred.
-
-### Authorized implementation correction
-
-The system now:
-
-- issues an opaque random token only after successful authentication;
-- stores issued session authority in application-owned state;
-- validates token, user identity, role, active status, and current role before protected operations;
-- rejects absent, forged, expired, disabled-user, or stale-role sessions with controlled authentication failure;
-- invalidates a user's existing sessions when the account is disabled or role authorization changes.
-
-The frozen OQ expected results remain unchanged.
-
-### Final corrective qualification receipt
-
-Corrected candidate: `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`  
-Candidate tree: `0fd797f7a4532ef18284aa8484c2db7036532c02`  
-GitHub Actions run: `36813357212`  
-Job: `110213023142`  
-Development tests: **10 / 10 PASS**  
-Frozen OQ: **18 / 18 PASS**  
-`sampletrack.py` SHA-256: `c0bcf3919279d41aabe90f63056f8b63b57e38f3ca8a3d146ab5a128ea28afe4`  
-OQ runner SHA-256: `0789c67da040a73904602b3ef0638e3ed27adca72268c180b92ffdf207ce68af`  
-Artifact: `11140757299`  
-Artifact digest: `sha256:94f82fb01bdd9999c4d71ccbd2587702181ab45bf7833dc39cb987b16051a490`
-
-The final execution explicitly passed:
-
-- unauthenticated GxP access denial;
-- invalid-password post-failure GxP access denial;
-- disabled-account post-failure GxP access denial;
-- forged-session development challenge;
-- all role/authority OQ paths.
-
-DEV-004 is resolved for the exact qualified candidate. The original pre-correction failures remain preserved.
-
 ## DEV-002 — Automated OQ harness did not preserve frozen protocol step coverage
 
 **Training seed category:** Protocol / execution discrepancy.
@@ -398,6 +279,121 @@ Artifact digest: `sha256:8a2b32fe35e5cd39cc7375fa21926630ae62cafa23c0096b1573180
 
 The OQ-TC-009 evidence object was confirmed to carry `execution_id = OQ-CI-36812736825`.
 
+## DEV-004 — Authentication boundary does not provide controlled denial
+
+**Discovered during:** corrected protocol-conformance execution `OQ-CI-36813093395`  
+**Candidate:** `9dfe0aa25ecd86173fc654b90665d51455ebb156`  
+**Affected test:** `OQ-TC-001`  
+**Affected requirements:** `URS-024`, `URS-025`, `URS-026`, `URS-027`  
+**Affected risks:** `RSK-010`, `RSK-011`
+
+### Observation
+
+After DEV-002 corrected the OQ harness to execute the frozen unauthenticated-access steps, `OQ-TC-001` failed.
+
+Three unauthenticated GxP-write challenges produced:
+
+`AttributeError: 'NoneType' object has no attribute 'role'`
+
+instead of a controlled authentication/access denial.
+
+The run result was **17 PASS / 1 FAIL**.
+
+### Classification
+
+**SYSTEM AUTHENTICATION / AUTHORIZATION BOUNDARY FAILURE**
+
+The qualification harness used the frozen expected behavior: a GxP data-changing function must require authenticated access and reject an unauthenticated attempt.
+
+### Additional code-inspection finding
+
+The current `Session` object is directly caller-constructible and `_require_role` trusts its role field without checking that the application actually issued the session.
+
+This creates a plausible forged-session authorization path.
+
+This exposure was subsequently **confirmed by a requirement-derived adversarial test** before implementation repair.
+
+### Impact assessment
+
+The observed uncontrolled exception is a validation failure for the authentication boundary.
+
+If the forged-session path is executable, the impact is more severe because an unauthenticated caller could potentially construct an apparently authorized Warehouse or QA session and bypass the intended authentication gate.
+
+Final validation disposition is blocked until this boundary is corrected and requalified.
+
+### Pre-correction adversarial test
+
+Before implementation repair, add development tests derived from the authentication requirement that require:
+
+1. an unauthenticated GxP write to raise a controlled `AuthenticationError`;
+2. a caller-constructed forged Warehouse session to be rejected with `AuthenticationError`.
+
+Preserve the first test result.
+
+### Planned correction
+
+If the adversarial test confirms the exposure:
+
+- issue opaque session tokens only after successful authentication;
+- validate each session token and its user/role against application-owned state before protected operations;
+- reject absent, forged, expired, disabled-user, or role-stale sessions with controlled authentication errors;
+- invalidate existing sessions when access is disabled or role authorization changes.
+
+### Status
+
+`RESOLVED — AUTHORITY CORRECTED / ADVERSARIAL TEST PASS / FULL OQ PASS`
+
+### Pre-correction adversarial receipt
+
+Candidate: `5a77e66e0bb165fb040c33e9445925b3e9eb070d`  
+Candidate tree: `0c90945319a2304d90394aae94ac0d3b65147967`  
+GitHub Actions run: `36813247201`  
+Job: `110212683378`
+
+Development gate result: **10 tests, 1 failure, 1 error**.
+
+Observed:
+
+- unauthenticated GxP write raised uncontrolled `AttributeError`, not `AuthenticationError`;
+- a caller-constructed Warehouse `Session` did **not** raise `AuthenticationError` and successfully passed the application role gate.
+
+The forged-session bypass is therefore OBSERVED, not merely inferred.
+
+### Authorized implementation correction
+
+The system now:
+
+- issues an opaque random token only after successful authentication;
+- stores issued session authority in application-owned state;
+- validates token, user identity, role, active status, and current role before protected operations;
+- rejects absent, forged, expired, disabled-user, or stale-role sessions with controlled authentication failure;
+- invalidates a user's existing sessions when the account is disabled or role authorization changes.
+
+The frozen OQ expected results remain unchanged.
+
+### Final corrective qualification receipt
+
+Corrected candidate: `37a23e1bb28c4fc96d6fcdc252d91e8a4e57ba0e`  
+Candidate tree: `0fd797f7a4532ef18284aa8484c2db7036532c02`  
+GitHub Actions run: `36813357212`  
+Job: `110213023142`  
+Development tests: **10 / 10 PASS**  
+Frozen OQ: **18 / 18 PASS**  
+`sampletrack.py` SHA-256: `c0bcf3919279d41aabe90f63056f8b63b57e38f3ca8a3d146ab5a128ea28afe4`  
+OQ runner SHA-256: `0789c67da040a73904602b3ef0638e3ed27adca72268c180b92ffdf207ce68af`  
+Artifact: `11140757299`  
+Artifact digest: `sha256:94f82fb01bdd9999c4d71ccbd2587702181ab45bf7833dc39cb987b16051a490`
+
+The final execution explicitly passed:
+
+- unauthenticated GxP access denial;
+- invalid-password post-failure GxP access denial;
+- disabled-account post-failure GxP access denial;
+- forged-session development challenge;
+- all role/authority OQ paths.
+
+DEV-004 is resolved for the exact qualified candidate. The original pre-correction failures remain preserved.
+
 ## DEV-005 — Critical-data correction does not invalidate prior QA verification
 
 **Discovered during:** public-release pressure test  
@@ -430,8 +426,6 @@ This invalidates final closure of URS-004 until corrected and requalified.
 
 `RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
 
----
-
 ## DEV-006 — GMP status change can be recorded without required rationale
 
 **Discovered during:** public-release pressure test  
@@ -457,8 +451,6 @@ The resulting history can be attributable in user/time/status terms while still 
 ### Status
 
 `RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
-
----
 
 ## DEV-007 — Regulated record retrieval is available without authenticated authority
 
@@ -488,8 +480,6 @@ Final validation consideration is blocked until regulated record retrieval paths
 
 `RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
 
----
-
 ## DEV-008 — Same-status request bypasses authentication
 
 **Discovered during:** public-release pressure test  
@@ -518,8 +508,6 @@ The observation does not itself alter material state, but it contradicts the req
 
 `RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
 
----
-
 ## Public-release pressure-test execution receipt
 
 Candidate: `718ce8e065d78e6df7a8d837cf71c68ad3909590`  
@@ -541,8 +529,6 @@ Passing pressure controls:
 Failing controls are preserved above as DEV-005 through DEV-008.
 
 Publication remains blocked until a corrected successor passes the pressure suite and the complete frozen OQ.
-
----
 
 ## DEV-009 — Temperature data-limit handling accepts non-finite values and leaks raw conversion errors
 
@@ -589,8 +575,6 @@ Normalize temperature input through one controlled conversion step and reject no
 
 `RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
 
----
-
 ## DEV-010 — TC-015 QA audit-review assertion used Warehouse read authority after read-boundary hardening
 
 **Discovered during:** public-release protocol-conformance inspection  
@@ -619,8 +603,6 @@ Retrieve the audit trail with `QA_REVIEW_01` for the frozen QA-reviewability ste
 
 `RESOLVED — CORRECTED / SUCCESSOR QUALIFICATION PASS`
 
----
-
 ## Second public-release pressure-sweep receipt
 
 Candidate: `d1471b983d06c3564531e505dcd75f407993a52c`  
@@ -633,20 +615,6 @@ Development/adversarial suite: original and first-wave pressure controls passed;
 Frozen OQ: **NOT ENTERED** because the pressure gate failed.  
 Artifact: `11179849851`  
 Artifact ZIP SHA-256: `c137814080ba4cfa35169471d4ef19e8ab3cad722d495acfeaf091a52a9e8f9f`
-
----
-
-## Final deviation closure summary
-
-Successor qualification: `OQ-CI-36947930824` on exact application/runner candidate `c3463a18b18c359d4d639055c4e3f6121df79f80`.
-
-- compilation: **PASS**
-- expanded development/adversarial suite: **20 / 20 PASS**
-- unchanged frozen OQ: **18 / 18 PASS**
-- open validation deviations: **0**
-- no frozen expected result was changed to obtain the pass
-
-DEV-001 through DEV-012 are resolved for the current successor candidate. Earlier failed runs remain preserved in this log.
 
 ## DEV-011 — Receiving record can complete without required receipt date
 
@@ -746,8 +714,6 @@ Artifact ZIP SHA-256: `1b8bde6ab6122ba979c8a73e04db0e2b2b1efde10fcdc83c2249d7cf3
 
 At this stage of the preserved failure lineage, publication remained blocked until DEV-011 was resolved by an exact successor candidate.
 
----
-
 ## DEV-012 — Denied GMP record deletion attempt leaves no audit event
 
 **Discovered during:** final requirement-by-requirement public-release pressure pass  
@@ -831,7 +797,55 @@ Artifact ZIP SHA-256: `f4322ed3183f8f1f8796f01a8a82ed93b053d624caa24d8e18e38e660
 
 At this stage, publication is blocked pending an exact successor qualification.
 
----
+## DEV-013 — Terminal evidence custody and provenance did not match the hosted execution
+
+**Discovered during:** post-qualification evidence-custody reconciliation of the terminal successor  
+**Affected execution:** `OQ-CI-36947930824` (GitHub Actions run `36947930824`, job `110654144729`)  
+**Candidate:** `c3463a18b18c359d4d639055c4e3f6121df79f80` (unchanged)  
+**Affected records:** `validation/evidence/OQ-CI-36947930824/execution.md`, `validation/evidence/OQ-CI-36947930824/manifest.json`, STL-VSR-001 section 6, `demo/README.md`, STL-OQ-001 historical qualification receipt banner  
+**Affected requirements / risks:** none at the functional level; evidence integrity of the release record
+
+### Observation
+
+Three record-level discrepancies were found after the terminal successor had passed:
+
+1. The repository copies of `execution.md` and `manifest.json` did not reproduce the SHA-256 values recorded by the hosted run in `execution-sha256.txt`. The repository `manifest.json` had been re-serialized (same 23 entries and values, different JSON formatting) and the repository `execution.md` was missing one trailing newline at the end of the hosted file. Repository SHA-256 before correction: `manifest.json` `6c4aaa56a25aa9292a965c440404851b2227a7ff42bf57601c1da8f6f2aff0e4`, `execution.md` `7e9f792f87cb5e611bdcb45b9544e83302b3a02e47d8b0e1fd5f38d586697450`.
+2. STL-VSR-001 section 6 recorded the terminal execution time as `2026-10-01T17:10:53+00:00`. That is the execution time of the earlier successor `OQ-CI-36897449285`. The terminal `execution.md` records `2026-10-02T00:49:49+00:00`.
+3. `demo/README.md` and the supersession banner of the historical qualification receipt still named the earlier candidate `b528234a0a14db68200c9213516d0ed6a76ca56b` as current release authority instead of `c3463a18b18c359d4d639055c4e3f6121df79f80`.
+
+### Classification
+
+**EVIDENCE / RECORD-CUSTODY AND PROVENANCE DEFICIENCY**
+
+This is not a SampleTrack functional failure and not a qualification-apparatus failure. No test was executed incorrectly. The defect was in how the repository copy of the release record matched, and pointed to, the hosted execution.
+
+### Impact assessment
+
+- The hosted artifact (`11203126111`, ZIP SHA-256 `0ac0db89702f40c98204f65537e23950b04fb3b5348bc0c11d03ca54f4315749`) was not affected.
+- The re-serialized manifest carried the same entries and digests as the hosted manifest, so no evidence content was lost or altered in meaning.
+- A reviewer comparing repository bytes to the recorded hashes would still have seen a mismatch, which weakens the custody claim for the release record.
+- The wrong timestamp and stale authority pointers could lead a reviewer to the wrong execution.
+
+No executable source, frozen validation authority, OQ result, validation scope, or qualification verdict was affected. Re-execution was therefore not required.
+
+### Correction
+
+- restored the hosted-original bytes of `execution.md` and `manifest.json` (commit `f8755428f63dc1a5599f214b468100db19c8d1df`);
+- pointed `demo/README.md` to the terminal candidate and execution (commit `5926f76653f24a897ccb513b20b1f23eee9b690f`);
+- corrected the historical receipt's supersession pointer (commit `b9f08886900e4f0e488953895a92c436f5deed1c`);
+- corrected the STL-VSR-001 execution timestamp and recorded revision 2.3 (commit `3f44effdbf195e17d7891fce259056872c52cde9`);
+- merged as `b871d4fafab8a3c47b23b386667dfb1a971405c7` on 2026-10-01.
+
+### Verification
+
+After correction, the repository copies hash to the values recorded by the hosted run:
+
+- `execution.md`: `560add9b413a2ada9e5803a5f9857c274035aee96ca33fe3d2fac38984650904`
+- `manifest.json`: `80d8d58ce14cb0e0561957fb8443622e2148a369a7d572314d044b69b989a9e6`
+
+### Status
+
+`RESOLVED — HOSTED-ORIGINAL BYTES RESTORED / PROVENANCE POINTERS CORRECTED / NO RE-EXECUTION REQUIRED`
 
 ## Pre-execution apparatus incident — workflow checkout
 
@@ -842,6 +856,30 @@ No system-under-test code executed. No OQ evidence was produced.
 Classification: **APPARATUS FAILURE — PRE-EXECUTION**.
 
 The workflow-only correction did not change the frozen validation artifacts or the system-under-test source blobs, so this incident does not invalidate OQ-EXEC-001.
+
+## Final deviation closure summary
+
+Successor qualification: `OQ-CI-36947930824` on exact application/runner candidate `c3463a18b18c359d4d639055c4e3f6121df79f80`.
+
+- compilation: **PASS**
+- expanded development/adversarial suite: **20 / 20 PASS**
+- unchanged frozen OQ: **18 / 18 PASS**
+- open validation deviations: **0**
+- no frozen expected result was changed to obtain the pass
+
+DEV-001 through DEV-012 are resolved for the current successor candidate. DEV-013 is resolved as a record-custody correction to the same candidate's evidence; it did not change the candidate or require re-execution.
+
+- total recorded validation deviations: **13 / 13 resolved**
+
+Earlier failed runs remain preserved in this log.
+
+### Note on historical deviation counts
+
+Earlier revisions of the README and of STL-VSR-001 (for example VSR revision 2.0) reported **10 / 10 resolved**, and later revisions reported **11 / 11** and then **12 / 12**. Each figure matched the deviations recorded when that revision was written. DEV-005 through DEV-010 came from the first two public-release pressure sweeps, DEV-011 and DEV-012 from later requirement-level passes, and DEV-013 from post-qualification evidence reconciliation. The total grew because later review found more; no earlier deviation was removed, merged, or reclassified.
+
+Separately, the **10 / 10 PASS** shown in the DEV-004 receipt and in the historical qualification receipt is a development-test count, not a deviation count.
+
+Entries in this log are now arranged in DEV number order, with the pressure-test receipts kept next to the deviations they produced and this closure summary at the end. Earlier revisions had some entries out of number order (for example DEV-004 before DEV-002, and the closure summary before DEV-011). No entry text was changed by the reordering; only the horizontal-rule separators between entries were dropped.
 
 ## Revision history
 
@@ -861,3 +899,5 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 1.2 | Closed for successor candidate | DEV-011 resolved; expanded suite 19/19 PASS and unchanged frozen OQ 18/18 PASS on exact candidate df40d5b. |
 | 1.3 | Reopened | Final requirement-level pressure pass exposed missing audit coverage for denied deletion attempts as DEV-012; OQ not entered. |
 | 1.4 | Closed for successor candidate | DEV-012 resolved; final pressure suite 20/20 PASS and unchanged frozen OQ 18/18 PASS on exact candidate c3463a18. |
+| 1.5 | Closed for successor candidate | DEV-013 recorded: terminal evidence custody and provenance reconciled to hosted-original bytes; no executable, frozen authority, qualification verdict, or validation scope changed. |
+| 1.6 | Closed for successor candidate | Entries arranged in DEV number order; closure summary moved to the end; note added explaining historical 10 / 10, 11 / 11 and 12 / 12 counts. No deviation content changed. |
