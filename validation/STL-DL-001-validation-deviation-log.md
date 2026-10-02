@@ -6,7 +6,7 @@
 |---|---|
 | Document ID | STL-DL-001 |
 | System | SampleTrack Lite demonstration surrogate |
-| Status | Closed for successor candidate `df40d5b71517e30af425d3b0f02e4e05c920cca6` |
+| Status | REOPENED — DEV-012 denied deletion attempt not audited; publication blocked pending successor qualification |
 | Approval status | Mock approval: Not executed |
 
 ## DEV-001 — Upper temperature boundary classified as excursion
@@ -748,6 +748,66 @@ At this stage of the preserved failure lineage, publication remained blocked unt
 
 ---
 
+## DEV-012 — Denied GMP record deletion attempt leaves no audit event
+
+**Discovered during:** final requirement-by-requirement public-release pressure pass  
+**Candidate:** `87a62bfb5646ef528cb219368e601f9cdd57419e`  
+**Candidate tree:** `1eb5b84f11fcaf410f98393bab0952a1bf80347f`  
+**GitHub Actions run:** `36947828276`  
+**Job:** `110653825639`  
+**Affected requirement:** `URS-029`  
+**Affected risk:** `RSK-012`
+
+### Observation
+
+The application supports an explicit completed-record deletion attempt through `attempt_delete_record`, and correctly denies the deletion.
+
+However, the denied attempt did not create a GMP audit event.
+
+The adversarial test observed the same audit-event count before and after the denied deletion attempt:
+
+`1 not greater than 1`
+
+Run result:
+
+- frozen-authority guard: **PASS**
+- compilation: **PASS**
+- development/adversarial tests: **19 PASS / 1 FAIL**
+- frozen OQ: **NOT ENTERED**
+
+### Classification
+
+**SYSTEM / AUDIT-COVERAGE FAILURE**
+
+URS-029 explicitly requires audit-trail coverage for a GMP-relevant deletion attempt where supported. The surrogate exposes the deletion-attempt function, so the attempt is within the supported behavior boundary.
+
+### Impact assessment
+
+The material record remains protected from deletion, but a denied attempt against a completed GxP record is not reconstructable from the audit trail.
+
+This prevents continued closure of URS-029 / RSK-012 for the current candidate.
+
+### Required correction
+
+- authenticate/authorize before exposing record existence;
+- preserve the denial behavior;
+- write an attributable `delete_attempt_denied` audit event for the affected record before returning the denial;
+- retain user, date/time, record identity, and reason;
+- rerun the complete expanded pressure suite and unchanged frozen OQ.
+
+### Status
+
+`OPEN — CORRECTION / SUCCESSOR QUALIFICATION REQUIRED`
+
+### Preserved failure receipt
+
+Artifact ID: `11203235312`  
+Artifact ZIP SHA-256: `f4322ed3183f8f1f8796f01a8a82ed93b053d624caa24d8e18e38e660aa6439c`
+
+At this stage, publication is blocked pending an exact successor qualification.
+
+---
+
 ## Pre-execution apparatus incident — workflow checkout
 
 Before OQ-EXEC-001, GitHub Actions run `36811955161` failed at candidate checkout because the workflow supplied an escaped SHA ref.
@@ -774,3 +834,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 1.0 | Closed for successor candidate | DEV-005 through DEV-010 resolved; expanded pressure suite 18/18 PASS and unchanged frozen OQ 18/18 PASS. |
 | 1.1 | Reopened | Final source-to-URS pressure test exposed missing required receipt-date control as DEV-011; OQ not entered and publication blocked. |
 | 1.2 | Closed for successor candidate | DEV-011 resolved; expanded suite 19/19 PASS and unchanged frozen OQ 18/18 PASS on exact candidate df40d5b. |
+| 1.3 | Reopened | Final requirement-level pressure pass exposed missing audit coverage for denied deletion attempts as DEV-012; OQ not entered. |
