@@ -14,13 +14,13 @@
 
 ## 1. Purpose
 
-This matrix records lifecycle traceability from SampleTrack user requirements to functional risks, executed OQ verification, evidence, deviations, and final requirement status for the qualified mock candidate `b528234a0a14db68200c9213516d0ed6a76ca56b`.
+This matrix records lifecycle traceability from SampleTrack user requirements to functional risks, executed OQ verification, evidence, deviations, and final requirement status for the qualified mock candidate `df40d5b71517e30af425d3b0f02e4e05c920cca6`.
 
-Final execution authority: `OQ-CI-36947244505`, GitHub Actions run `36813357212`, frozen OQ result **18 / 18 PASS**.
+Final execution authority: `OQ-CI-36947244505`, GitHub Actions run `36947244505`, frozen OQ result **18 / 18 PASS**.
 
-## 2. Planned OQ test architecture
+## 2. Frozen OQ test architecture
 
-The identifiers below are planning anchors only. The detailed test scripts and expected results will be authored in STL-OQ-001 after the risk/traceability slice is reviewed.
+The identifiers below originated as pre-execution planning anchors. The corresponding detailed test scripts and expected results were subsequently frozen in STL-OQ-001 and executed without changing the frozen oracle to accommodate observed failures.
 
 | OQ ID | Planned test focus | Primary risk depth |
 |---|---|---|
@@ -180,4 +180,5 @@ A green aggregate test count is not a substitute for those paths.
 |---|---|---|
 | 0.1 | Draft / pre-execution | Initial URS → risk → planned OQ traceability skeleton. |
 | 0.2 | Draft / pre-execution | Pre-OQ source review: URS-007/RSK-014 traceability aligned to human-readable plus electronic record copies. |
-| 0.3 | Executed / reconciled | Final run OQ-CI-36947244505 traced across all 35 URS requirements; 18/18 OQ PASS; all recorded validation deviations resolved. |
+| 0.3 | Executed / reconciled | Final run OQ-CI-36813357212 traced across all 35 URS requirements; 18/18 OQ PASS; initial recorded validation deviations resolved. |
+| 0.4 | Pressure-tested successor | DEV-005 through DEV-011 reconciled; final successor OQ-CI-36947244505 provides 19/19 supplemental development/adversarial PASS plus unchanged 18/18 frozen OQ PASS. |
