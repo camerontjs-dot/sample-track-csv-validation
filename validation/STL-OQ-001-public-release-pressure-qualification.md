@@ -20,7 +20,7 @@ The earlier bounded qualification candidate `37a23e1bb28c4fc96d6fcdc252d91e8a4e5
 
 Before publication, an additional adversarial pressure review challenged assumptions and behavior outside the original OQ's explicit examples.
 
-That review found additional material gaps. Publication was blocked, the failures were preserved as DEV-005 through DEV-010, corrections were applied without weakening the frozen OQ, and the full successor gates were rerun.
+That review found additional material gaps. Publication was blocked, the failures were preserved as DEV-005 through DEV-011, corrections were applied without weakening the frozen OQ, and the full successor gates were rerun.
 
 This receipt therefore supersedes the earlier qualification receipt as the current release authority.
 
@@ -64,7 +64,7 @@ Gates:
 
 - compilation: **PASS**
 - expanded development/adversarial suite: **19 / 19 PASS**
-- unchanged frozen OQ: **19 / 19 PASS**
+- unchanged frozen OQ: **18 / 18 PASS**
 - OQ failures: **0**
 
 No frozen OQ expected result was changed to obtain the passing result.
