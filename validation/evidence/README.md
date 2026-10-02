@@ -12,7 +12,7 @@ This directory contains durable repository-facing receipts for executed SampleTr
 
 Current successor result:
 
-- development/adversarial pressure suite: **18 / 18 PASS**
+- development/adversarial pressure suite: **19 / 19 PASS**
 - unchanged frozen OQ: **18 / 18 PASS**
 - exact application/runner candidate: `df40d5b71517e30af425d3b0f02e4e05c920cca6`
 
