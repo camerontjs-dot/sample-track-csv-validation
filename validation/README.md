@@ -26,7 +26,7 @@
 
 ## Current package state
 
-No core validation deliverables remain planned for the current bounded mock scope. The package has also completed a separate public-release pressure test; DEV-001 through DEV-012 are resolved for the current successor candidate.
+No core validation deliverables remain planned for the current bounded mock scope. The package has also completed a separate public-release pressure test; DEV-001 through DEV-013 are resolved for the current successor candidate (DEV-013 is an evidence-custody correction with no re-execution required).
 
 Final bounded disposition:
 
