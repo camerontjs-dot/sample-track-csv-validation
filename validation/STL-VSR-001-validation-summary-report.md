@@ -113,7 +113,7 @@ Final full OQ:
 - GitHub Actions run: `36947930824`
 - job: `110654144729`
 - execution ID: `OQ-CI-36947930824`
-- executed: 2026-10-01T17:10:53+00:00
+- executed: 2026-10-02T00:49:49+00:00
 - GitHub-hosted Ubuntu 24.04 runner
 - architecture: x86_64
 - Python: 3.13.15
@@ -475,3 +475,4 @@ The evidence supports the bounded mock disposition above and no broader claim.
 | 2.0 | Final pressure-tested summary | Public-release adversarial review preserved DEV-005 through DEV-010 and qualified successor b528234a with 18/18 pressure tests plus unchanged 18/18 frozen OQ. |
 | 2.1 | Final source-to-URS successor | DEV-011 receipt-date completeness failure preserved and resolved; intermediate successor df40d5b passed 19/19 expanded development/adversarial tests plus unchanged 18/18 frozen OQ. |
 | 2.2 | Final requirement-level pressure successor | DEV-012 denied-deletion audit gap preserved and resolved; exact successor c3463a18 passed 20/20 development/adversarial tests plus unchanged 18/18 frozen OQ. |
+| 2.3 | Evidence-provenance reconciliation | DEV-013 corrected the terminal execution timestamp and repository evidence custody to the hosted-original bytes; no executable, frozen authority, qualification verdict, or validation scope changed. |
