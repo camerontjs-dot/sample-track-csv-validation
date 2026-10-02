@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from sampletrack import SampleTrackDemo, AuthenticationError, ValidationError
+from sampletrack import SampleTrackDemo, AuthenticationError, AuthorizationError, ValidationError
 
 
 class PublicPressureTests(unittest.TestCase):
@@ -109,6 +109,19 @@ class PublicPressureTests(unittest.TestCase):
                 "QA_REVIEW_01",
                 self.credentials["QA_REVIEW_01"],
             )
+
+    def test_denied_record_deletion_attempt_is_audited(self):
+        """URS-029: a supported GMP-relevant deletion attempt leaves audit evidence."""
+        rid = self.record("LOT-PRESSURE-DELETE")
+        before = len(self.app.audit_events(rid, self.qa))
+        with self.assertRaises(AuthorizationError):
+            self.app.attempt_delete_record(self.wh, rid)
+        audit = self.app.audit_events(rid, self.qa)
+        self.assertGreater(len(audit), before)
+        denied = [e for e in audit if e["action"] == "delete_attempt_denied"]
+        self.assertEqual(len(denied), 1)
+        self.assertEqual(denied[0]["actor"], "WH_OP_01")
+        self.assertEqual(denied[0]["record_id"], rid)
 
     def test_gmp_status_change_requires_reason(self):
         """URS-015: a GMP-relevant status change requires a reason/rationale."""
