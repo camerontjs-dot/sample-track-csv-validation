@@ -114,6 +114,10 @@ class PublicPressureTests(unittest.TestCase):
         """URS-029: a supported GMP-relevant deletion attempt leaves audit evidence."""
         rid = self.record("LOT-PRESSURE-DELETE")
         before = len(self.app.audit_events(rid, self.qa))
+        with self.assertRaises(AuthenticationError):
+            self.app.attempt_delete_record(None, rid)
+        self.assertEqual(len(self.app.audit_events(rid, self.qa)), before)
+
         with self.assertRaises(AuthorizationError):
             self.app.attempt_delete_record(self.wh, rid)
         audit = self.app.audit_events(rid, self.qa)
@@ -122,6 +126,11 @@ class PublicPressureTests(unittest.TestCase):
         self.assertEqual(len(denied), 1)
         self.assertEqual(denied[0]["actor"], "WH_OP_01")
         self.assertEqual(denied[0]["record_id"], rid)
+        self.assertTrue(denied[0]["at"])
+        self.assertEqual(
+            denied[0]["reason"],
+            "permanent deletion of completed GxP record is not permitted",
+        )
 
     def test_gmp_status_change_requires_reason(self):
         """URS-015: a GMP-relevant status change requires a reason/rationale."""
