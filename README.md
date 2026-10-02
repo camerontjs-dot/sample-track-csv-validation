@@ -35,7 +35,7 @@ Taken from STL-RTM-001 (section 4) and STL-VSR-001 (sections 9, 11 and 12):
 - functional risks: 15 (9 High, 4 Medium, 2 Low), each with at least one executed OQ path
 - frozen OQ: 18 / 18 PASS on candidate `c3463a18`, execution `OQ-CI-36947930824`
 - development and adversarial tests: 20 / 20 PASS
-- recorded validation deviations: 12 / 12 resolved, 0 open
+- recorded validation deviations: 13 / 13 resolved, 0 open
 
 ### Limits
 
@@ -60,7 +60,7 @@ Final qualification evidence:
 - development and adversarial pressure tests: **20 / 20 PASS**;
 - frozen OQ: **18 / 18 PASS**;
 - URS traceability: **35 / 35 VERIFIED - PASS**;
-- recorded validation deviations: **12 / 12 resolved**;
+- recorded validation deviations: **13 / 13 resolved**;
 - final mock disposition: **ACCEPTED FOR BOUNDED MOCK DEMONSTRATION USE**;
 - production disposition: **NOT APPROVED FOR GxP PRODUCTION USE**.
 
@@ -70,7 +70,7 @@ The passing final run does not replace the failed executions that preceded it. T
 
 A separate pre-publication adversarial pass challenged behaviors beyond the original OQ examples. It found additional defects in stale verification state, status-change rationale, regulated read authorization, authentication ordering, malformed temperature handling, and one qualification-role mismatch.
 
-Those findings were preserved as DEV-005 through DEV-010. A final source-to-URS pass then found DEV-011: receiving could complete without the distinct receipt date required by URS-002. Publication remained blocked until the corrected receipt-date successor passed 19 pressure tests and the unchanged OQ. A final requirement-level challenge then exposed DEV-012: denied completed-record deletion attempts were not audited. The terminal successor passed the expanded 20-test pressure suite and the unchanged 18-case frozen OQ.
+Those findings were preserved as DEV-005 through DEV-010. A final source-to-URS pass then found DEV-011: receiving could complete without the distinct receipt date required by URS-002. Publication remained blocked until the corrected receipt-date successor passed 19 pressure tests and the unchanged OQ. A final requirement-level challenge then exposed DEV-012: denied completed-record deletion attempts were not audited. The terminal successor passed the expanded 20-test pressure suite and the unchanged 18-case frozen OQ. After that, DEV-013 corrected how the repository copy of the terminal evidence matched the hosted run (restored hosted-original bytes and corrected provenance pointers) without changing the candidate or the result.
 
 ## Reproduce the demonstration
 
