@@ -6,7 +6,7 @@
 |---|---|
 | Document ID | STL-DL-001 |
 | System | SampleTrack Lite demonstration surrogate |
-| Status | REOPENED — DEV-012 denied deletion attempt not audited; publication blocked pending successor qualification |
+| Status | Closed for successor candidate `c3463a18b18c359d4d639055c4e3f6121df79f80` |
 | Approval status | Mock approval: Not executed |
 
 ## DEV-001 — Upper temperature boundary classified as excursion
@@ -638,15 +638,15 @@ Artifact ZIP SHA-256: `c137814080ba4cfa35169471d4ef19e8ab3cad722d495acfeaf091a52
 
 ## Final deviation closure summary
 
-Successor qualification: `OQ-CI-36897449285` on exact application/runner candidate `b528234a0a14db68200c9213516d0ed6a76ca56b`.
+Successor qualification: `OQ-CI-36947930824` on exact application/runner candidate `c3463a18b18c359d4d639055c4e3f6121df79f80`.
 
 - compilation: **PASS**
-- expanded development/adversarial suite: **18 / 18 PASS**
+- expanded development/adversarial suite: **20 / 20 PASS**
 - unchanged frozen OQ: **18 / 18 PASS**
 - open validation deviations: **0**
 - no frozen expected result was changed to obtain the pass
 
-DEV-005 through DEV-010 are resolved for the successor candidate. Earlier failed runs remain preserved in this log.
+DEV-001 through DEV-012 are resolved for the current successor candidate. Earlier failed runs remain preserved in this log.
 
 ## DEV-011 — Receiving record can complete without required receipt date
 
@@ -797,7 +797,32 @@ This prevents continued closure of URS-029 / RSK-012 for the current candidate.
 
 ### Status
 
-`OPEN — CORRECTION / SUCCESSOR QUALIFICATION REQUIRED`
+`RESOLVED — DENIED DELETION ATTEMPT AUDITED / SUCCESSOR QUALIFICATION PASS`
+
+### Correction and successor qualification
+
+The surrogate now:
+
+- authenticates and validates role authority before resolving the target record;
+- continues to deny permanent deletion of completed GxP records;
+- writes and commits an attributable `delete_attempt_denied` audit event before returning the denial;
+- retains actor, date/time, affected record, and denial reason;
+- does not create a misleading deletion audit event for an unauthenticated attempt.
+
+Successor candidate: `c3463a18b18c359d4d639055c4e3f6121df79f80`  
+Candidate tree: `dcc0159f5cfaca61e3768497442e3fce8ae9613f`  
+GitHub Actions run: `36947930824`  
+Job: `110654144729`  
+Development/adversarial suite: **20 / 20 PASS**  
+Unchanged frozen OQ: **18 / 18 PASS**  
+`sampletrack.py` SHA-256: `1e1b016debc4ca45319171468b2fe048a473e92b5eb6a5f1e60d4a95412db939`  
+`test_sampletrack.py` SHA-256: `36b0f41d79476d9f42f412e33a20f71de2840ea5c3eee4c2adb1895589d1928a`  
+`test_pressure.py` SHA-256: `34c05b01dad118b06b32ec0fcc56e616e72411c50e0ed3a20a1fe3db3c97609a`  
+`oq_runner.py` SHA-256: `982a635c3fff19e942401e272cba5f2c061572c614d192951b4f44632c7bbf37`  
+Artifact ID: `11203126111`  
+Artifact ZIP SHA-256: `0ac0db89702f40c98204f65537e23950b04fb3b5348bc0c11d03ca54f4315749`
+
+DEV-012 is resolved for this exact successor candidate. The failed 19/1 run remains preserved.
 
 ### Preserved failure receipt
 
@@ -835,3 +860,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 1.1 | Reopened | Final source-to-URS pressure test exposed missing required receipt-date control as DEV-011; OQ not entered and publication blocked. |
 | 1.2 | Closed for successor candidate | DEV-011 resolved; expanded suite 19/19 PASS and unchanged frozen OQ 18/18 PASS on exact candidate df40d5b. |
 | 1.3 | Reopened | Final requirement-level pressure pass exposed missing audit coverage for denied deletion attempts as DEV-012; OQ not entered. |
+| 1.4 | Closed for successor candidate | DEV-012 resolved; final pressure suite 20/20 PASS and unchanged frozen OQ 18/18 PASS on exact candidate c3463a18. |
