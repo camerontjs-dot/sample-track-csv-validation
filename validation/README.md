@@ -38,4 +38,6 @@ Production disposition:
 
 Final public-release pressure successor: **20 / 20 development/adversarial tests PASS + 18 / 18 unchanged frozen OQ PASS**.
 
-Some controlled/frozen artifacts retain their original watermark wording because their exact blobs are part of the preserved qualification record.
+## Original qualification records
+
+Frozen documents and original execution evidence retain their exact bytes, including their original watermarks. Those records preserve the qualification history of this fictional demonstration; they do not describe a real deployment.

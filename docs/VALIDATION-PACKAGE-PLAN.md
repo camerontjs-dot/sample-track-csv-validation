@@ -183,6 +183,6 @@ Checksums establish evidence-object identity/integrity. They do not establish th
 
 ## 13. Public-facing boundary
 
-If this repository is later made public, technical artifacts should describe what was exercised, what failed, what evidence exists, and what is not established.
+Technical documentation should describe the fictional system, what was exercised, what failed, the preserved evidence, and the limits of the result.
 
-Do not add evaluator-facing sections such as "skills demonstrated" or imply that the mock package is equivalent to regulated on-the-job CSV experience.
+Keep the bounded demonstration result distinct from qualification of a real production system.

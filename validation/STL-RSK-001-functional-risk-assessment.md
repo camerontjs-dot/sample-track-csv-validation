@@ -1,6 +1,6 @@
 # STL-RSK-001 — SampleTrack Lite Functional Risk Assessment
 
-> **MOCK / FICTIONAL — TRAINING & INTERVIEW DEMONSTRATION ONLY — NOT FOR GxP USE**
+> **MOCK / FICTIONAL - DEMONSTRATION ONLY - NOT FOR GxP USE**
 
 | Field | Value |
 |---|---|

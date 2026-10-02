@@ -1,6 +1,6 @@
 # STL-RTM-001 — SampleTrack Lite Requirements Traceability Matrix
 
-> **MOCK / FICTIONAL — TRAINING & INTERVIEW DEMONSTRATION ONLY — NOT FOR GxP USE**
+> **MOCK / FICTIONAL - DEMONSTRATION ONLY - NOT FOR GxP USE**
 
 | Field | Value |
 |---|---|
