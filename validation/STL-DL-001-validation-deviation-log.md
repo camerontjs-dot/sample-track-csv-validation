@@ -6,7 +6,7 @@
 |---|---|
 | Document ID | STL-DL-001 |
 | System | SampleTrack Lite demonstration surrogate |
-| Status | Closed for successor candidate `b528234a0a14db68200c9213516d0ed6a76ca56b` |
+| Status | REOPENED — DEV-011 receipt-date requirement failure; publication blocked pending successor qualification |
 | Approval status | Mock approval: Not executed |
 
 ## DEV-001 — Upper temperature boundary classified as excursion
@@ -648,6 +648,73 @@ Successor qualification: `OQ-CI-36897449285` on exact application/runner candida
 
 DEV-005 through DEV-010 are resolved for the successor candidate. Earlier failed runs remain preserved in this log.
 
+## DEV-011 — Receiving record can complete without required receipt date
+
+**Discovered during:** final source-to-URS public-release pressure test  
+**Candidate:** `915e3f7215c33fdc2646c74ae168c94080fdf306`  
+**Candidate tree:** `22baa35067b994399744875fd4889f5eeb037851`  
+**GitHub Actions run:** `36946957100`  
+**Job:** `110651165310`  
+**Affected requirement:** `URS-002`  
+**Affected risk:** `RSK-002`
+
+### Observation
+
+URS-002 requires a receiving record to contain a distinct **receipt date** before completion.
+
+The demonstration surrogate accepted and completed a receiving record through:
+
+`create_inventory(session, product_id, lot, quantity, storage_condition)`
+
+without any receipt-date field or receipt-date completion gate.
+
+The pressure-test challenge expected the missing receipt date to raise `ValidationError`; no exception was raised.
+
+Run result:
+
+- frozen-authority guard: **PASS**
+- compilation: **PASS**
+- development/adversarial tests: **18 PASS / 1 FAIL**
+- frozen OQ: **NOT ENTERED**
+
+### Classification
+
+**SYSTEM / REQUIRED-DATA COMPLETENESS FAILURE**
+
+There is also a **qualification-coverage gap**: the frozen OQ and test fixture did not separately exercise the receipt-date element of URS-002.
+
+The frozen URS remains authoritative and is not weakened or reinterpreted to make the implementation pass.
+
+### Impact assessment
+
+A receiving record could be considered complete while omitting one of the explicitly required receiving fields.
+
+This prevents continued final closure of URS-002 and RSK-002 for the current candidate.
+
+The system-generated creation timestamp is not silently substituted for the separately specified receipt date.
+
+### Required correction
+
+- add a distinct required receipt-date field to the receiving record;
+- validate receipt date as a controlled ISO calendar date;
+- retain it in the authoritative record and human-readable/electronic outputs;
+- update valid demonstration callers to provide the frozen-scenario receipt date;
+- add supplemental adversarial verification for missing, malformed, and retained receipt date;
+- rerun the complete expanded pressure suite and unchanged frozen OQ.
+
+### Status
+
+`OPEN — CORRECTION / SUCCESSOR QUALIFICATION REQUIRED`
+
+### Preserved failure receipt
+
+Artifact ID: `11202038732`  
+Artifact ZIP SHA-256: `1b8bde6ab6122ba979c8a73e04db0e2b2b1efde10fcdc83c2249d7cf344b0adb`
+
+Publication remains blocked until DEV-011 is resolved by an exact successor candidate.
+
+---
+
 ## Pre-execution apparatus incident — workflow checkout
 
 Before OQ-EXEC-001, GitHub Actions run `36811955161` failed at candidate checkout because the workflow supplied an escaped SHA ref.
@@ -672,3 +739,4 @@ The workflow-only correction did not change the frozen validation artifacts or t
 | 0.8 | Reopened | Public-release pressure test run 36895767954 found four requirement-level gaps; DEV-005 through DEV-008 opened and publication blocked pending successor qualification. |
 | 0.9 | Reopened | Second pressure sweep found temperature data-limit failure (DEV-009) and QA-review apparatus discrepancy (DEV-010); full successor qualification required. |
 | 1.0 | Closed for successor candidate | DEV-005 through DEV-010 resolved; expanded pressure suite 18/18 PASS and unchanged frozen OQ 18/18 PASS. |
+| 1.1 | Reopened | Final source-to-URS pressure test exposed missing required receipt-date control as DEV-011; OQ not entered and publication blocked. |
