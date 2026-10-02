@@ -190,7 +190,7 @@ Individual evidence IDs and hashes are preserved in the execution manifest and f
 
 ## 10. Validation deviations
 
-Twelve validation deviations were preserved across qualification and public-release pressure testing.
+Thirteen validation deviations were preserved across qualification, public-release pressure testing, and post-qualification evidence reconciliation.
 
 ### DEV-001 — Upper temperature boundary defect
 
@@ -303,6 +303,16 @@ Correction: authentication/authority is evaluated before target-record disclosur
 
 Final status: **RESOLVED**.
 
+### DEV-013 — Terminal evidence custody and provenance
+
+After the terminal successor passed, the repository copies of the terminal `execution.md` and `manifest.json` did not reproduce the hosted SHA-256 values, section 6 of this report carried the earlier successor's execution time, and two pointers still named the earlier candidate `b528234a` as release authority.
+
+Classification: evidence / record-custody and provenance deficiency.
+
+Correction: the hosted-original bytes were restored, the pointers and the execution timestamp were corrected (revision 2.3). No executable, frozen authority, OQ result, or validation scope changed, so no re-execution was required.
+
+Final status: **RESOLVED**.
+
 ### Public-release pressure qualification
 
 Pressure-test lineage:
@@ -336,7 +346,7 @@ Final RTM status:
 - requirements with final OQ evidence: **35 / 35**
 - final requirement status: **35 / 35 VERIFIED — PASS**
 - open validation deviations: **0**
-- total recorded validation deviations: **12 / 12 resolved**
+- total recorded validation deviations: **13 / 13 resolved**
 
 Requirement-specific deviation history remains visible for the affected temperature and authentication controls.
 
@@ -476,3 +486,4 @@ The evidence supports the bounded mock disposition above and no broader claim.
 | 2.1 | Final source-to-URS successor | DEV-011 receipt-date completeness failure preserved and resolved; intermediate successor df40d5b passed 19/19 expanded development/adversarial tests plus unchanged 18/18 frozen OQ. |
 | 2.2 | Final requirement-level pressure successor | DEV-012 denied-deletion audit gap preserved and resolved; exact successor c3463a18 passed 20/20 development/adversarial tests plus unchanged 18/18 frozen OQ. |
 | 2.3 | Evidence-provenance reconciliation | DEV-013 corrected the terminal execution timestamp and repository evidence custody to the hosted-original bytes; no executable, frozen authority, qualification verdict, or validation scope changed. |
+| 2.4 | Deviation-count reconciliation | DEV-013 summarized in section 10; total recorded validation deviations updated to 13 / 13 resolved to match STL-DL-001 revision 1.5. No evidence, verdict, or scope changed. |
