@@ -6,15 +6,15 @@ This directory contains durable repository-facing receipts for executed SampleTr
 
 ## Current release authority
 
-- [OQ-CI-36897449285 receipt](OQ-CI-36897449285/README.md)
-- [OQ-CI-36897449285 step-level execution](OQ-CI-36897449285/execution.md)
-- [OQ-CI-36897449285 evidence-object manifest](OQ-CI-36897449285/manifest.json)
+- [OQ-CI-36947244505 receipt](OQ-CI-36947244505/README.md)
+- [OQ-CI-36947244505 step-level execution](OQ-CI-36947244505/execution.md)
+- [OQ-CI-36947244505 evidence-object manifest](OQ-CI-36947244505/manifest.json)
 
 Current successor result:
 
 - development/adversarial pressure suite: **18 / 18 PASS**
 - unchanged frozen OQ: **18 / 18 PASS**
-- exact application/runner candidate: `b528234a0a14db68200c9213516d0ed6a76ca56b`
+- exact application/runner candidate: `df40d5b71517e30af425d3b0f02e4e05c920cca6`
 
 ## Preserved historical execution
 
