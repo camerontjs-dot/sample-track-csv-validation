@@ -463,3 +463,4 @@ The evidence supports the bounded mock disposition above and no broader claim.
 | 1.0 | Final mock summary | Final bounded validation decision for exact qualified candidate after complete deviation reconciliation. |
 | 1.1 | Final mock summary | Clarified automated execution ownership, limited independence, and non-executed mock approval boundary. |
 | 2.0 | Final pressure-tested summary | Public-release adversarial review preserved DEV-005 through DEV-010 and qualified successor b528234a with 18/18 pressure tests plus unchanged 18/18 frozen OQ. |
+| 2.1 | Final source-to-URS successor | DEV-011 receipt-date completeness failure preserved and resolved; exact successor df40d5b passed 19/19 expanded development/adversarial tests plus unchanged 18/18 frozen OQ. |
