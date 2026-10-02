@@ -6,11 +6,11 @@
 |---|---|
 | Record type | Public-release adversarial successor qualification |
 | Qualification disposition | PASS FOR BOUNDED MOCK OQ AFTER PRESSURE TEST |
-| Exact application/runner candidate | `b528234a0a14db68200c9213516d0ed6a76ca56b` |
-| Candidate tree | `834831c3df75d2a610c338c02657036c8ee9695a` |
-| GitHub Actions run | `36897449285` |
-| Job | `110487913996` |
-| Execution ID | `OQ-CI-36897449285` |
+| Exact application/runner candidate | `df40d5b71517e30af425d3b0f02e4e05c920cca6` |
+| Candidate tree | `14431f747e3072435f7664263724cd10c3365da1` |
+| GitHub Actions run | `36947244505` |
+| Job | `110652043880` |
+| Execution ID | `OQ-CI-36947244505` |
 | Frozen OQ protocol blob | `c3e0b589362d3c12650e1ade1290da36db1a3f31` |
 | Approval status | Mock approval: Not executed |
 
@@ -33,7 +33,8 @@ The public-release pressure test exposed and preserved:
 - **DEV-007:** regulated record/history/export reads lacked an authenticated authority boundary;
 - **DEV-008:** a same-status request returned before authentication;
 - **DEV-009:** NaN/infinite temperature values were not rejected and malformed text leaked a raw conversion error;
-- **DEV-010:** the TC-015 QA audit-review assertion used the wrong authenticated role after read-boundary hardening.
+- **DEV-010:** the TC-015 QA audit-review assertion used the wrong authenticated role after read-boundary hardening;
+- **DEV-011:** receiving records could complete without the distinct receipt date required by URS-002.
 
 The first pressure run failed before OQ. A later second-wave probe also failed before OQ. Neither failure was rewritten into a pass.
 
@@ -47,7 +48,8 @@ The successor:
 - validates session authority before a same-status no-op return;
 - invalidates issued sessions after account disable or role change;
 - rejects nonnumeric and non-finite temperature values through controlled validation errors;
-- executes TC-015's QA audit-review step with `QA_REVIEW_01`.
+- executes TC-015's QA audit-review step with `QA_REVIEW_01`;
+- requires and validates a distinct ISO receipt date and retains it in authoritative and exported records.
 
 ## 4. Final execution result
 
@@ -61,8 +63,8 @@ Environment:
 Gates:
 
 - compilation: **PASS**
-- expanded development/adversarial suite: **18 / 18 PASS**
-- unchanged frozen OQ: **18 / 18 PASS**
+- expanded development/adversarial suite: **19 / 19 PASS**
+- unchanged frozen OQ: **19 / 19 PASS**
 - OQ failures: **0**
 
 No frozen OQ expected result was changed to obtain the passing result.
@@ -71,31 +73,31 @@ No frozen OQ expected result was changed to obtain the passing result.
 
 SHA-256:
 
-- `demo/sampletrack.py`: `c719094618123bc280cb0d9ce204da1f7072004e40e48a9787b38b02f1aa14b5`
-- `demo/test_sampletrack.py`: `1a9a45f3710b452b9b078d738698011b21d964f4803e97b510afe410f1484363`
-- `demo/test_pressure.py`: `63a66eddf7b71b91f238b9d2c2cffe8c6c251c5b0f582b9d94bf9baa8ae3ef8d`
-- `demo/oq_runner.py`: `aac407bec114b285298642f4ae22f8fa8d32d384e5cd170542073687689ea5b6`
+- `demo/sampletrack.py`: `f61136b70b020d1516470c263308750427ac65fff621be73dacf824ef70a35d0`
+- `demo/test_sampletrack.py`: `36b0f41d79476d9f42f412e33a20f71de2840ea5c3eee4c2adb1895589d1928a`
+- `demo/test_pressure.py`: `dc35140bde0618f769f3897d31debad643c2e7c581b1d63f03bfe802f636df94`
+- `demo/oq_runner.py`: `982a635c3fff19e942401e272cba5f2c061572c614d192951b4f44632c7bbf37`
 
 ## 6. Execution evidence identity
 
 Core execution SHA-256:
 
-- `execution.json`: `1ccd18f02deaf920f08f2742906a37e70d375e6b0f7f3f87c13e39df774e2b3b`
-- `execution.md`: `6129581178cad83cd9fadf64a20795ea4128e73d220794c78dd9358b8fad55d7`
-- `manifest.json`: `2f572bad3c11ea34a2c343da5dee839b602874c14ce36c9bbee3772f56df1e08`
+- `execution.json`: `0b6e1ce0a48b0a31c2340b77051b2736dfca9dbecbf421f962f97f879a9bf062`
+- `execution.md`: `3a63c0aa3a18223b46efda35bb90d0828d92d340222652841d94fc51a3b6ad01`
+- `manifest.json`: `4cecdd948d3f997ca4d98feb8f2c3a97e391e1f22b4edee9c1d480c157283e04`
 
 GitHub Actions artifact:
 
-- artifact ID: `11180665087`
-- artifact: `sampletrack-oq-36897449285`
-- ZIP SHA-256: `7c1d8c52dd6161b16130d20699ce1a5ff47a4edc9ef54454cd469966af6c05af`
-- size: 25,925 bytes
+- artifact ID: `11203030254`
+- artifact: `sampletrack-oq-36947244505`
+- ZIP SHA-256: `45c51df8787a32a5851ee6895d89a4c7bfc3e424364b49019f08ebe232b28845`
+- size: 26,208 bytes
 
 The downloaded ZIP was independently re-hashed to the same SHA-256 and passed a ZIP integrity test.
 
 A durable repository copy of the final step-level execution record, evidence manifest, environment receipt and hash ledgers is stored under:
 
-`validation/evidence/OQ-CI-36897449285/`
+`validation/evidence/OQ-CI-36947244505/`
 
 ## 7. Regulatory/source pressure recheck
 
@@ -116,7 +118,7 @@ The Part 11 material remains a conditional exercise overlay rather than an asser
 
 ## 8. Deviation disposition
 
-DEV-001 through DEV-010 are resolved for the successor application/runner candidate.
+DEV-001 through DEV-011 are resolved for the successor application/runner candidate.
 
 Earlier failed executions remain preserved and continue to constrain the claim.
 
@@ -145,3 +147,4 @@ It does not establish:
 |---|---|---|
 | 1.0 | Qualified successor | Final public-release pressure qualification after DEV-005 through DEV-010. |
 | 1.1 | Evidence hardening | Added exact SHA-256 identity for the adversarial pressure-test source after CI source-ledger hardening. |
+| 2.0 | Final pressure successor | DEV-011 receipt-date completeness failure preserved and resolved; successor passed 19/19 expanded development/adversarial tests plus unchanged 18/18 frozen OQ. |
