@@ -744,7 +744,7 @@ DEV-011 is resolved for this exact successor candidate. The failed 18/1 run rema
 Artifact ID: `11202038732`  
 Artifact ZIP SHA-256: `1b8bde6ab6122ba979c8a73e04db0e2b2b1efde10fcdc83c2249d7cf344b0adb`
 
-Publication remains blocked until DEV-011 is resolved by an exact successor candidate.
+At this stage of the preserved failure lineage, publication remained blocked until DEV-011 was resolved by an exact successor candidate.
 
 ---
 
