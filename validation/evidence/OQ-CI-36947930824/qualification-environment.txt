@@ -1,0 +1,11 @@
+MOCK / FICTIONAL — TRAINING & INTERVIEW DEMONSTRATION ONLY — NOT FOR GxP USE
+candidate_sha=c3463a18b18c359d4d639055c4e3f6121df79f80
+candidate_tree=dcc0159f5cfaca61e3768497442e3fce8ae9613f
+git_status_begin
+?? validation/evidence/OQ-CI-36947930824/
+git_status_end
+runner_os=Linux runnervm8df0l 6.17.0-1022-azure #22-Ubuntu SMP Mon Jul 27 17:24:03 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+Python 3.13.15
+architecture=x86_64
+python_full=3.13.15 (main, Aug  6 2026, 02:15:18) [GCC 13.3.0]
+sqlite=3.45.1
