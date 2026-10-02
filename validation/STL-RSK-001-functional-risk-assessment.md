@@ -305,20 +305,20 @@ The Validation Summary Report will make the final bounded risk/validation dispos
 
 ## 14. Post-OQ residual-risk disposition
 
-Final functional qualification was executed against exact candidate `b528234a0a14db68200c9213516d0ed6a76ca56b` under execution ID `OQ-CI-36947244505`.
+Final functional qualification was executed against exact candidate `c3463a18b18c359d4d639055c4e3f6121df79f80` under execution ID `OQ-CI-36947930824`.
 
 Observed:
 
-- expanded development/adversarial pressure tests: **18 / 18 PASS**;
+- expanded development/adversarial pressure tests: **20 / 20 PASS**;
 - unchanged frozen OQ: **18 / 18 PASS**;
 - all 15 risk scenarios retain at least one executed OQ path;
-- all ten recorded validation deviations are resolved for the exact successor candidate;
+- all twelve recorded validation deviations are resolved for the exact successor candidate;
 - no frozen expected result was changed to obtain the final pass;
 - the public-release pressure suite specifically challenged stale critical verification, missing status rationale, unauthenticated regulated reads, authentication ordering, session invalidation, malformed/non-finite temperature data, and QA audit-review authority.
 
 Accordingly, each functional risk in this assessment is now marked:
 
-`SUPPORTED WITH BOUNDS — OQ-CI-36947244505 + PRESSURE SUITE PASS`
+`SUPPORTED WITH BOUNDS — OQ-CI-36947930824 + PRESSURE SUITE PASS`
 
 This means the planned application control was exercised successfully under the bounded mock conditions.
 
@@ -332,7 +332,7 @@ The public-release pressure test materially strengthened several existing risks 
 - **RSK-006:** excursion logic must reject malformed and non-finite temperature inputs before comparison;
 - **RSK-012:** the qualification apparatus must exercise the QA audit-review role actually required by the frozen protocol.
 
-These findings were preserved as DEV-005 through DEV-010 and closed only after the successor pressure suite and complete frozen OQ passed.
+These findings were preserved as DEV-005 through DEV-012 and closed only after the successor pressure suite and complete frozen OQ passed.
 
 It does **not** mean that the underlying risk no longer exists, that its real-world probability has been measured, or that production residual risk has been accepted for an actual pharmaceutical operation.
 
@@ -354,6 +354,19 @@ Exact successor evidence:
 - execution: `OQ-CI-36947244505`.
 
 The original RSK-002 design-time S/P/D/RPN/class is preserved.
+
+### 14.2 Final audit-coverage pressure addition
+
+DEV-012 confirms that denied completed-record deletion attempts are part of RSK-012 audit-trail coverage. The corrected successor preserves the denial and writes an attributable audit event only after authenticated authority and target-record validation.
+
+Final successor evidence:
+
+- candidate: `c3463a18b18c359d4d639055c4e3f6121df79f80`;
+- development/adversarial tests: **20 / 20 PASS**;
+- unchanged frozen OQ: **18 / 18 PASS**;
+- execution: `OQ-CI-36947930824`.
+
+The original RSK-012 design-time S/P/D/RPN/class is preserved.
 
 ## 15. Subjectivity controls
 
