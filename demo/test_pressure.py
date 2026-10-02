@@ -39,18 +39,44 @@ class PublicPressureTests(unittest.TestCase):
             lot,
             24,
             "REFRIGERATED_2_8C",
+            "2026-10-01",
         )
 
     def test_receipt_date_is_required_before_receiving_completion(self):
-        """URS-002: a receiving record requires a distinct receipt date."""
+        """URS-002: receipt date is required, valid, retained, and exportable."""
         with self.assertRaises(ValidationError):
             self.app.create_inventory(
                 self.wh,
                 "DEMO-RX-COLD-001",
-                "LOT-PRESSURE-RECEIPT-DATE",
+                "LOT-PRESSURE-RECEIPT-DATE-MISSING",
                 24,
                 "REFRIGERATED_2_8C",
             )
+
+        with self.assertRaises(ValidationError):
+            self.app.create_inventory(
+                self.wh,
+                "DEMO-RX-COLD-001",
+                "LOT-PRESSURE-RECEIPT-DATE-BAD",
+                24,
+                "REFRIGERATED_2_8C",
+                "2026-13-40",
+            )
+
+        rid = self.app.create_inventory(
+            self.wh,
+            "DEMO-RX-COLD-001",
+            "LOT-PRESSURE-RECEIPT-DATE-VALID",
+            24,
+            "REFRIGERATED_2_8C",
+            "2026-10-01",
+        )
+        record = self.app.get_record(rid, self.wh)
+        self.assertEqual(record["receipt_date"], "2026-10-01")
+        electronic = self.app.export_electronic(rid, self.wh)
+        self.assertEqual(electronic["record"]["receipt_date"], "2026-10-01")
+        human = self.app.export_human_readable(rid, self.wh)
+        self.assertIn("Receipt date: 2026-10-01", human)
 
     def test_critical_verification_is_invalidated_after_critical_lot_correction(self):
         """URS-004: release must rely on verification of current critical data."""
